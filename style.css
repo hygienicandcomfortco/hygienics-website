@@ -11,6 +11,11 @@ body {
   flex-direction: column;
 }
 
+main {
+  flex: 1;
+}
+
+
 /* ---------- HEADER ---------- */
 header {
   background-color: #2b7cff;
@@ -142,3 +147,4 @@ footer {
     font-size: 13px;
   }
 }
+
