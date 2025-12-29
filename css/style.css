@@ -1,6 +1,9 @@
-css/style.css
+/* ---------- GLOBAL LAYOUT ---------- */
 html, body {
   height: 100%;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
 }
 
 body {
@@ -8,16 +11,7 @@ body {
   flex-direction: column;
 }
 
-footer {
-  margin-top: auto;
-}
-
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f9f9f9;
-}
-
+/* ---------- HEADER ---------- */
 header {
   background-color: #2b7cff;
   color: white;
@@ -25,6 +19,7 @@ header {
   text-align: center;
 }
 
+/* ---------- NAV ---------- */
 nav {
   background: white;
   padding: 10px;
@@ -38,11 +33,21 @@ nav a {
   font-weight: bold;
 }
 
+nav a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- CONTENT ---------- */
 .hero {
   padding: 40px;
   text-align: center;
 }
 
+.hero h2 {
+  margin-top: 0;
+}
+
+/* ---------- BUTTON ---------- */
 .btn {
   background: #2b7cff;
   color: white;
@@ -52,12 +57,11 @@ nav a {
   display: inline-block;
 }
 
-footer {
-  background: #222;
-  color: white;
-  text-align: center;
-  padding: 10px;
+.btn:hover {
+  background: #1f5fd6;
 }
+
+/* ---------- PRODUCTS ---------- */
 .product-list {
   display: flex;
   gap: 20px;
@@ -74,6 +78,17 @@ footer {
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   text-align: center;
 }
+
+/* ---------- FOOTER ---------- */
+footer {
+  margin-top: auto;
+  background: #222;
+  color: white;
+  text-align: center;
+  padding: 10px;
+}
+
+/* ---------- MOBILE ---------- */
 @media (max-width: 768px) {
 
   header {
@@ -99,7 +114,6 @@ footer {
 
   .hero {
     padding: 20px 15px;
-    text-align: center;
   }
 
   .hero h2 {
@@ -117,7 +131,6 @@ footer {
     display: block;
   }
 
-  /* 🔥 PRODUCT PAGE FIX */
   .product-list {
     flex-direction: column;
     gap: 15px;
