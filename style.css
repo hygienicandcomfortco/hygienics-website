@@ -1,10 +1,17 @@
-css/style.css
-body {
+/* ---------- GLOBAL ---------- */
+html, body {
+  height: 100%;
   margin: 0;
   font-family: Arial, sans-serif;
   background-color: #f9f9f9;
 }
 
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- HEADER ---------- */
 header {
   background-color: #2b7cff;
   color: white;
@@ -12,6 +19,7 @@ header {
   text-align: center;
 }
 
+/* ---------- NAV ---------- */
 nav {
   background: white;
   padding: 10px;
@@ -25,11 +33,21 @@ nav a {
   font-weight: bold;
 }
 
+/* ---------- CONTENT ---------- */
 .hero {
   padding: 40px;
   text-align: center;
 }
 
+/* For About / Contact / Products pages */
+.page-content {
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* ---------- BUTTON ---------- */
 .btn {
   background: #2b7cff;
   color: white;
@@ -39,12 +57,7 @@ nav a {
   display: inline-block;
 }
 
-footer {
-  background: #222;
-  color: white;
-  text-align: center;
-  padding: 10px;
-}
+/* ---------- PRODUCTS ---------- */
 .product-list {
   display: flex;
   gap: 20px;
@@ -61,6 +74,17 @@ footer {
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   text-align: center;
 }
+
+/* ---------- FOOTER ---------- */
+footer {
+  margin-top: auto;
+  background: #222;
+  color: white;
+  text-align: center;
+  padding: 10px;
+}
+
+/* ---------- MOBILE ---------- */
 @media (max-width: 768px) {
 
   header {
@@ -86,7 +110,6 @@ footer {
 
   .hero {
     padding: 20px 15px;
-    text-align: center;
   }
 
   .hero h2 {
@@ -104,7 +127,6 @@ footer {
     display: block;
   }
 
-  /* 🔥 PRODUCT PAGE FIX */
   .product-list {
     flex-direction: column;
     gap: 15px;
@@ -120,5 +142,3 @@ footer {
     font-size: 13px;
   }
 }
-
-
