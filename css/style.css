@@ -21,25 +21,28 @@ main {
 /* ================================
    HEADER
 ================================ */
-header {
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
   background-color: #2b7cff;
   color: white;
   padding: 20px;
+}
+
+.header-left {
+  position: absolute;
+  left: 20px;
+}
+
+.header-center {
   text-align: center;
 }
 
-header h1 {
-  margin: 0;
-}
-
-header p {
-  margin: 8px 0 0;
-}
 .logo {
-  max-width: 120px;
-  margin-bottom: 10px;
+  max-width: 80px;
 }
-
 
 /* ================================
    NAVIGATION
