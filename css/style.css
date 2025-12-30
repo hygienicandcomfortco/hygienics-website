@@ -1,5 +1,6 @@
-Any changes needed here?
-/* ---------- GLOBAL LAYOUT ---------- */
+/* ================================
+   GLOBAL LAYOUT
+================================ */
 html, body {
   height: 100%;
   margin: 0;
@@ -12,7 +13,14 @@ body {
   flex-direction: column;
 }
 
-/* ---------- HEADER ---------- */
+/* Main content grows to push footer down */
+main {
+  flex: 1;
+}
+
+/* ================================
+   HEADER
+================================ */
 header {
   background-color: #2b7cff;
   color: white;
@@ -20,7 +28,17 @@ header {
   text-align: center;
 }
 
-/* ---------- NAV ---------- */
+header h1 {
+  margin: 0;
+}
+
+header p {
+  margin: 8px 0 0;
+}
+
+/* ================================
+   NAVIGATION
+================================ */
 nav {
   background: white;
   padding: 10px;
@@ -32,37 +50,55 @@ nav a {
   text-decoration: none;
   color: #2b7cff;
   font-weight: bold;
+  transition: all 0.2s ease-in-out;
 }
 
 nav a:hover {
   text-decoration: underline;
 }
 
-/* ---------- CONTENT ---------- */
+/* ================================
+   CONTENT / HERO
+================================ */
 .hero {
-  padding: 40px;
+  padding: 40px 20px;
   text-align: center;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .hero h2 {
   margin-top: 0;
 }
 
-/* ---------- BUTTON ---------- */
+/* Used for short pages (About / Contact) */
+.page-content {
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* ================================
+   BUTTON
+================================ */
 .btn {
   background: #2b7cff;
   color: white;
   padding: 12px 25px;
   text-decoration: none;
-  border-radius: 5px;
+  border-radius: 6px;
   display: inline-block;
+  transition: background 0.2s ease-in-out;
 }
 
 .btn:hover {
   background: #1f5fd6;
 }
 
-/* ---------- PRODUCTS ---------- */
+/* ================================
+   PRODUCTS
+================================ */
 .product-list {
   display: flex;
   gap: 20px;
@@ -78,18 +114,46 @@ nav a:hover {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   text-align: center;
+  transition: transform 0.2s ease;
 }
 
-/* ---------- FOOTER ---------- */
+.product-card:hover {
+  transform: translateY(-3px);
+}
+
+/* ================================
+   GOOGLE MAP
+================================ */
+.map {
+  margin-top: 30px;
+  width: 100%;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.map iframe {
+  width: 100%;
+  height: 300px;
+  border: 0;
+  border-radius: 10px;
+}
+
+/* ================================
+   FOOTER
+================================ */
 footer {
   margin-top: auto;
   background: #222;
   color: white;
   text-align: center;
-  padding: 10px;
+  padding: 12px;
+  font-size: 14px;
 }
 
-/* ---------- MOBILE ---------- */
+/* ================================
+   MOBILE RESPONSIVE
+================================ */
 @media (max-width: 768px) {
 
   header {
@@ -143,21 +207,9 @@ footer {
     max-width: 350px;
   }
 
-  .map {
-  margin-top: 25px;
-  width: 100%;
-  max-width: 900px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.map iframe {
-  width: 100%;
-  height: 300px;
-  border: 0;
-  border-radius: 8px;
-}
-
+  .map iframe {
+    height: 250px;
+  }
 
   footer {
     font-size: 13px;
