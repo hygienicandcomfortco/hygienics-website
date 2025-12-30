@@ -107,6 +107,13 @@ nav a:hover {
 /* ================================
    PRODUCTS
 ================================ */
+.page-content {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .product-list {
   display: flex;
   gap: 20px;
