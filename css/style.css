@@ -13,7 +13,7 @@ body {
   flex-direction: column;
 }
 
-/* Main content grows to push footer down */
+/* Main content pushes footer down */
 main {
   flex: 1;
 }
@@ -25,23 +25,27 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
   background-color: #2b7cff;
   color: white;
   padding: 20px;
+  position: relative;
 }
 
+/* Logo container (desktop) */
 .header-left {
   position: absolute;
   left: 20px;
 }
 
+/* Header text */
 .header-center {
   text-align: center;
 }
 
+/* Logo image */
 .logo {
   max-width: 80px;
+  height: auto;
 }
 
 /* ================================
@@ -58,7 +62,6 @@ nav a {
   text-decoration: none;
   color: #2b7cff;
   font-weight: bold;
-  transition: all 0.2s ease-in-out;
 }
 
 nav a:hover {
@@ -79,9 +82,9 @@ nav a:hover {
   margin-top: 0;
 }
 
-/* Used for short pages (About / Contact) */
+/* Used for short pages */
 .page-content {
-  min-height: 50vh;
+  min-height: 60vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -97,7 +100,7 @@ nav a:hover {
   text-decoration: none;
   border-radius: 6px;
   display: inline-block;
-  transition: background 0.2s ease-in-out;
+  margin-top: 15px;
 }
 
 .btn:hover {
@@ -107,13 +110,6 @@ nav a:hover {
 /* ================================
    PRODUCTS
 ================================ */
-.page-content {
-  min-height: 60vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
 .product-list {
   display: flex;
   gap: 20px;
@@ -129,11 +125,6 @@ nav a:hover {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   text-align: center;
-  transition: transform 0.2s ease;
-}
-
-.product-card:hover {
-  transform: translateY(-3px);
 }
 
 /* ================================
@@ -167,25 +158,26 @@ footer {
 }
 
 /* ================================
-   MOBILE RESPONSIVE
+   MOBILE FIXES (IMPORTANT)
 ================================ */
 @media (max-width: 768px) {
-    .logo {
-    max-width: 90px;
+
+  /* 🔥 FIX LOGO OVERLAP */
+  .site-header {
+    flex-direction: column;
+    text-align: center;
   }
 
-  header {
-    padding: 15px;
+  .header-left {
+    position: static;       /* removes overlap */
+    margin-bottom: 10px;
   }
 
-  header h1 {
-    font-size: 22px;
+  .logo {
+    max-width: 70px;
   }
 
-  header p {
-    font-size: 14px;
-  }
-
+  /* Navigation */
   nav {
     padding: 5px;
   }
@@ -195,6 +187,7 @@ footer {
     margin: 8px 0;
   }
 
+  /* Content */
   .hero {
     padding: 20px 15px;
   }
@@ -207,6 +200,7 @@ footer {
     font-size: 15px;
   }
 
+  /* Button */
   .btn {
     width: 90%;
     max-width: 320px;
@@ -214,6 +208,7 @@ footer {
     display: block;
   }
 
+  /* Products */
   .product-list {
     flex-direction: column;
     gap: 15px;
@@ -225,6 +220,7 @@ footer {
     max-width: 350px;
   }
 
+  /* Map */
   .map iframe {
     height: 250px;
   }
