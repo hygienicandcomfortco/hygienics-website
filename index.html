@@ -26,7 +26,7 @@
       line-height: 1.6;
     }
 
-    /* --- Professional Header (Matches About Page) --- */
+    /* --- Professional Header Navigation --- */
     .main-header {
       background: #ffffff;
       padding: 15px 5%;
@@ -51,10 +51,11 @@
       display: block;
     }
 
+    /* Flexbox keeps logo beside text on all screens */
     .logo-area {
       display: flex;
       align-items: center;
-      gap: 15px; /* Sidebar logo alignment */
+      gap: 15px; 
       cursor: pointer;
     }
 
@@ -106,6 +107,7 @@
       max-width: 1400px;
       margin: 0 auto;
       padding: 0 5%;
+      gap: 40px;
     }
 
     .hero-content h1 {
@@ -129,9 +131,11 @@
       padding: 16px 32px;
       border-radius: var(--radius);
       text-decoration: none;
-      font-weight: 600;
+      font-weight: 800;
       transition: 0.3s;
+      display: inline-block;
     }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 15px rgba(37, 99, 235, 0.2); }
 
     .hero-image img {
       width: 100%;
@@ -141,11 +145,25 @@
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
     }
 
+    /* --- Responsive Adjustments --- */
     @media (max-width: 968px) {
-      .hero-split { grid-template-columns: 1fr; text-align: center; padding-top: 4rem; }
+      .hero-split { grid-template-columns: 1fr; text-align: center; padding: 60px 5%; }
       .header-container { flex-direction: column; gap: 15px; }
-      .logo-area { flex-direction: column; text-align: center; gap: 5px; }
-      .hero-image { order: -1; margin-bottom: 3rem; }
+      
+      /* Keeps logo on the left of the text for mobile */
+      .logo-area { text-align: left; }
+      
+      .hero-content p { margin: 0 auto 2.5rem; }
+      .hero-image { order: -1; }
+      .hero-image img { height: 350px; }
+    }
+
+    @media (max-width: 480px) {
+      .logo-area { gap: 10px; }
+      .brand-text h1 { font-size: 1.1rem; }
+      .header-logo { height: 45px; }
+      .nav-links { gap: 12px; }
+      .nav-links a { font-size: 0.85rem; }
     }
   </style>
 </head>
@@ -174,12 +192,12 @@
 <main>
   <section class="hero-split">
     <div class="hero-content">
-      <span style="color: var(--primary); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px;">Premium Daily Care</span>
+      <span style="color: var(--primary); font-weight: 800; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px; display: block; margin-bottom: 10px;">Premium Daily Care</span>
       <h1>Trusted Quality For <br><span class="highlight">Your Family</span></h1>
       <p>We provide high-quality baby and adult hygiene products designed for ultimate comfort and skin-safe protection.</p>
-      <div style="display: flex; gap: 1rem;">
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
         <a href="products.html" class="btn-primary">View Products</a>
-        <a href="contact.html" style="padding: 16px 32px; border: 1px solid #e2e8f0; border-radius: 12px; text-decoration: none; color: var(--dark); font-weight: 600;">Contact Us</a>
+        <a href="contact.html" style="padding: 16px 32px; border: 2px solid #e2e8f0; border-radius: 12px; text-decoration: none; color: var(--dark); font-weight: 800; transition: 0.3s;">Contact Us</a>
       </div>
     </div>
     <div class="hero-image">
@@ -188,7 +206,7 @@
   </section>
 </main>
 
-<footer style="text-align: center; padding: 40px; color: var(--grey); border-top: 1px solid #f1f5f9;">
+<footer style="text-align: center; padding: 40px; color: var(--grey); border-top: 1px solid #f1f5f9; background: #fff;">
   <p>© 2026 Hygienic & Comfort Co.</p>
 </footer>
 
