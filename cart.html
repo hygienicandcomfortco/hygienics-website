@@ -1,130 +1,52 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Cart | Hygienic & Comfort Co.</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <style>
-        :root {
-            --primary: #2563eb;
-            --soft-blue: #eef4ff;
-            --dark: #1e293b;
-            --grey: #64748b;
-            --white: #ffffff;
-            --radius: 12px;
-            --bg: #f8fafc;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+<style>
+    :root { --primary:#2563eb; --dark:#1e293b; --grey:#64748b; --white:#fff; --bg:#f8fafc; }
+    * { margin:0; padding:0; box-sizing:border-box; }
 
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: var(--bg); 
-            color: var(--dark); 
-            line-height: 1.6;
-            padding-bottom: 120px; 
-        }
+    body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:var(--dark); padding-bottom:120px; }
 
-        /* --- Header --- */
-        .main-header { 
-            background: white; 
-            padding: 12px 5%; 
-            border-bottom: 1px solid #f1f5f9; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            position: sticky; 
-            top: 0; 
-            z-index: 1000; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-        }
+    .main-header { background:white; padding:12px 5%; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:1000; box-shadow:0 2px 10px rgba(0,0,0,.03); }
 
-        .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
-        .header-logo { height: 45px; width: auto; }
-        .brand-text h1 { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.5px; }
+    .logo-area { display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit; }
 
-        .back-btn {
-            text-decoration: none;
-            color: var(--primary);
-            font-weight: 700;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
+    .header-logo { height:45px; width:auto; }
 
-        /* --- Container --- */
-        .cart-container { max-width: 800px; margin: 30px auto; padding: 0 5%; }
-        h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 25px; }
+    .brand-text h1 { font-size:1.1rem; font-weight:800; letter-spacing:-.5px; }
 
-        .cart-item { 
-            background: white; 
-            padding: 20px; 
-            border-radius: 18px; 
-            display: flex; 
-            gap: 20px; 
-            margin-bottom: 15px; 
-            border: 1px solid #f1f5f9; 
-            align-items: center; 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
+    .cart-container { max-width:800px; margin:30px auto; padding:0 5%; }
 
-        .cart-img { width: 85px; height: 85px; object-fit: contain; background: #fdfdfd; border-radius: 10px; }
-        .cart-info { flex: 1; }
-        .cart-info h4 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
-        .item-price { font-weight: 800; font-size: 1.1rem; }
+    .cart-item { background:white; padding:20px; border-radius:18px; display:flex; gap:20px; margin-bottom:15px; border:1px solid #f1f5f9; align-items:center; box-shadow:0 4px 6px -1px rgba(0,0,0,.05); }
 
-        .qty-controls { display: flex; align-items: center; gap: 15px; margin-top: 12px; }
-        .qty-btn { width: 32px; height: 32px; border-radius: 10px; border: 1px solid #e2e8f0; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .remove-btn { background: #fff1f2; color: #ef4444; border: none; width: 40px; height: 40px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .cart-img { width:70px; height:70px; object-fit:contain; }
 
-        /* --- Footer Summary --- */
-        .footer-summary { 
-            position: fixed; bottom: 0; left: 0; width: 100%; 
-            background: white; padding: 25px 5%; border-top: 1px solid #f1f5f9; 
-            box-shadow: 0 -10px 25px rgba(0,0,0,0.05); z-index: 1001;
-        }
-        .summary-container { max-width: 800px; margin: 0 auto; }
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: 800; font-size: 1.3rem; }
+    .footer-summary { position:fixed; bottom:0; left:0; width:100%; background:white; padding:25px 5%; border-top:1px solid #f1f5f9; box-shadow:0 -10px 25px rgba(0,0,0,.05); }
 
-        .checkout-btn { 
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            width: 100%; background: #22c55e; color: white; padding: 18px; 
-            border-radius: 15px; text-decoration: none; font-weight: 800; 
-            font-size: 1.1rem; transition: 0.3s; border: none; cursor: pointer;
-        }
+    .checkout-btn { width:100%; max-width:400px; background:#22c55e; color:white; padding:18px; border-radius:15px; font-weight:800; border:none; cursor:pointer; display:flex; justify-content:center; gap:10px; margin:0 auto; }
 
-        /* --- Modal Styling --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); display: none; align-items: center;
-            justify-content: center; z-index: 2000; backdrop-filter: blur(4px);
-        }
-        .modal-content {
-            background: white; width: 90%; max-width: 400px; padding: 30px;
-            border-radius: 20px; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-        .modal-header { margin-bottom: 20px; }
-        .modal-header h3 { font-size: 1.4rem; font-weight: 800; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--dark); }
-        
-        .phone-input-container { display: flex; gap: 0; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; }
-        .phone-prefix { background: #f1f5f9; padding: 12px; font-weight: 700; color: var(--grey); border-right: 1px solid #e2e8f0; }
-        .phone-input-container input { flex: 1; padding: 12px; border: none; font-family: inherit; outline: none; }
+    .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; z-index:2000; backdrop-filter:blur(4px); }
 
-        @media (max-width: 480px) {
-            .brand-text h1 { font-size: 0.95rem; }
-            .cart-item { padding: 15px; }
-            .cart-img { width: 65px; height: 65px; }
-        }
-    </style>
+    .modal-content { background:white; width:90%; max-width:400px; padding:30px; border-radius:20px; }
+
+    .phone-input { display:flex; border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; margin-top:5px; }
+
+    .prefix { background:#f1f5f9; padding:12px; font-weight:800; border-right:1px solid #e2e8f0; }
+
+    .phone-input input { flex:1; border:none; padding:12px; outline:none; }
+</style>
+```
+
 </head>
+
 <body>
 
 <header class="main-header">
@@ -132,202 +54,137 @@
         <img src="logo.png" alt="Logo" class="header-logo">
         <div class="brand-text"><h1>Hygienic & Comfort Co.</h1></div>
     </a>
-    <a href="products.html" class="back-btn"><i data-lucide="arrow-left" style="width: 18px;"></i> Back</a>
+    <a href="products.html" style="text-decoration:none; color:var(--primary); font-weight:700;">Back to Shop</a>
 </header>
 
 <main class="cart-container">
-    <h2>Your Shopping Cart</h2>
+    <h2 style="font-weight:800; margin-bottom:25px;">Final Checkout</h2>
     <div id="cart-items"></div>
 </main>
 
-<div class="modal-overlay" id="checkout-modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Customer Details</h3>
-            <p style="color: var(--grey); font-size: 0.85rem;">Enter your info to finish your order via WhatsApp.</p>
-        </div>
-        <form id="customer-form" onsubmit="handleFormSubmit(event)">
-            <div class="form-group">
-                <label>Full Name *</label>
-                <input type="text" id="cust-name" placeholder="John Doe" required style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0; outline: none;">
-            </div>
-            <div class="form-group">
-                <label>Phone Number *</label>
-                <div class="phone-input-container">
-                    <span class="phone-prefix">+91</span>
-                    <input 
-                        type="tel" 
-                        id="cust-phone" 
-                        placeholder="0123456789" 
-                        required 
-                        pattern="[0-9]{10}" 
-                        maxlength="10" 
-                        oninput="this.value = this.value.replace(/[^0-9]/g, '');"
-                        title="Please enter exactly 10 digits">
-                </div>
-            </div>
-            <button type="submit" class="checkout-btn" id="confirm-btn">
-                <i data-lucide="check-circle"></i> Confirm & Open WhatsApp
-            </button>
-            <button type="button" onclick="closeModal()" style="width:100%; background:none; border:none; color:var(--grey); margin-top:15px; cursor:pointer; font-weight:600;">Cancel</button>
-        </form>
+<div class="footer-summary" id="summary-section">
+    <div style="max-width:800px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <span style="font-weight:800; font-size:1.2rem">Total: <span id="grand-total">₹0</span></span>
     </div>
+    <button onclick="openModal()" class="checkout-btn"><i data-lucide="shopping-bag"></i> Proceed to Checkout</button>
 </div>
 
-<div class="footer-summary" id="summary-section">
-    <div class="summary-container">
-        <div class="summary-row">
-            <span>Total Amount:</span>
-            <span id="grand-total">₹0</span>
+<div class="modal-overlay" id="checkout-modal">
+    <div class="modal-content">
+        <h3 style="font-weight:800; margin-bottom:15px;">Customer Details</h3>
+    <form onsubmit="handleFormSubmit(event)">
+        <label style="font-weight:700; font-size:.8rem">Full Name</label>
+        <input type="text" id="cust-name" required style="width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:15px;">
+
+        <label style="font-weight:700; font-size:.8rem">WhatsApp Number</label>
+        <div class="phone-input">
+            <span class="prefix">+91</span>
+            <input type="tel" id="cust-phone" required pattern="[0-9]{10}" maxlength="10">
         </div>
-        <button onclick="openModal()" class="checkout-btn">
-            <i data-lucide="shopping-bag"></i> Proceed to Checkout
-        </button>
-    </div>
+
+        <button type="submit" id="confirm-btn" class="checkout-btn" style="width:100%; margin-top:20px;">Confirm & WhatsApp</button>
+        <button type="button" onclick="closeModal()" style="width:100%; background:none; border:none; color:var(--grey); margin-top:15px; cursor:pointer">Cancel</button>
+    </form>
+</div>
+
 </div>
 
 <script>
-    // Initialize Supabase
-    const SUPABASE_URL = "https://uhkheprfbxxwuojswyht.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es";
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const supa = supabase.createClient(
+    "https://uhkheprfbxxwuojswyht.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es"
+);
 
-    let cart = JSON.parse(localStorage.getItem('hc-cart')) || [];
+let cart = JSON.parse(localStorage.getItem('hc-cart') || '[]');
 
-    function renderCart() {
-        const container = document.getElementById('cart-items');
-        const summary = document.getElementById('summary-section');
-        
-        if (cart.length === 0) {
-            container.innerHTML = `<div class="empty-cart-msg" style="text-align:center; padding:50px;"><p>Your cart is empty.</p><a href="products.html" style="color:var(--primary); font-weight:bold; text-decoration:none;">Shop Now</a></div>`;
-            summary.style.display = 'none';
-            return;
-        }
+function renderCart() {
+    const container = document.getElementById('cart-items');
 
-        summary.style.display = 'block';
-        let total = 0;
-
-        container.innerHTML = cart.map((item, i) => {
-            const qty = item.qty || item.quantity || 1;
-            total += item.price * qty;
-            const img = (item.images && item.images.length > 0) ? item.images[0] : (item.image || 'logo.png');
-
-            return `
-                <div class="cart-item">
-                    <img src="${img}" class="cart-img">
-                    <div class="cart-info">
-                        <h4>${item.name}</h4>
-                        <div class="item-price">₹${item.price}</div>
-                        <div class="qty-controls">
-                            <button class="qty-btn" onclick="updateQty(${i}, -1)"><i data-lucide="minus"></i></button>
-                            <span class="qty-num">${qty}</span>
-                            <button class="qty-btn" onclick="updateQty(${i}, 1)"><i data-lucide="plus"></i></button>
-                        </div>
-                    </div>
-                    <button onclick="removeItem(${i})" class="remove-btn"><i data-lucide="trash-2"></i></button>
-                </div>
-            `;
-        }).join('');
-
-        document.getElementById('grand-total').innerText = `₹${total}`;
-        lucide.createIcons();
+    if (!cart.length) {
+        container.innerHTML = `<p style="text-align:center; padding:40px;">Your cart is empty.</p>`;
+        document.getElementById('summary-section').style.display = 'none';
+        return;
     }
 
-    function updateQty(index, change) {
-        let qty = cart[index].qty || cart[index].quantity || 1;
-        qty += change;
-        if (qty < 1) return removeItem(index);
-        cart[index].qty = qty; cart[index].quantity = qty;
-        saveCart();
-    }
+    let total = 0;
 
-    function removeItem(index) {
-        if (confirm('Remove item?')) { cart.splice(index, 1); saveCart(); }
-    }
+    container.innerHTML = cart.map((item, i) => {
+        const qty = item.qty || 1;
+        const price = item.price || 0;
+        total += price * qty;
 
-    function saveCart() {
-        localStorage.setItem('hc-cart', JSON.stringify(cart));
-        renderCart();
-    }
+        return `
+        <div class="cart-item">
+            <img src="${item.images?.[0] || 'logo.png'}" class="cart-img">
+            <div style="flex:1">
+                <h4 style="font-weight:700">${item.name}</h4>
+                <p style="font-weight:800">₹${price.toLocaleString()}</p>
+                <div style="margin-top:5px">Quantity: ${qty}</div>
+            </div>
+            <button onclick="removeItem(${i})" style="border:none; background:none; color:#ef4444; cursor:pointer"><i data-lucide="trash-2"></i></button>
+        </div>`;
+    }).join('');
 
-    function openModal() {
-        document.getElementById('checkout-modal').style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
+    document.getElementById('grand-total').innerText = `₹${total.toLocaleString()}`;
+    lucide.createIcons();
+}
 
-    function closeModal() {
-        document.getElementById('checkout-modal').style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
+function removeItem(i) {
+    cart.splice(i, 1);
+    localStorage.setItem('hc-cart', JSON.stringify(cart));
+    renderCart();
+}
 
-    async function handleFormSubmit(event) {
-        event.preventDefault();
-        
-        const confirmBtn = document.getElementById('confirm-btn');
-        const name = document.getElementById('cust-name').value;
-        const phone = document.getElementById('cust-phone').value;
-        const total = document.getElementById('grand-total').innerText;
+function openModal() { document.getElementById('checkout-modal').style.display = 'flex'; }
+function closeModal() { document.getElementById('checkout-modal').style.display = 'none'; }
 
-        if (phone.length !== 10) {
-            alert("Please enter a valid 10-digit phone number.");
-            return;
-        }
+async function handleFormSubmit(e) {
+    e.preventDefault();
+    const btn = document.getElementById('confirm-btn');
+    btn.disabled = true;
+    btn.innerText = "Syncing Admin Panel...";
 
-        confirmBtn.disabled = true;
-        confirmBtn.innerText = "Processing Order...";
+    try {
+        const name = document.getElementById('cust-name').value.trim();
+        const phone = document.getElementById('cust-phone').value.trim();
+        const totalText = document.getElementById('grand-total').innerText;
 
-        // 1. Prepare Order Data for Admin Panel
-        const orderData = {
+        const itemsString = cart.map(i => `${i.name} (x${i.qty || 1})`).join(', ');
+        const cleanTotal = parseInt(totalText.replace(/[^0-9]/g, ''));
+
+        const { error } = await supa.from('orders').insert([{
             customer_name: name,
             phone_number: "+91" + phone,
-            items: cart.map(item => `${item.name} (${item.qty || item.quantity || 1})`).join(', '),
-            total_price: parseInt(total.replace('₹', '')),
+            items: itemsString,
+            total_price: cleanTotal,
             status: 'New'
-        };
+        }]);
 
-        try {
-            // 2. Save to Supabase 'orders' table
-            const { error } = await _supabase
-                .from('orders')
-                .insert([orderData]);
+        if (error) throw error;
 
-            if (error) throw error;
+        const msg =
+`*New Order — Hygienic & Comfort Co.*
+👤 Name: ${name}
+📞 Phone: +91 ${phone}
+💰 Total: ${totalText}
 
-            // 3. Prepare WhatsApp Message
-            let message = `*New Order Request from Hygienic & Comfort Co.*\n`;
-            message += `------------------------------------------\n`;
-            message += `👤 *Customer:* ${name}\n`;
-            message += `📞 *Phone:* +91 ${phone}\n`;
-            message += `------------------------------------------\n`;
-            
-            cart.forEach((item, index) => {
-                const qty = item.qty || item.quantity || 1;
-                message += `${index + 1}. ${item.name}\n`;
-                message += `   Qty: ${qty} x ₹${item.price} = *₹${item.price * qty}*\n\n`;
-            });
+🧺 Items:
+${cart.map(i => `• ${i.name} (x${i.qty || 1})`).join('\n')}
+`;
 
-            message += `------------------------------------------\n`;
-            message += `*Grand Total: ${total}*`;
-            
-            // 4. Open WhatsApp
-            const whatsappUrl = `https://wa.me/919307760665?text=${encodeURIComponent(message)}`;
-            window.open(whatsappUrl, '_blank');
-            
-            // 5. Success cleanup
-            localStorage.removeItem('hc-cart');
-            alert("Order recorded! WhatsApp has been opened to complete your request.");
-            window.location.href = 'index.html';
+        window.open(`https://wa.me/919307760665?text=${encodeURIComponent(msg)}`, '_blank');
+        localStorage.removeItem('hc-cart');
+        window.location.href = 'index.html';
 
-        } catch (err) {
-            console.error("Database Error:", err);
-            alert("Sorry, we couldn't process your order. Please check your internet or contact support.");
-            confirmBtn.disabled = false;
-            confirmBtn.innerText = "Confirm & Open WhatsApp";
-        }
+    } catch (err) {
+        alert("Error: " + err.message);
+        btn.disabled = false;
+        btn.innerText = "Confirm & WhatsApp";
     }
+}
 
-    renderCart();
-    lucide.createIcons();
+renderCart();
+lucide.createIcons();
 </script>
 
 </body>
