@@ -17,7 +17,7 @@ body {
   line-height: 1.6;
 }
 
-/* --- Fixed Header Navigation --- */
+/* --- Professional Header Navigation --- */
 .main-header {
   background: var(--white);
   padding: 15px 5%;
@@ -37,22 +37,22 @@ body {
   align-items: center;
 }
 
-/* Fix for clickable logo and text alignment */
+/* Ensures the logo and text are side-by-side */
 .logo-link {
-  text-decoration: none; /* Removes underline */
-  color: inherit;        /* Keeps defined text color */
-  display: block;        /* Makes entire area clickable */
+  text-decoration: none; 
+  color: inherit;        
+  display: block;        
 }
 
 .logo-area {
   display: flex;
-  align-items: center;
-  gap: 15px;             /* Space between logo and text */
+  align-items: center;   /* Vertical centering */
+  gap: 15px;             /* Space between logo and brand text */
   cursor: pointer;
 }
 
 .header-logo {
-  height: 55px;          /* Matches preferred branding size */
+  height: 55px;          /* Defined branding size from About page */
   width: auto;
   display: block;
 }
@@ -62,7 +62,7 @@ body {
   margin: 0;
   color: var(--dark);
   font-weight: 800;
-  line-height: 1.2;      /* Refined text spacing */
+  line-height: 1.2;
   letter-spacing: -0.5px;
 }
 
@@ -73,10 +73,10 @@ body {
   font-weight: 500;
 }
 
-/* Navigation link spacing */
+/* Navigation Links */
 .nav-links {
   display: flex;
-  gap: 25px;             /* Balanced spacing for nav links */
+  gap: 25px;
 }
 
 .nav-links a {
@@ -180,8 +180,20 @@ body {
 @media (max-width: 968px) {
   .hero-split { grid-template-columns: 1fr; text-align: center; padding-top: 4rem; }
   .header-container { flex-direction: column; gap: 15px; }
-  .logo-area { flex-direction: column; text-align: center; gap: 5px; }
+  .logo-area { 
+    flex-direction: row; /* Keeps logo beside text even on tablet */
+    text-align: left; 
+    gap: 15px; 
+  }
   .hero-content p { margin: 0 auto 2.5rem; }
   .hero-btns { justify-content: center; }
   .hero-image { order: -1; margin-bottom: 3rem; }
+}
+
+@media (max-width: 480px) {
+  .logo-area {
+    flex-direction: column; /* Stacks on very small phones if needed */
+    gap: 5px;
+  }
+  .brand-text h1 { font-size: 1.1rem; }
 }
