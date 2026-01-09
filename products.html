@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Products | Hygienic & Comfort Co.</title>
-
-  <meta name="description" content="Explore baby diapers, adult diapers, and daily care products from Hygienic & Comfort Co. Designed for comfort, hygiene, and reliability.">
-
+  <meta name="description" content="Explore baby diapers, adult diapers, and daily care products from Hygienic & Comfort Co.">
   <link rel="stylesheet" href="css/style.css">
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -18,7 +17,6 @@
       <img src="images/logo.png" alt="Hygienic & Comfort Co. Logo" class="logo">
     </a>
   </div>
-
   <div class="header-center">
     <h1>Hygienic & Comfort Co.</h1>
     <p>Care, Comfort & Hygiene for Every Age</p>
@@ -36,28 +34,65 @@
   <section class="hero page-content">
     <h2>Our Products</h2>
 
-    <div class="product-list">
-      <div class="product-card">
-        <h3>Baby Diapers</h3>
-        <p>Soft, breathable and gentle on baby skin.</p>
-      </div>
-
-      <div class="product-card">
-        <h3>Adult Diapers</h3>
-        <p>Comfortable, leak-proof solutions for adults.</p>
-      </div>
-
-      <div class="product-card">
-        <h3>Daily Care Products</h3>
-        <p>Hygienic essentials for everyday comfort.</p>
-      </div>
+    <div id="product-list" class="product-list">
+      <p style="text-align: center; color: #666;">Loading latest care products...</p>
     </div>
   </section>
 </main>
 
 <footer>
-  <p>© 2025 Hygienic & Comfort Co.</p>
+  <p>© 2026 Hygienic & Comfort Co.</p>
 </footer>
+
+<script>
+  // Replace with your actual Supabase credentials from your Admin Panel
+  const SUPABASE_URL = "https://YOUR-PROJECT-ID.supabase.co";
+  const SUPABASE_KEY = "YOUR-PUBLIC-ANON-KEY";
+  
+  const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  async function loadProducts() {
+    const productContainer = document.getElementById("product-list");
+
+    try {
+      // Fetching all products from the shared database
+      const { data: products, error } = await _supabase
+        .from("products")
+        .select("*")
+        .order('name', { ascending: true });
+
+      if (error) throw error;
+
+      if (!products || products.length === 0) {
+        productContainer.innerHTML = "<p>No products currently in stock. Check back soon!</p>";
+        return;
+      }
+
+      // Generate HTML for each product found in Supabase
+      productContainer.innerHTML = products.map(product => `
+        <div class="product-card">
+          ${product.image_url ? `<img src="${product.image_url}" alt="${product.name}" style="width:100%; border-radius:10px; margin-bottom:15px;">` : ''}
+          <h3>${product.name}</h3>
+          <p>${product.description || 'Quality care and comfort for your needs.'}</p>
+          <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: bold; color: #2563eb; font-size: 1.2rem;">₹${product.price}</span>
+            <a href="contact.html?product=${encodeURIComponent(product.name)}" 
+               style="background: #2563eb; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 0.9rem; font-weight: bold;">
+               Order Now
+            </a>
+          </div>
+        </div>
+      `).join('');
+
+    } catch (err) {
+      console.error("Ecosystem Error:", err.message);
+      productContainer.innerHTML = "<p>Error connecting to store. Please refresh or contact support.</p>";
+    }
+  }
+
+  // Run when page loads
+  loadProducts();
+</script>
 
 </body>
 </html>
