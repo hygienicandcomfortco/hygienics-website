@@ -4,167 +4,142 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Products | Hygienic & Comfort Co.</title>
-  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
   
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-
     :root {
       --primary: #2563eb;
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --text: #1e293b;
+      --soft-blue: #eef4ff;
+      --dark: #1e293b;
       --grey: #64748b;
+      --white: #ffffff;
       --radius: 12px;
+      --bg: #f8fafc;
     }
 
-    body { 
-      font-family: 'Plus Jakarta Sans', sans-serif; 
-      background-color: var(--bg); 
-      margin: 0; padding: 0; 
-      color: var(--text);
-      line-height: 1.6;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; color: var(--dark); background: var(--bg); line-height: 1.6; overflow-x: hidden; }
+
+    /* --- MOBILE HEADER FIX (Home Page Style) --- */
+    .main-header { 
+      background: var(--white); 
+      padding: 12px 5%; 
+      border-bottom: 1px solid #f1f5f9; 
+      position: sticky; 
+      top: 0; 
+      z-index: 1000; 
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03); 
     }
 
-    /* --- Fixed Header Navigation (Sidebar Logo Style) --- */
-    .main-header {
-      background: #ffffff;
-      padding: 15px 5%;
-      border-bottom: 1px solid #f1f5f9;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    .header-container { 
+      max-width: 1200px; 
+      margin: 0 auto; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
     }
 
-    .header-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .logo-link { text-decoration: none; color: inherit; display: block; }
+
+    .logo-area { 
+      display: flex; 
+      align-items: center; 
+      gap: 15px; 
+      cursor: pointer; 
     }
 
-    .logo-link {
-      text-decoration: none; 
-      color: inherit;        
-      display: block;
-    }
+    .header-logo { height: 55px; width: auto; display: block; }
 
-    .logo-area {
-      display: flex;
-      align-items: center;
-      gap: 15px; /* Keeps logo to the left of text */
-      cursor: pointer;
-    }
+    .brand-text h1 { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; }
+    .brand-text p { font-size: 0.8rem; color: var(--grey); font-weight: 500; }
 
-    .header-logo {
-      height: 55px;
-      width: auto;
-      display: block;
-    }
+    .nav-links { display: flex; gap: 25px; }
+    .nav-links a { text-decoration: none; color: #475569; font-weight: 600; font-size: 0.95rem; transition: color 0.2s; }
+    .nav-links a.active { color: var(--primary); }
 
-    .brand-text h1 {
-      font-size: 1.25rem;
-      margin: 0;
-      color: #1e293b;
-      font-weight: 800;
-      line-height: 1.2;
-      letter-spacing: -0.5px;
-    }
-
-    .brand-text p {
-      font-size: 0.8rem;
-      margin: 0;
-      color: var(--grey);
-      font-weight: 500;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 25px;
-    }
-
-    .nav-links a {
-      text-decoration: none;
-      color: #475569;
-      font-weight: 600;
-      font-size: 0.95rem;
-      transition: color 0.2s;
-    }
-
-    .nav-links a:hover, .nav-links a.active {
-      color: var(--primary);
-    }
-
-    /* --- Mobile Fix: Keeps Logo Sidebar --- */
-    @media (max-width: 768px) {
-      .header-container {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
+    /* --- Responsive Header (Matching Home Page Concept) --- */
+    @media (max-width: 968px) {
+      .header-container { 
+        /* Kept as flex-row conceptually, but spacing adjusted for mobile flow */
+        flex-direction: column; 
+        gap: 15px; 
       }
-      /* Logo Area stays in a row (Logo left, Text right) */
-      .logo-area {
-        flex-direction: row; 
-        text-align: left;
+      .logo-area { 
+        flex-direction: row !important; /* Forces logo to stay on left of text */
+        text-align: left; 
       }
-      .nav-links {
-        gap: 15px;
-      }
-      .brand-text h1 { font-size: 1.1rem; }
+    }
+
+    @media (max-width: 480px) {
       .header-logo { height: 45px; }
+      .brand-text h1 { font-size: 1.1rem; }
+      .brand-text p { font-size: 0.7rem; }
+      .nav-links { gap: 15px; }
+      .nav-links a { font-size: 0.85rem; }
     }
 
-    /* --- Page Controls & Grid --- */
-    .controls-container { max-width: 1200px; margin: 30px auto; padding: 0 15px; text-align: center; }
+    /* --- SEARCH & FILTERS --- */
+    .controls-container { max-width: 1200px; margin: 20px auto; padding: 0 4%; }
+    .search-wrapper { position: relative; width: 100%; margin-bottom: 15px; }
+    .search-input { width: 100%; padding: 12px 15px 12px 45px; border-radius: 12px; border: 1.5px solid #e2e8f0; outline: none; font-size: 0.9rem; }
+    .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 18px; color: var(--grey); }
     
-    .search-input {
-      width: 100%; max-width: 600px; padding: 14px 20px; border-radius: var(--radius);
-      border: 2px solid #e2e8f0; font-size: 16px; outline: none; transition: 0.3s;
-      box-sizing: border-box; margin-bottom: 20px;
-    }
-    .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
-
-    .filter-container { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
-    
-    .filter-btn { 
-      padding: 8px 18px; border-radius: 20px; border: 1px solid #cbd5e1; 
-      background: white; color: var(--grey); font-weight: 600; cursor: pointer; transition: 0.3s;
-    }
+    .filter-container { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0 15px; scrollbar-width: none; }
+    .filter-container::-webkit-scrollbar { display: none; }
+    .filter-btn { padding: 8px 16px; border-radius: 20px; border: 1px solid #cbd5e1; background: white; white-space: nowrap; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: 0.3s; }
     .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-    .product-list { 
-      display: grid; grid-template-columns: repeat(2, 1fr); 
-      gap: 15px; padding: 15px; max-width: 1200px; margin: 0 auto;
-    }
-    @media (min-width: 768px) {
-      .product-list { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; }
-    }
+    /* --- GRID VIEW & POPUP EFFECT --- */
+    .product-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 10px 4%; max-width: 1200px; margin: 0 auto 100px; }
+    @media (min-width: 992px) { .product-list { grid-template-columns: repeat(4, 1fr); gap: 25px; } }
 
     .product-card { 
-      background: var(--card); border-radius: 16px; overflow: hidden;
-      display: flex; flex-direction: column; border: 1px solid #e2e8f0;
-      transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;
+      background: var(--white); 
+      border-radius: 15px; 
+      overflow: hidden; 
+      border: 1px solid #f1f5f9; 
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease; 
+      cursor: pointer; 
+      display: flex; 
+      flex-direction: column; 
     }
-    .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+    .product-card:hover { transform: translateY(-10px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
 
-    .img-box { width: 100%; aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; padding: 15px; box-sizing: border-box; background: #fff; }
-    .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .img-box { width: 100%; aspect-ratio: 1/1; padding: 10px; display: flex; align-items: center; justify-content: center; }
+    .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; transition: 0.3s ease; }
+    .product-card:hover .img-box img { transform: scale(1.05); }
 
-    .details { padding: 15px; flex-grow: 1; text-align: left; }
-    .brand { font-size: 11px; color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
-    .p-name { font-size: 15px; font-weight: 600; margin: 6px 0; line-height: 1.4; color: #0f172a; height: 42px; overflow: hidden; }
-    .price { font-size: 18px; font-weight: 800; color: #000; margin-top: 5px; }
+    .details { padding: 12px; flex-grow: 1; display: flex; flex-direction: column; border-top: 1px solid #f8fafc; }
+    .p-name { font-weight: 700; font-size: 0.85rem; margin: 4px 0; height: 38px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .price-row { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+    .price { font-size: 1rem; font-weight: 800; }
+    .add-to-cart-icon-btn { background: var(--soft-blue); color: var(--primary); border: none; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+    .add-to-cart-icon-btn:hover { background: var(--primary); color: white; }
 
-    /* --- Modal Styling --- */
-    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
-    .modal.active { display: flex; }
-    .modal-content { background: white; width: 90%; max-width: 500px; border-radius: 20px; padding: 30px; position: relative; max-height: 90vh; overflow-y: auto; }
-    .close-modal { font-size: 32px; position: absolute; right: 20px; top: 15px; cursor: pointer; color: var(--grey); }
-    .modal-img { width: 100%; border-radius: 15px; margin-bottom: 20px; aspect-ratio: 1/1; object-fit: contain; background: #f8fafc; }
-    .buy-btn { display: block; width: 100%; padding: 16px; background: #22c55e; color: white; text-align: center; text-decoration: none; border-radius: var(--radius); font-weight: 800; font-size: 1.1rem; }
+    /* --- DETAIL VIEW --- */
+    .hidden { display: none !important; }
+    .detail-view-container { max-width: 1200px; margin: 20px auto; padding: 0 5%; }
+    .back-nav { display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 20px; font-weight: 700; color: var(--grey); }
+    .detail-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+    .full-img-card { background: white; border-radius: 20px; padding: 30px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; }
+    .full-img-card img { width: 100%; max-height: 300px; object-fit: contain; }
+    .info-panel h2 { font-size: 1.8rem; font-weight: 800; margin: 10px 0; }
+    .detail-price-tag { font-size: 1.8rem; font-weight: 800; margin-bottom: 20px; }
+    .button-group { display: flex; flex-direction: column; gap: 10px; }
+    @media (min-width: 768px) {
+      .detail-grid { grid-template-columns: 1.2fr 1fr; gap: 50px; }
+      .button-group { flex-direction: row; }
+      .full-img-card img { max-height: 500px; }
+    }
+
+    /* --- FLOATING CART --- */
+    .cart-icon-wrapper { position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 1500; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3); text-decoration: none; }
+    .cart-count { position: absolute; top: 0; right: 0; background: #ef4444; color: white; font-size: 0.7rem; min-width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 800; border: 2px solid white; }
+
+    #toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px; font-weight: 600; font-size: 0.85rem; z-index: 2000; transition: 0.3s; opacity: 0; visibility: hidden; }
+    #toast.show { opacity: 1; visibility: visible; bottom: 100px; }
   </style>
 </head>
 <body>
@@ -173,7 +148,7 @@
   <div class="header-container">
     <a href="index.html" class="logo-link">
       <div class="logo-area">
-        <img src="logo.png" alt="H&C Logo" class="header-logo">
+        <img src="logo.png" alt="Logo" class="header-logo">
         <div class="brand-text">
           <h1>Hygienic & Comfort Co.</h1>
           <p>Care, Comfort & Hygiene for Every Age</p>
@@ -189,111 +164,152 @@
   </div>
 </header>
 
-<main>
+<main id="catalog-section">
   <div class="controls-container">
-    <input type="text" id="search-input" class="search-input" placeholder="Search for products..." oninput="handleSearch()">
+    <div class="search-wrapper">
+      <i data-lucide="search" class="search-icon"></i>
+      <input type="text" id="search-input" class="search-input" placeholder="Search products..." oninput="handleSearch()">
+    </div>
     <div id="filter-bar" class="filter-container">
-      <button class="filter-btn active" onclick="filterProducts('All')">All</button>
+      <button class="filter-btn active" onclick="filterProducts('All')">All Products</button>
     </div>
   </div>
-
-  <div id="product-list" class="product-list">
-    <p style="text-align: center; grid-column: 1/-1; padding: 50px; color: var(--grey);">Loading premium care products...</p>
-  </div>
+  <div id="product-list" class="product-list"></div>
 </main>
 
-<div id="product-modal" class="modal" onclick="closeModalOutside(event)">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <span class="close-modal" onclick="closeModal()">&times;</span>
-    <div id="modal-body"></div>
-  </div>
-</div>
+<main id="detail-section" class="hidden">
+    <div class="detail-view-container">
+        <div class="back-nav" onclick="showCatalog()"><i data-lucide="arrow-left"></i> Back</div>
+        <div class="detail-grid">
+            <div class="full-img-card"><img id="dp-image" src="" alt=""></div>
+            <div class="info-panel">
+                <span id="dp-category" style="color:var(--primary); font-weight:800; text-transform:uppercase; font-size:0.8rem;"></span>
+                <h2 id="dp-name"></h2>
+                <div id="dp-price" class="detail-price-tag"></div>
+                <p style="color:var(--grey); margin-bottom:30px;">Premium quality protection and comfort for sensitive skin.</p>
+                <div class="button-group">
+                    <button class="cart-btn-big" id="dp-add-btn" style="background:var(--primary); color:white; border:none; padding:18px; border-radius:12px; font-weight:800; cursor:pointer;">Add to Cart</button>
+                    <a href="" id="dp-whatsapp-btn" target="_blank" style="background:#22c55e; color:white; padding:18px; border-radius:12px; text-decoration:none; font-weight:800; text-align:center;">Order on WhatsApp</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div id="toast">Added to cart!</div>
+
+<a href="cart.html" class="cart-icon-wrapper">
+  <i data-lucide="shopping-basket"></i>
+  <span class="cart-count" id="cart-badge">0</span>
+</a>
 
 <script>
   const SUPABASE_URL = "https://uhkheprfbxxwuojswyht.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es";
-  
   const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  
   let allProducts = [];
-  let currentCategory = 'All';
+  let cart = JSON.parse(localStorage.getItem('hc-cart')) || [];
 
-  async function loadProducts() {
-    const container = document.getElementById("product-list");
-    try {
-      const { data, error } = await _supabase.from("products").select("*").order('name');
-      if (error) throw error;
-      
-      allProducts = data || [];
-      
-      const filterBar = document.getElementById("filter-bar");
-      const cats = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
-      cats.forEach(c => {
-        filterBar.innerHTML += `<button class="filter-btn" onclick="filterProducts('${c}')">${c}</button>`;
-      });
-
-      renderDisplay(allProducts);
-    } catch (err) {
-      container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 50px; color: #ef4444;">Error loading products. Check internet connection.</p>`;
+  async function init() {
+    updateCartBadge();
+    const { data, error } = await _supabase.from("products").select("*").order('name');
+    if (!error) {
+      allProducts = data;
+      renderGrid(allProducts);
+      setupFilters();
     }
+    lucide.createIcons();
   }
 
-  function renderDisplay(list) {
+  function renderGrid(list) {
     const container = document.getElementById("product-list");
-    container.innerHTML = list.length ? list.map((p) => `
-      <div class="product-card" onclick="openModal(${allProducts.indexOf(p)})">
-        <div class="img-box"><img src="${p.images?.[0] || 'https://via.placeholder.com/300'}" alt="${p.name}"></div>
+    container.innerHTML = list.map((p) => `
+      <div class="product-card">
+        <div class="img-box" onclick="openProductPage('${p.id}')">
+          <img src="${p.images?.[0] || 'https://via.placeholder.com/300'}" alt="${p.name}">
+        </div>
         <div class="details">
-          <span class="brand">${p.category || 'Hygienic'}</span>
-          <div class="p-name">${p.name}</div>
-          <div class="price">₹${p.price}</div>
+          <div class="p-name" onclick="openProductPage('${p.id}')">${p.name}</div>
+          <div class="price-row">
+            <div class="price">₹${p.price}</div>
+            <button class="add-to-cart-icon-btn" onclick="addToCart('${p.id}')"><i data-lucide="plus"></i></button>
+          </div>
         </div>
       </div>
-    `).join('') : "<p style='grid-column: 1/-1; text-align: center; padding: 50px;'>No products found.</p>";
+    `).join('');
+    lucide.createIcons();
+  }
+
+  function setupFilters() {
+    const filterBar = document.getElementById("filter-bar");
+    const categories = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
+    categories.forEach(cat => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn';
+      btn.innerText = cat;
+      btn.onclick = () => filterProducts(cat);
+      filterBar.appendChild(btn);
+    });
+  }
+
+  function openProductPage(productId) {
+    const product = allProducts.find(p => p.id == productId);
+    document.getElementById('catalog-section').classList.add('hidden');
+    document.getElementById('detail-section').classList.remove('hidden');
+    document.getElementById('dp-image').src = product.images?.[0];
+    document.getElementById('dp-name').innerText = product.name;
+    document.getElementById('dp-price').innerText = `₹${product.price}`;
+    document.getElementById('dp-category').innerText = product.category;
+    document.getElementById('dp-whatsapp-btn').href = `https://wa.me/919307760665?text=I want to order: ${product.name}`;
+    document.getElementById('dp-add-btn').onclick = () => addToCart(product.id);
+    window.scrollTo(0,0);
+  }
+
+  function showCatalog() {
+    document.getElementById('catalog-section').classList.remove('hidden');
+    document.getElementById('detail-section').classList.add('hidden');
+  }
+
+  function addToCart(productId) {
+    const product = allProducts.find(p => p.id == productId);
+    const existing = cart.find(item => item.id == productId);
+    if(existing) { 
+      existing.qty = (existing.qty || 1) + 1; 
+    } else { 
+      cart.push({ ...product, qty: 1 }); 
+    }
+    localStorage.setItem('hc-cart', JSON.stringify(cart));
+    updateCartBadge();
+    showToast();
+  }
+
+  function showToast() {
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+  }
+
+  function updateCartBadge() { 
+    const totalQty = cart.reduce((sum, item) => sum + (item.qty || 1), 0);
+    document.getElementById('cart-badge').innerText = totalQty; 
+  }
+
+  function filterProducts(cat) {
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      const isAll = (cat === 'All' && btn.innerText === 'All Products');
+      const isMatch = (btn.innerText === cat);
+      btn.classList.toggle('active', isAll || isMatch);
+    });
+    renderGrid(cat === 'All' ? allProducts : allProducts.filter(p => p.category === cat));
   }
 
   function handleSearch() {
     const term = document.getElementById("search-input").value.toLowerCase();
-    const filtered = allProducts.filter(p => 
-      (p.name.toLowerCase().includes(term) || (p.category && p.category.toLowerCase().includes(term))) && 
-      (currentCategory === 'All' || p.category === currentCategory)
-    );
-    renderDisplay(filtered);
+    renderGrid(allProducts.filter(p => p.name.toLowerCase().includes(term)));
   }
 
-  function filterProducts(cat) {
-    currentCategory = cat;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.innerText === cat));
-    handleSearch();
-  }
-
-  function openModal(idx) {
-    const p = allProducts[idx];
-    const whatsappLink = `https://wa.me/919307760665?text=Hello! I want to order: ${encodeURIComponent(p.name)}`;
-    
-    document.getElementById("modal-body").innerHTML = `
-      <img src="${p.images?.[0] || 'https://via.placeholder.com/300'}" class="modal-img">
-      <span class="brand">${p.category || 'Hygienic'}</span>
-      <h2 style="margin: 10px 0; color: #1e293b;">${p.name}</h2>
-      <div class="price" style="font-size: 26px; margin-bottom: 20px;">₹${p.price}</div>
-      <p style="color: #64748b; line-height: 1.6; margin-bottom: 25px;">
-        High-quality hygiene product from Hygienic & Comfort Co. Click the button below to order via WhatsApp.
-      </p>
-      <a href="${whatsappLink}" target="_blank" class="buy-btn">Order on WhatsApp</a>
-    `;
-    document.getElementById("product-modal").classList.add("active");
-    document.body.style.overflow = "hidden";
-  }
-
-  function closeModal() { 
-    document.getElementById("product-modal").classList.remove("active"); 
-    document.body.style.overflow = "auto";
-  }
-
-  function closeModalOutside(e) {
-    if (e.target.id === 'product-modal') closeModal();
-  }
-
-  loadProducts();
+  init();
 </script>
 </body>
 </html>
