@@ -3,83 +3,212 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Contact | Hygienic & Comfort Co.</title>
-
   <meta name="description" content="Contact Hygienic & Comfort Co. for baby and adult diapers. Call, WhatsApp, or visit our store in Ambernath East.">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #2563eb;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+      --grey: #64748b;
+      --radius: 12px;
+    }
 
-  <link rel="stylesheet" href="css/style.css">
+    body { 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+      background-color: var(--bg); 
+      margin: 0; padding: 0; 
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* --- Optimized Header (Matches Product Page) --- */
+    .main-header {
+      background: #ffffff;
+      padding: 15px 5%;
+      border-bottom: 1px solid #f1f5f9;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo-link { text-decoration: none; color: inherit; display: block; }
+
+    .logo-area { display: flex; align-items: center; gap: 15px; cursor: pointer; }
+
+    .header-logo { height: 55px; width: auto; display: block; }
+
+    .brand-text h1 {
+      font-size: 1.25rem;
+      margin: 0;
+      color: #1e293b;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-text p { font-size: 0.8rem; margin: 0; color: var(--grey); font-weight: 500; }
+
+    .nav-links { display: flex; gap: 25px; }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #475569;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+
+    /* --- Contact Content --- */
+    .contact-container {
+      max-width: 1000px;
+      margin: 50px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    @media (max-width: 768px) {
+      .contact-container { grid-template-columns: 1fr; }
+      .header-container { flex-direction: column; gap: 15px; text-align: center; }
+      .nav-links { gap: 15px; }
+    }
+
+    .contact-card {
+      background: var(--card);
+      padding: 40px;
+      border-radius: 20px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+    }
+
+    h2 { font-size: 2rem; margin-bottom: 10px; font-weight: 800; }
+    .subtitle { color: var(--grey); margin-bottom: 30px; }
+
+    .contact-item { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 25px; }
+    .icon { font-size: 1.5rem; }
+    .contact-item h4 { margin: 0; font-weight: 700; color: var(--text); }
+    .contact-item p, .contact-item a { margin: 0; color: var(--grey); text-decoration: none; }
+    .contact-item a:hover { color: var(--primary); }
+
+    .whatsapp-btn {
+      display: inline-block;
+      background: #22c55e;
+      color: white;
+      padding: 14px 28px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      font-weight: 800;
+      margin-top: 10px;
+      transition: 0.3s;
+      text-align: center;
+    }
+    .whatsapp-btn:hover { background: #16a34a; transform: translateY(-2px); }
+
+    /* --- Map Styling --- */
+    .map-box {
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      height: 100%;
+      min-height: 400px;
+    }
+
+    iframe { width: 100%; height: 100%; border: none; }
+
+    footer {
+      text-align: center;
+      padding: 40px;
+      color: var(--grey);
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body>
 
-<!-- ================= HEADER ================= -->
-<header class="site-header">
-  <div class="header-left">
-    <a href="index.html">
-      <img src="images/logo.png" alt="Hygienic & Comfort Co. Logo" class="logo">
+<header class="main-header">
+  <div class="header-container">
+    <a href="index.html" class="logo-link">
+      <div class="logo-area">
+        <img src="logo.png" alt="H&C Logo" class="header-logo">
+        <div class="brand-text">
+          <h1>Hygienic & Comfort Co.</h1>
+          <p>Care, Comfort & Hygiene for Every Age</p>
+        </div>
+      </div>
     </a>
-  </div>
-
-  <div class="header-center">
-    <h1>Hygienic & Comfort Co.</h1>
-    <p>Care, Comfort & Hygiene for Every Age</p>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="products.html">Products</a>
+      <a href="contact.html" class="active">Contact</a>
+    </nav>
   </div>
 </header>
 
-<!-- ================= NAVIGATION ================= -->
-<nav>
-  <a href="index.html">Home</a>
-  <a href="about.html">About</a>
-  <a href="products.html">Products</a>
-  <a href="contact.html">Contact</a>
-</nav>
-
-<!-- ================= MAIN CONTENT ================= -->
-<main>
-  <section class="hero page-content">
-
+<main class="contact-container">
+  <section class="contact-card">
     <h2>Contact Us</h2>
-    <p>Have questions or want to place an order?</p>
+    <p class="subtitle">We're here to help you with your care and hygiene needs.</p>
 
-    <!-- WhatsApp Button -->
-    <a class="btn" href="https://wa.me/919307760665" target="_blank">
-      Chat on WhatsApp
-    </a>
-
-    <!-- Contact Details -->
-    <p style="margin-top:20px;">
-      📞 Phone:
-      <a href="tel:+919307760665">+91 9307760665</a>
-      <br><br>
-
-      📍 Address:<br>
-      Shop No. 01, Bhausaheb Paranjapee CHS,<br>
-      Near Shiv Mandir, Barkhupada Road,<br>
-      Ambernath East – 421505
-    </p>
-
-    <!-- Google Map -->
-    <div class="map">
-      <iframe
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3581.5344640282065!2d73.17537157498055!3d19.196490582033086!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be79529df3ab39f%3A0x1c5a6a80cf7377c4!2sHygienic%20%26%20Comfort%20Co.%20(Diaper%20Wholesale%20and%20Retail)!5e1!3m2!1sen!2sin!4v1767090526113!5m2!1sen!2sin"
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade">
-      </iframe>
-
-      <p style="margin-top:10px; text-align:center;">
-        <a href="https://www.google.com/maps/dir/?api=1&destination=Hygienic+%26+Comfort+Co+Ambernath"
-           target="_blank">
-          📍 Get Directions on Google Maps
-        </a>
-      </p>
+    <div class="contact-item">
+      <span class="icon">📞</span>
+      <div>
+        <h4>Phone</h4>
+        <a href="tel:+919307760665">+91 9307760665</a>
+      </div>
     </div>
 
+    <div class="contact-item">
+      <span class="icon">📍</span>
+      <div>
+        <h4>Our Store</h4>
+        <p>Shop No. 01, Bhausaheb Paranjapee CHS,<br>
+           Near Shiv Mandir, Barkhupada Road,<br>
+           Ambernath East – 421505</p>
+      </div>
+    </div>
+
+    <div class="contact-item">
+      <span class="icon">💬</span>
+      <div>
+        <h4>Order Online</h4>
+        <p>Ready to place an order? Chat with us instantly.</p>
+        <a href="https://wa.me/919307760665" target="_blank" class="whatsapp-btn">
+          Chat on WhatsApp
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="map-box">
+    <iframe 
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3768.647!2d73.18!3d19.18!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTnCsDEwJzQ4LjAiTiA3M8KwMTAnNDguMCJF!5e0!3m2!1sen!2sin!4v1700000000000" 
+      allowfullscreen="" 
+      loading="lazy" 
+      referrerpolicy="no-referrer-when-downgrade">
+    </iframe>
   </section>
 </main>
 
-<!-- ================= FOOTER ================= -->
 <footer>
-  <p>© 2025 Hygienic & Comfort Co.</p>
+  <p>© 2026 Hygienic & Comfort Co.</p>
 </footer>
 
 </body>
