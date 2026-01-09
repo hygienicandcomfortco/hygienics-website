@@ -1,208 +1,195 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hygienic & Comfort Co. | Premium Care Products</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        /* Modern CSS Variables to match the Products Page aesthetics */
-        :root {
-            --primary: #2563eb;
-            --dark: #1e293b;
-            --grey: #64748b;
-            --soft-blue: #f8fafc;
-            --radius: 16px;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home | Hygienic & Comfort Co.</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #2563eb;
+      --soft-blue: #eef4ff;
+      --dark: #1e293b;
+      --grey: #64748b;
+      --white: #ffffff;
+      --radius: 12px;
+    }
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            margin: 0;
-            background-color: #ffffff;
-            color: var(--dark);
-        }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* --- Professional Header & Navigation --- */
-        .main-header {
-            background: #ffffff;
-            padding: 15px 5%;
-            border-bottom: 1px solid #f1f5f9;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-        }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--dark);
+      background: var(--white);
+      line-height: 1.6;
+    }
 
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    /* --- Professional Header (Matches About Page) --- */
+    .main-header {
+      background: #ffffff;
+      padding: 15px 5%;
+      border-bottom: 1px solid #f1f5f9;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    }
 
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            text-decoration: none;
-            color: inherit;
-        }
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        .header-logo {
-            height: 55px;
-            width: auto;
-        }
+    .logo-link {
+      text-decoration: none; 
+      color: inherit;        
+      display: block;
+    }
 
-        .brand-text h1 {
-            font-size: 1.25rem;
-            margin: 0;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 15px; /* Sidebar logo alignment */
+      cursor: pointer;
+    }
 
-        .brand-text p {
-            font-size: 0.8rem;
-            margin: 0;
-            color: var(--grey);
-            font-weight: 500;
-        }
+    .header-logo {
+      height: 55px;
+      width: auto;
+      display: block;
+    }
 
-        .nav-links a {
-            text-decoration: none;
-            color: #475569;
-            font-weight: 600;
-            margin-left: 25px;
-            font-size: 0.95rem;
-            transition: color 0.2s;
-        }
+    .brand-text h1 {
+      font-size: 1.25rem;
+      margin: 0;
+      color: var(--dark);
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+    }
 
-        .nav-links a:hover, .nav-links a.active {
-            color: var(--primary);
-        }
+    .brand-text p {
+      font-size: 0.8rem;
+      margin: 0;
+      color: var(--grey);
+      font-weight: 500;
+    }
 
-        /* --- Hero Section with Split Layout --- */
-        .hero {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            align-items: center;
-            max-width: 1200px;
-            margin: 60px auto;
-            padding: 0 5%;
-            gap: 40px;
-        }
+    .nav-links {
+      display: flex;
+      gap: 25px;
+    }
 
-        .hero-content {
-            text-align: left;
-        }
+    .nav-links a {
+      text-decoration: none;
+      color: #475569;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
 
-        .badge {
-            color: var(--primary);
-            font-weight: 700;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: block;
-            margin-bottom: 15px;
-        }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--primary);
+    }
 
-        .hero-content h2 {
-            font-size: 3.5rem;
-            line-height: 1.1;
-            margin: 0 0 20px 0;
-            color: var(--dark);
-        }
+    /* --- Hero Section Styling --- */
+    .hero-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 80vh;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 5%;
+    }
 
-        .hero-content p {
-            font-size: 1.15rem;
-            color: var(--grey);
-            line-height: 1.6;
-            margin-bottom: 35px;
-            max-width: 500px;
-        }
+    .hero-content h1 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
 
-        .btn {
-            background: var(--primary);
-            color: white;
-            padding: 16px 32px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 700;
-            display: inline-block;
-            transition: 0.3s;
-            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);
-        }
+    .highlight { color: var(--primary); }
 
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.3);
-        }
+    .hero-content p {
+      font-size: 1.1rem;
+      color: var(--grey);
+      max-width: 500px;
+      margin-bottom: 2.5rem;
+    }
 
-        /* Hero Image - Visual appeal */
-        .hero-image {
-            background: var(--soft-blue);
-            border-radius: 30px;
-            padding: 20px;
-            text-align: center;
-        }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      padding: 16px 32px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      font-weight: 600;
+      transition: 0.3s;
+    }
 
-        .hero-image img {
-            max-width: 100%;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
+    .hero-image img {
+      width: 100%;
+      height: 500px;
+      object-fit: cover;
+      border-radius: 30px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+    }
 
-        /* Responsive Design */
-        @media (max-width: 968px) {
-            .hero { grid-template-columns: 1fr; text-align: center; margin-top: 40px; }
-            .hero-content { order: 2; text-align: center; }
-            .hero-content p { margin-left: auto; margin-right: auto; }
-            .hero-content h2 { font-size: 2.5rem; }
-            .hero-image { order: 1; }
-        }
-    </style>
+    @media (max-width: 968px) {
+      .hero-split { grid-template-columns: 1fr; text-align: center; padding-top: 4rem; }
+      .header-container { flex-direction: column; gap: 15px; }
+      .logo-area { flex-direction: column; text-align: center; gap: 5px; }
+      .hero-image { order: -1; margin-bottom: 3rem; }
+    }
+  </style>
 </head>
 <body>
 
 <header class="main-header">
-    <div class="header-container">
-        <a href="index.html" class="logo-area">
-            <img src="logo.png" alt="H&C Logo" class="header-logo">
-            <div class="brand-text">
-                <h1>Hygienic & Comfort Co.</h1>
-                <p>Care, Comfort & Hygiene for Every Age</p>
-            </div>
-        </a>
-        <nav class="nav-links">
-            <a href="index.html" class="active">Home</a>
-            <a href="about.html">About</a>
-            <a href="products.html">Products</a>
-            <a href="contact.html">Contact</a>
-        </nav>
-    </div>
+  <div class="header-container">
+    <a href="index.html" class="logo-link">
+      <div class="logo-area">
+        <img src="logo.png" alt="H&C Logo" class="header-logo">
+        <div class="brand-text">
+          <h1>Hygienic & Comfort Co.</h1>
+          <p>Care, Comfort & Hygiene for Every Age</p>
+        </div>
+      </div>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="about.html">About</a>
+      <a href="products.html">Products</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
 </header>
 
 <main>
-    <section class="hero">
-        <div class="hero-content">
-            <span class="badge">Premium Daily Care</span>
-            <h2>Trusted Quality For Your Family</h2>
-            <p>We provide high-quality baby and adult hygiene products designed for ultimate comfort and skin-safe protection.</p>
-            <div style="display: flex; gap: 15px;">
-                <a class="btn" href="products.html">View Products</a>
-                <a class="btn" style="background: white; color: var(--primary); border: 2px solid var(--primary); box-shadow: none;" href="contact.html">Contact Us</a>
-            </div>
-        </div>
-        
-        <div class="hero-image">
-            <img src="images/logo.png" alt="Featured Products">
-        </div>
-    </section>
+  <section class="hero-split">
+    <div class="hero-content">
+      <span style="color: var(--primary); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px;">Premium Daily Care</span>
+      <h1>Trusted Quality For <br><span class="highlight">Your Family</span></h1>
+      <p>We provide high-quality baby and adult hygiene products designed for ultimate comfort and skin-safe protection.</p>
+      <div style="display: flex; gap: 1rem;">
+        <a href="products.html" class="btn-primary">View Products</a>
+        <a href="contact.html" style="padding: 16px 32px; border: 1px solid #e2e8f0; border-radius: 12px; text-decoration: none; color: var(--dark); font-weight: 600;">Contact Us</a>
+      </div>
+    </div>
+    <div class="hero-image">
+      <img src="hero-image.jpg" alt="Family Comfort">
+    </div>
+  </section>
 </main>
 
-<footer style="padding: 40px 5%; background: var(--soft-blue); text-align: center; border-top: 1px solid #f1f5f9;">
-    <p style="color: var(--grey); font-weight: 500;">© 2026 Hygienic & Comfort Co.</p>
+<footer style="text-align: center; padding: 40px; color: var(--grey); border-top: 1px solid #f1f5f9;">
+  <p>© 2026 Hygienic & Comfort Co.</p>
 </footer>
 
 </body>
