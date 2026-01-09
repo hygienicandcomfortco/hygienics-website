@@ -27,7 +27,7 @@
       line-height: 1.6;
     }
 
-    /* --- Optimized Header Navigation --- */
+    /* --- Fixed Header Navigation (Sidebar Logo Style) --- */
     .main-header {
       background: #ffffff;
       padding: 15px 5%;
@@ -36,7 +36,6 @@
       top: 0;
       z-index: 1000;
       box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-      backdrop-filter: blur(10px);
     }
 
     .header-container {
@@ -47,7 +46,6 @@
       align-items: center;
     }
 
-    /* Fix for clickable logo and text alignment */
     .logo-link {
       text-decoration: none; 
       color: inherit;        
@@ -57,7 +55,7 @@
     .logo-area {
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 15px; /* Keeps logo to the left of text */
       cursor: pointer;
     }
 
@@ -100,20 +98,23 @@
       color: var(--primary);
     }
 
-    /* Mobile adjustments for header */
+    /* --- Mobile Fix: Keeps Logo Sidebar --- */
     @media (max-width: 768px) {
       .header-container {
         flex-direction: column;
         gap: 15px;
         text-align: center;
       }
+      /* Logo Area stays in a row (Logo left, Text right) */
       .logo-area {
-        flex-direction: column;
-        gap: 5px;
+        flex-direction: row; 
+        text-align: left;
       }
       .nav-links {
         gap: 15px;
       }
+      .brand-text h1 { font-size: 1.1rem; }
+      .header-logo { height: 45px; }
     }
 
     /* --- Page Controls & Grid --- */
