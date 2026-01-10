@@ -7,6 +7,7 @@
   
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <style>
     :root {
@@ -30,10 +31,10 @@
       overflow-x: hidden;
     }
 
-    /* --- Professional Header Navigation --- */
+    /* --- Header Navigation --- */
     .main-header {
       background: rgba(255, 255, 255, 0.9);
-      padding: 15px 5%;
+      padding: 12px 5%;
       border-bottom: 1px solid #f1f5f9;
       position: sticky;
       top: 0;
@@ -49,11 +50,7 @@
       align-items: center;
     }
 
-    .logo-link {
-      text-decoration: none; 
-      color: inherit;         
-      display: block;
-    }
+    .logo-link { text-decoration: none; color: inherit; display: block; }
 
     .logo-area {
       display: flex;
@@ -63,14 +60,13 @@
     }
 
     .header-logo {
-      height: 55px;
+      height: 50px;
       width: auto;
       display: block;
-      border-radius: 8px;
     }
 
     .brand-text h1 {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       margin: 0;
       color: var(--dark);
       font-weight: 800;
@@ -79,17 +75,13 @@
     }
 
     .brand-text p {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       margin: 0;
       color: var(--grey);
       font-weight: 500;
     }
 
-    .nav-links {
-      display: flex;
-      gap: 25px;
-    }
-
+    .nav-links { display: flex; gap: 25px; }
     .nav-links a {
       text-decoration: none;
       color: #475569;
@@ -98,83 +90,35 @@
       transition: color 0.2s;
     }
 
-    .nav-links a:hover, .nav-links a.active {
-      color: var(--primary);
-    }
+    .nav-links a:hover, .nav-links a.active { color: var(--primary); }
 
-    /* --- Hero Section --- */
-    .hero-split {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      min-height: 85vh;
+    /* --- Hero Section Fixes --- */
+    .hero-container {
+      display: flex;
       align-items: center;
-      max-width: 1400px;
+      justify-content: space-between;
+      padding: 60px 5%;
+      gap: 40px;
+      min-height: 80vh;
+      max-width: 1300px;
       margin: 0 auto;
-      padding: 2rem 5%;
-      gap: 60px;
+      background: #ffffff;
     }
 
-    .badge-top {
+    .hero-text-side { flex: 1.2; min-width: 320px; }
+    .hero-image-side { flex: 1; min-width: 320px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+    .selling-badge {
+      margin-top: 20px;
       color: var(--primary);
       font-weight: 800;
       text-transform: uppercase;
-      font-size: 0.8rem;
       letter-spacing: 2px;
-      display: block;
-      margin-bottom: 1.5rem;
-    }
-
-    .hero-content h1 {
-      font-size: clamp(2.5rem, 5vw, 4rem);
-      line-height: 1.1;
-      margin-bottom: 1.5rem;
-    }
-
-    .highlight { color: var(--primary); }
-
-    .hero-content p {
-      font-size: 1.15rem;
-      color: var(--grey);
-      max-width: 520px;
-      margin-bottom: 2.5rem;
-    }
-
-    .hero-btns {
+      font-size: 0.9rem;
+      text-align: center;
       display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-      padding: 18px 36px;
-      border-radius: var(--radius);
-      text-decoration: none;
-      font-weight: 800;
-      transition: 0.3s;
-      display: inline-block;
-    }
-
-    .btn-secondary {
-      padding: 18px 36px;
-      border: 2px solid #e2e8f0;
-      border-radius: var(--radius);
-      text-decoration: none;
-      color: var(--dark);
-      font-weight: 800;
-      transition: 0.3s;
-    }
-
-    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2); }
-    .btn-secondary:hover { background: #f8fafc; border-color: var(--grey); }
-
-    .hero-image img {
-      width: 100%;
-      height: 550px;
-      object-fit: cover;
-      border-radius: 40px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+      align-items: center;
+      gap: 8px;
     }
 
     /* --- Trust Bar --- */
@@ -217,11 +161,6 @@
       transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    .cart-icon-wrapper:hover {
-      transform: translateY(-5px) scale(1.05);
-      background: var(--dark);
-    }
-
     .cart-count {
       position: absolute;
       top: -2px;
@@ -239,23 +178,25 @@
       border: 2px solid var(--white);
     }
 
-    /* --- Responsive --- */
+    /* --- MOBILE REVERSE ALIGNMENT FIXES --- */
     @media (max-width: 968px) {
-      .hero-split { grid-template-columns: 1fr; text-align: center; padding: 60px 5%; }
+      .hero-container {
+        flex-direction: column-reverse; /* Image goes to TOP */
+        text-align: center;
+        padding: 40px 5%;
+        gap: 30px;
+      }
       .header-container { flex-direction: column; gap: 15px; }
-      .hero-content p { margin: 0 auto 2.5rem; }
-      .hero-btns { justify-content: center; }
-      .hero-image { order: -1; }
-      .hero-image img { height: 400px; }
-      .trust-bar { flex-wrap: wrap; gap: 2rem; justify-content: center; }
-    }
-
-    @media (max-width: 480px) {
-      .brand-text h1 { font-size: 1.1rem; }
-      .header-logo { height: 45px; }
-      .nav-links { gap: 12px; }
-      .nav-links a { font-size: 0.8rem; }
-      .cart-icon-wrapper { bottom: 20px; right: 20px; width: 55px; height: 55px; }
+      .hero-text-side { display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%; }
+      .hero-text-side p { margin-bottom: 30px; }
+      
+      /* Fixed centering for buttons on mobile */
+      .hero-btn-container { 
+        justify-content: center !important; 
+        width: 100%; 
+      }
+      
+      .trust-bar { flex-wrap: wrap; gap: 2rem; }
     }
   </style>
 </head>
@@ -282,19 +223,31 @@
 </header>
 
 <main>
-  <section class="hero-split">
-    <div class="hero-content">
-      <span class="badge-top">Premium Daily Care</span>
-      <h1>Trusted Quality For <br><span class="highlight">Your Family</span></h1>
-      <p>Providing high-quality baby and adult hygiene products designed with dermatologically tested materials for ultimate skin protection.</p>
-      <div class="hero-btns">
-        <a href="products.html" class="btn-primary">View Products</a>
-        <a href="contact.html" class="btn-secondary">Contact Us</a>
-      </div>
+  <section class="hero-container">
+    
+    <div class="hero-text-side">
+        <p style="color: #2563eb; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.85rem; margin-bottom: 15px;">Premium Daily Care</p>
+        <h2 style="font-size: clamp(2.5rem, 5vw, 4.2rem); font-weight: 900; line-height: 1.05; color: #1e293b; margin-bottom: 25px; letter-spacing: -1px;">Trusted Quality For Your Family</h2>
+        <p style="color: #64748b; font-size: 1.15rem; line-height: 1.7; margin-bottom: 40px; max-width: 520px;">Providing high-quality baby and adult hygiene products designed with dermatologically tested materials for ultimate skin protection.</p>
+        
+        <div class="hero-btn-container" style="display: flex; gap: 15px; flex-wrap: wrap;">
+            <a href="products.html" style="background: #2563eb; color: white; padding: 18px 38px; border-radius: 14px; text-decoration: none; font-weight: 700; transition: 0.3s; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);">View Products</a>
+            <a href="#contact" style="border: 2px solid #e2e8f0; color: #1e293b; padding: 18px 38px; border-radius: 14px; text-decoration: none; font-weight: 700; transition: 0.3s;">Contact Us</a>
+        </div>
     </div>
-    <div class="hero-image">
-      <img src="hero-image.jpg" alt="Mother and Baby Comfort">
+
+    <div class="hero-image-side">
+        <a href="products.html?category=Healvite" style="display: block; width: 100%; text-decoration: none; transition: transform 0.4s ease;">
+            <img src="homepage.png" alt="Healvite Premium Diapers" 
+                  style="width: 100%; height: auto; border-radius: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); cursor: pointer;"
+                  onmouseover="this.parentElement.style.transform='scale(1.03) translateY(-5px)'" 
+                  onmouseout="this.parentElement.style.transform='scale(1) translateY(0)'">
+        </a>
+        <div class="selling-badge">
+            <i data-lucide="trending-up"></i> MOST SELLING BRAND
+        </div>
     </div>
+
   </section>
 
   <section class="trust-bar">
@@ -312,7 +265,7 @@
 
 <a href="cart.html" class="cart-icon-wrapper">
   <i data-lucide="shopping-basket"></i>
-  <span class="cart-count">0</span>
+  <span class="cart-count" id="cart-badge">0</span>
 </a>
 
 <footer style="text-align: center; padding: 60px 20px; color: var(--grey); border-top: 1px solid #f1f5f9; background: #fff;">
@@ -320,8 +273,17 @@
 </footer>
 
 <script>
-  // Initialize Lucide Icons
-  lucide.createIcons();
+  function updateCartBadge() {
+    const cart = JSON.parse(localStorage.getItem('hc-cart')) || [];
+    const totalQty = cart.reduce((sum, item) => sum + (Number(item.qty) || 1), 0);
+    const badge = document.getElementById('cart-badge');
+    if (badge) badge.innerText = totalQty;
+  }
+
+  window.onload = () => {
+    updateCartBadge();
+    lucide.createIcons();
+  };
 </script>
 
 </body>
