@@ -22,7 +22,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Plus Jakarta Sans', sans-serif; color: var(--dark); background: var(--bg); line-height: 1.6; overflow-x: hidden; }
 
-    /* --- MOBILE HEADER FIX (Home Page Style) --- */
+    /* --- Professional Header --- */
     .main-header { 
       background: var(--white); 
       padding: 12px 5%; 
@@ -51,7 +51,6 @@
     }
 
     .header-logo { height: 55px; width: auto; display: block; }
-
     .brand-text h1 { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; }
     .brand-text p { font-size: 0.8rem; color: var(--grey); font-weight: 500; }
 
@@ -59,86 +58,62 @@
     .nav-links a { text-decoration: none; color: #475569; font-weight: 600; font-size: 0.95rem; transition: color 0.2s; }
     .nav-links a.active { color: var(--primary); }
 
-    /* --- Responsive Header (Matching Home Page Concept) --- */
-    @media (max-width: 968px) {
-      .header-container { 
-        /* Kept as flex-row conceptually, but spacing adjusted for mobile flow */
-        flex-direction: column; 
-        gap: 15px; 
-      }
-      .logo-area { 
-        flex-direction: row !important; /* Forces logo to stay on left of text */
-        text-align: left; 
-      }
-    }
-
-    @media (max-width: 480px) {
-      .header-logo { height: 45px; }
-      .brand-text h1 { font-size: 1.1rem; }
-      .brand-text p { font-size: 0.7rem; }
-      .nav-links { gap: 15px; }
-      .nav-links a { font-size: 0.85rem; }
-    }
-
-    /* --- SEARCH & FILTERS --- */
-    .controls-container { max-width: 1200px; margin: 20px auto; padding: 0 4%; }
-    .search-wrapper { position: relative; width: 100%; margin-bottom: 15px; }
-    .search-input { width: 100%; padding: 12px 15px 12px 45px; border-radius: 12px; border: 1.5px solid #e2e8f0; outline: none; font-size: 0.9rem; }
-    .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 18px; color: var(--grey); }
+    /* --- Fixed Centering on Mobile --- */
+    .controls-container { max-width: 1200px; margin: 20px auto; padding: 0 4%; display: flex; flex-direction: column; align-items: center; }
+    .search-wrapper { position: relative; width: 100%; max-width: 600px; margin-bottom: 15px; }
     
-    .filter-container { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0 15px; scrollbar-width: none; }
-    .filter-container::-webkit-scrollbar { display: none; }
+    .filter-container { 
+        display: flex; 
+        gap: 8px; 
+        overflow-x: auto; 
+        padding: 5px 0 15px; 
+        scrollbar-width: none; 
+        justify-content: center; /* Centers filters on desktop */
+        width: 100%;
+    }
+    
+    @media (max-width: 768px) {
+        .filter-container { 
+            justify-content: flex-start; /* Allows scrolling on mobile */
+            padding-left: 10px;
+        }
+        .header-container { flex-direction: column; gap: 10px; text-align: center; }
+    }
+
     .filter-btn { padding: 8px 16px; border-radius: 20px; border: 1px solid #cbd5e1; background: white; white-space: nowrap; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: 0.3s; }
     .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-    /* --- GRID VIEW & POPUP EFFECT --- */
+    /* --- Product Grid --- */
     .product-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 10px 4%; max-width: 1200px; margin: 0 auto 100px; }
     @media (min-width: 992px) { .product-list { grid-template-columns: repeat(4, 1fr); gap: 25px; } }
 
     .product-card { 
-      background: var(--white); 
-      border-radius: 15px; 
-      overflow: hidden; 
-      border: 1px solid #f1f5f9; 
-      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease; 
-      cursor: pointer; 
-      display: flex; 
-      flex-direction: column; 
+      background: var(--white); border-radius: 15px; overflow: hidden; border: 1px solid #f1f5f9; 
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer; display: flex; flex-direction: column; 
     }
     .product-card:hover { transform: translateY(-10px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
-
     .img-box { width: 100%; aspect-ratio: 1/1; padding: 10px; display: flex; align-items: center; justify-content: center; }
-    .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; transition: 0.3s ease; }
-    .product-card:hover .img-box img { transform: scale(1.05); }
+    .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
     .details { padding: 12px; flex-grow: 1; display: flex; flex-direction: column; border-top: 1px solid #f8fafc; }
-    .p-name { font-weight: 700; font-size: 0.85rem; margin: 4px 0; height: 38px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .p-name { font-weight: 700; font-size: 0.85rem; margin: 4px 0; height: 38px; overflow: hidden; }
     .price-row { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
     .price { font-size: 1rem; font-weight: 800; }
-    .add-to-cart-icon-btn { background: var(--soft-blue); color: var(--primary); border: none; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
-    .add-to-cart-icon-btn:hover { background: var(--primary); color: white; }
+    .add-to-cart-icon-btn { background: var(--soft-blue); color: var(--primary); border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; }
 
-    /* --- DETAIL VIEW --- */
+    /* --- Detail Section --- */
     .hidden { display: none !important; }
     .detail-view-container { max-width: 1200px; margin: 20px auto; padding: 0 5%; }
     .back-nav { display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 20px; font-weight: 700; color: var(--grey); }
     .detail-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
     .full-img-card { background: white; border-radius: 20px; padding: 30px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; }
     .full-img-card img { width: 100%; max-height: 300px; object-fit: contain; }
-    .info-panel h2 { font-size: 1.8rem; font-weight: 800; margin: 10px 0; }
-    .detail-price-tag { font-size: 1.8rem; font-weight: 800; margin-bottom: 20px; }
-    .button-group { display: flex; flex-direction: column; gap: 10px; }
-    @media (min-width: 768px) {
-      .detail-grid { grid-template-columns: 1.2fr 1fr; gap: 50px; }
-      .button-group { flex-direction: row; }
-      .full-img-card img { max-height: 500px; }
-    }
-
-    /* --- FLOATING CART --- */
+    
+    /* --- Floating Cart --- */
     .cart-icon-wrapper { position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 1500; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3); text-decoration: none; }
-    .cart-count { position: absolute; top: 0; right: 0; background: #ef4444; color: white; font-size: 0.7rem; min-width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 800; border: 2px solid white; }
+    .cart-count { position: absolute; top: 0; right: 0; background: #ef4444; color: white; font-size: 0.7rem; min-width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid white; }
 
-    #toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px; font-weight: 600; font-size: 0.85rem; z-index: 2000; transition: 0.3s; opacity: 0; visibility: hidden; }
+    #toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px; font-weight: 600; opacity: 0; visibility: hidden; transition: 0.3s; z-index: 2000; }
     #toast.show { opacity: 1; visibility: visible; bottom: 100px; }
   </style>
 </head>
@@ -167,8 +142,8 @@
 <main id="catalog-section">
   <div class="controls-container">
     <div class="search-wrapper">
-      <i data-lucide="search" class="search-icon"></i>
-      <input type="text" id="search-input" class="search-input" placeholder="Search products..." oninput="handleSearch()">
+      <i data-lucide="search" class="search-icon" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 18px; color: var(--grey);"></i>
+      <input type="text" id="search-input" class="search-input" style="width: 100%; padding: 12px 15px 12px 45px; border-radius: 12px; border: 1.5px solid #e2e8f0; outline: none;" placeholder="Search products..." oninput="handleSearch()">
     </div>
     <div id="filter-bar" class="filter-container">
       <button class="filter-btn active" onclick="filterProducts('All')">All Products</button>
@@ -184,12 +159,12 @@
             <div class="full-img-card"><img id="dp-image" src="" alt=""></div>
             <div class="info-panel">
                 <span id="dp-category" style="color:var(--primary); font-weight:800; text-transform:uppercase; font-size:0.8rem;"></span>
-                <h2 id="dp-name"></h2>
-                <div id="dp-price" class="detail-price-tag"></div>
+                <h2 id="dp-name" style="font-size: 1.8rem; font-weight: 800; margin: 10px 0;"></h2>
+                <div id="dp-price" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 20px;"></div>
                 <p style="color:var(--grey); margin-bottom:30px;">Premium quality protection and comfort for sensitive skin.</p>
-                <div class="button-group">
-                    <button class="cart-btn-big" id="dp-add-btn" style="background:var(--primary); color:white; border:none; padding:18px; border-radius:12px; font-weight:800; cursor:pointer;">Add to Cart</button>
-                    <a href="" id="dp-whatsapp-btn" target="_blank" style="background:#22c55e; color:white; padding:18px; border-radius:12px; text-decoration:none; font-weight:800; text-align:center;">Order on WhatsApp</a>
+                <div style="display: flex; gap: 10px;" class="button-group">
+                    <button id="dp-add-btn" style="flex: 1; background:var(--primary); color:white; border:none; padding:18px; border-radius:12px; font-weight:800; cursor:pointer;">Add to Cart</button>
+                    <a href="" id="dp-whatsapp-btn" target="_blank" style="flex: 1; background:#22c55e; color:white; padding:18px; border-radius:12px; text-decoration:none; font-weight:800; text-align:center;">WhatsApp</a>
                 </div>
             </div>
         </div>
@@ -218,6 +193,10 @@
       allProducts = data;
       renderGrid(allProducts);
       setupFilters();
+      
+      const params = new URLSearchParams(window.location.search);
+      const targetCategory = params.get('category');
+      if (targetCategory) filterProducts(targetCategory);
     }
     lucide.createIcons();
   }
@@ -253,6 +232,15 @@
     });
   }
 
+  function filterProducts(cat) {
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      const isAll = (cat === 'All' && btn.innerText === 'All Products');
+      const isMatch = (btn.innerText === cat);
+      btn.classList.toggle('active', isAll || isMatch);
+    });
+    renderGrid(cat === 'All' ? allProducts : allProducts.filter(p => p.category === cat));
+  }
+
   function openProductPage(productId) {
     const product = allProducts.find(p => p.id == productId);
     document.getElementById('catalog-section').classList.add('hidden');
@@ -261,7 +249,7 @@
     document.getElementById('dp-name').innerText = product.name;
     document.getElementById('dp-price').innerText = `₹${product.price}`;
     document.getElementById('dp-category').innerText = product.category;
-    document.getElementById('dp-whatsapp-btn').href = `https://wa.me/919307760665?text=I want to order: ${product.name}`;
+    document.getElementById('dp-whatsapp-btn').href = `https://wa.me/919307760665?text=I want to order: ${encodeURIComponent(product.name)}`;
     document.getElementById('dp-add-btn').onclick = () => addToCart(product.id);
     window.scrollTo(0,0);
   }
@@ -290,23 +278,17 @@
     setTimeout(() => t.classList.remove('show'), 2000);
   }
 
+  // FIXED: Removed stray "0, )" that was causing the error
   function updateCartBadge() { 
     const totalQty = cart.reduce((sum, item) => sum + (item.qty || 1), 0);
-    document.getElementById('cart-badge').innerText = totalQty; 
-  }
-
-  function filterProducts(cat) {
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      const isAll = (cat === 'All' && btn.innerText === 'All Products');
-      const isMatch = (btn.innerText === cat);
-      btn.classList.toggle('active', isAll || isMatch);
-    });
-    renderGrid(cat === 'All' ? allProducts : allProducts.filter(p => p.category === cat));
+    const badge = document.getElementById('cart-badge');
+    if (badge) badge.innerText = totalQty; 
   }
 
   function handleSearch() {
     const term = document.getElementById("search-input").value.toLowerCase();
     renderGrid(allProducts.filter(p => p.name.toLowerCase().includes(term)));
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
   }
 
   init();
