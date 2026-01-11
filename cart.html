@@ -269,20 +269,21 @@
             const qty = item.qty || 1;
             const price = item.price || 0;
             total += price * qty;
-            return `
-                <div class="cart-item">
-                    <div class="cart-img-wrapper">
-                        <img src="${item.images?.[0] || 'logo.png'}" class="cart-img">
-                    </div>
-                    <div class="item-info">
-                        <h4>${item.name}</h4>
-                        <p class="item-price">₹${price.toLocaleString()}</p>
-                        <p class="item-qty">Quantity: ${qty}</p>
-                    </div>
-                    <button onclick="removeItem(${i})" class="remove-btn" title="Remove Item">
-                        <i data-lucide="trash-2" style="width:18px;"></i>
-                    </button>
-                </div>`;
+            // Inside renderCart mapping logic
+return `
+    <div class="cart-item" onclick="viewProduct('${item.id}')" style="cursor:pointer;">
+        <div class="cart-img-wrapper">
+            <img src="${item.images?.[0] || 'logo.png'}" class="cart-img">
+        </div>
+        <div class="item-info">
+            <h4>${item.name}</h4>
+            <p class="item-price">₹${price.toLocaleString()}</p>
+            <p class="item-qty">Quantity: ${qty}</p>
+        </div>
+        <button onclick="event.stopPropagation(); removeItem(${i})" class="remove-btn" title="Remove Item">
+            <i data-lucide="trash-2" style="width:18px;"></i>
+        </button>
+    </div>`;
         }).join('');
 
         document.getElementById('grand-total').innerText = `₹${total.toLocaleString()}`;
@@ -334,8 +335,11 @@
             lucide.createIcons();
         }
     }
-
+function viewProduct(productId) {
+        window.location.href = `products.html?id=${productId}`;
+    }
     renderCart();
+    
     lucide.createIcons();
 </script>
 
