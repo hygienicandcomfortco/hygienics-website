@@ -23,7 +23,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Plus Jakarta Sans', sans-serif; color: var(--dark); background: var(--bg); line-height: 1.4; overflow-x: hidden; }
 
-    /* --- Fixed Professional Header (Matching Home/About) --- */
+    /* --- Fixed Professional Header --- */
     .main-header { 
       background: var(--white); 
       padding: 12px 5%; 
@@ -56,33 +56,10 @@
     .brand-text h1 { font-size: 1.1rem; font-weight: 800; color: var(--dark); margin: 0; line-height: 1.2; }
     .brand-text p { font-size: 0.75rem; color: var(--grey); font-weight: 600; margin: 0; }
 
-    .nav-links { 
-      display: flex; 
-      gap: 25px; 
-      align-items: center;
-    }
-
-    .nav-links a { 
-      text-decoration: none; 
-      color: #475569; 
-      font-weight: 700; 
-      font-size: 0.9rem; 
-      transition: 0.2s; 
-      position: relative;
-      padding: 5px 0;
-    }
-
+    .nav-links { display: flex; gap: 25px; align-items: center; }
+    .nav-links a { text-decoration: none; color: #475569; font-weight: 700; font-size: 0.9rem; transition: 0.2s; position: relative; padding: 5px 0; }
     .nav-links a.active { color: var(--primary); }
-    .nav-links a.active::after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: var(--primary);
-      border-radius: 2px;
-    }
+    .nav-links a.active::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: var(--primary); border-radius: 2px; }
 
     /* --- Catalog Controls --- */
     .controls-container { max-width: 1200px; margin: 20px auto; padding: 0 4%; display: flex; gap: 10px; align-items: center; }
@@ -107,39 +84,40 @@
     .price { font-size: 1.1rem; font-weight: 800; }
     .add-to-cart-icon-btn { background: var(--soft-blue); color: var(--primary); border: none; width: 38px; height: 38px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-    /* --- Mobile Fixes --- */
-    @media (max-width: 768px) {
-      .header-container { flex-direction: column; gap: 15px; }
-      .nav-links { gap: 15px; width: 100%; justify-content: center; border-top: 1px solid #f1f5f9; padding-top: 10px; }
-      .brand-text h1 { font-size: 1rem; }
-      .header-logo { height: 45px; }
-    }
-
-    /* --- Tablet & Desktop Fixes --- */
-    @media (min-width: 769px) {
-      .product-list { grid-template-columns: repeat(3, 1fr); }
-    }
-    @media (min-width: 1024px) {
-      .product-list { grid-template-columns: repeat(4, 1fr); }
-    }
-
-    /* --- Detail View, Toast, Cart Badge CSS (Unchanged) --- */
+    /* --- Amazon Style Gallery & Detail Page --- */
     .detail-view-container { max-width: 1200px; margin: 20px auto; padding: 0 5%; }
     .back-nav { display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 20px; font-weight: 700; color: var(--grey); }
-    .detail-grid { display: flex; flex-direction: column; gap: 30px; text-align: center; }
-    .full-img-card { background: white; border-radius: 24px; padding: 30px; border: 1px solid #e2e8f0; }
-    .full-img-card img { width: 100%; max-height: 300px; object-fit: contain; }
-    .info-panel h2 { font-size: 1.6rem; font-weight: 800; margin: 10px 0; }
-    .detail-price-tag { font-size: 1.8rem; font-weight: 800; margin-bottom: 20px; color: var(--primary); }
-    .detail-desc { color: var(--grey); margin-bottom: 30px; line-height: 1.6; }
-    .button-group { display: flex; flex-direction: column; gap: 12px; }
-    .button-group button, .button-group a { padding: 18px; border-radius: 15px; font-weight: 800; text-decoration: none; border: none; font-size: 1rem; cursor: pointer; }
     
+    .gallery-container { display: flex; flex-direction: column; gap: 15px; }
+    .main-image-view { background: white; border-radius: 20px; padding: 20px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; height: 400px; }
+    .main-image-view img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    
+    .thumbnail-row { display: flex; gap: 10px; overflow-x: auto; padding: 5px; }
+    .thumb { width: 70px; height: 70px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; padding: 5px; background: white; transition: 0.2s; }
+    .thumb.active { border-color: var(--primary); }
+    .thumb img { width: 100%; height: 100%; object-fit: contain; }
+
+    .pricing-box { margin: 15px 0; }
+    .discount-row { display: flex; align-items: baseline; gap: 5px; }
+    .discount-percent { color: #cc0c39; font-size: 1.8rem; font-weight: 400; }
+    .main-price { font-size: 1.8rem; font-weight: 700; }
+    .mrp-row { color: #565959; font-size: 0.85rem; margin-top: 4px; font-weight: 600; }
+    .strikethrough-mrp { text-decoration: line-through; }
+
+    .features-section { margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+    .section-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 12px; color: var(--dark); text-transform: uppercase; }
+    .rich-description { color: #334155; font-size: 0.95rem; line-height: 1.7; white-space: pre-wrap; }
+
+    .button-group { display: flex; flex-direction: column; gap: 12px; margin-top: 25px; }
+    .btn-primary { background: var(--primary); color: white; padding: 18px; border-radius: 15px; font-weight: 800; border: none; cursor: pointer; transition: 0.2s; font-size: 1rem; }
+    .btn-whatsapp { background: #22c55e; color: white; padding: 18px; border-radius: 15px; font-weight: 800; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1rem; }
+
+    /* --- Filters & Overlays --- */
     .filter-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; opacity: 0; visibility: hidden; transition: 0.3s; backdrop-filter: blur(4px); }
     .filter-overlay.show { opacity: 1; visibility: visible; }
     .filter-drawer { position: fixed; right: -320px; top: 0; height: 100%; width: 320px; background: white; z-index: 2001; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding: 30px; display: flex; flex-direction: column; }
     .filter-drawer.open { right: 0; }
-    .chip { padding: 8px 16px; border-radius: 10px; border: 1.5px solid #e2e8f0; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+    .chip { padding: 8px 16px; border-radius: 10px; border: 1.5px solid #e2e8f0; font-size: 0.85rem; font-weight: 600; cursor: pointer; margin: 4px; display: inline-block; }
     .chip.selected { background: var(--primary); color: white; border-color: var(--primary); }
 
     .cart-icon-wrapper { position: fixed; bottom: 25px; right: 25px; background: var(--primary); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 1500; box-shadow: 0 8px 20px rgba(37,99,235,0.3); text-decoration: none; }
@@ -148,11 +126,21 @@
     #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--dark); color: white; padding: 14px 28px; border-radius: 50px; font-weight: 600; font-size: 0.9rem; opacity: 0; visibility: hidden; transition: 0.3s; z-index: 3000; }
     #toast.show { opacity: 1; visibility: visible; }
     .hidden { display: none !important; }
-    
-    @media (min-width: 768px) {
-      .detail-grid { flex-direction: row; text-align: left; align-items: center; gap: 60px; }
-      .button-group { flex-direction: row; }
+
+    /* --- Media Queries --- */
+    @media (max-width: 768px) {
+      .header-container { flex-direction: column; gap: 15px; }
+      .nav-links { gap: 15px; width: 100%; justify-content: center; border-top: 1px solid #f1f5f9; padding-top: 10px; }
+      .detail-grid { display: flex; flex-direction: column; gap: 20px; }
+      .main-image-view { height: 300px; }
     }
+    @media (min-width: 769px) {
+      .product-list { grid-template-columns: repeat(3, 1fr); }
+      .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+      .button-group { flex-direction: row; }
+      .btn-primary, .btn-whatsapp { flex: 1; }
+    }
+    @media (min-width: 1024px) { .product-list { grid-template-columns: repeat(4, 1fr); } }
   </style>
 </head>
 <body>
@@ -168,8 +156,8 @@
     </a>
     <nav class="nav-links">
       <a href="index.html">Home</a>
-      <a href="about.html">About</a>
       <a href="products.html" class="active">Products</a>
+      <a href="about.html">About</a>
       <a href="contact.html">Contact</a>
     </nav>
   </div>
@@ -217,17 +205,37 @@
   <div class="detail-view-container">
     <div class="back-nav" onclick="showCatalog()"><i data-lucide="arrow-left"></i> Back</div>
     <div class="detail-grid">
-      <div class="full-img-card"><img id="dp-image" src="" alt=""></div>
+      <div class="gallery-container">
+        <div class="main-image-view">
+          <img id="dp-image" src="" alt="Product">
+        </div>
+        <div id="thumb-row" class="thumbnail-row"></div>
+      </div>
+
       <div class="info-panel">
         <span id="dp-category" class="p-category" style="font-size:0.9rem"></span>
-        <h2 id="dp-name"></h2>
-        <div id="dp-price" class="detail-price-tag"></div>
-        <p id="dp-description" class="detail-desc"></p>
+        <h2 id="dp-name" style="font-size:1.8rem; font-weight:800; margin-bottom:10px;"></h2>
+        
+        <div class="pricing-box">
+          <div class="discount-row">
+            <span id="dp-discount" class="discount-percent"></span>
+            <span class="main-price">₹<span id="dp-price"></span></span>
+          </div>
+          <div class="mrp-row">
+            M.R.P.: <span class="strikethrough-mrp" id="dp-mrp"></span>
+          </div>
+        </div>
+
         <div class="button-group">
-          <button id="dp-add-btn" style="background:var(--primary); color:white">Add to Cart</button>
-          <a href="" id="dp-whatsapp-btn" target="_blank" style="background:#22c55e; color:white; display:flex; align-items:center; justify-content:center; gap:10px;">
+          <button id="dp-add-btn" class="btn-primary">Add to Cart</button>
+          <a href="" id="dp-whatsapp-btn" target="_blank" class="btn-whatsapp">
             <i data-lucide="message-circle"></i> WhatsApp Order
           </a>
+        </div>
+
+        <div class="features-section">
+          <h3 class="section-title">Features & Details</h3>
+          <p id="dp-description" class="rich-description"></p>
         </div>
       </div>
     </div>
@@ -242,7 +250,6 @@
 </a>
 
 <script>
-  // Script logic remains exactly the same as previous version
   const SUPABASE_URL = "https://uhkheprfbxxwuojswyht.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es";
   const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -321,13 +328,43 @@
     const product = allProducts.find(p => p.id == productId);
     document.getElementById('catalog-section').classList.add('hidden');
     document.getElementById('detail-section').classList.remove('hidden');
-    document.getElementById('dp-image').src = product.images?.[0];
+    
+    // Gallery Logic
+    const mainImg = document.getElementById('dp-image');
+    const thumbRow = document.getElementById('thumb-row');
+    mainImg.src = product.images?.[0] || 'placeholder.png';
+    thumbRow.innerHTML = '';
+    
+    if (product.images && product.images.length > 1) {
+      product.images.forEach((url, i) => {
+        const t = document.createElement('div');
+        t.className = `thumb ${i === 0 ? 'active' : ''}`;
+        t.innerHTML = `<img src="${url}">`;
+        t.onclick = () => {
+          mainImg.src = url;
+          document.querySelectorAll('.thumb').forEach(thumb => thumb.classList.remove('active'));
+          t.classList.add('active');
+        };
+        thumbRow.appendChild(t);
+      });
+    }
+
+    // Pricing Logic
+    const curPrice = Number(product.price);
+    const mrp = Number(product.mrp || curPrice + Math.round(curPrice * 0.25)); // Fallback MRP if not in DB
+    const disc = Math.round(((mrp - curPrice) / mrp) * 100);
+
+    document.getElementById('dp-price').innerText = curPrice.toLocaleString('en-IN');
+    document.getElementById('dp-mrp').innerText = `₹${mrp.toLocaleString('en-IN')}`;
+    document.getElementById('dp-discount').innerText = `-${disc}%`;
+    
+    // Info Logic
     document.getElementById('dp-name').innerText = product.name;
-    document.getElementById('dp-price').innerText = `₹${product.price}`;
     document.getElementById('dp-category').innerText = product.category;
     document.getElementById('dp-description').innerText = product.description || "Premium quality protection and comfort.";
     document.getElementById('dp-whatsapp-btn').href = `https://wa.me/919307760665?text=Order: ${encodeURIComponent(product.name)}`;
     document.getElementById('dp-add-btn').onclick = () => addToCart(product.id);
+    
     window.scrollTo(0,0);
     lucide.createIcons();
   }
