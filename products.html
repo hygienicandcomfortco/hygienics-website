@@ -110,11 +110,11 @@
 
     .button-group { display: flex; flex-direction: column; gap: 12px; margin-top: 25px; }
     .btn-primary { background: var(--primary); color: white; padding: 18px; border-radius: 15px; font-weight: 800; border: none; cursor: pointer; transition: 0.2s; font-size: 1rem; }
-    .btn-whatsapp { background: #22c55e; color: white; padding: 18px; border-radius: 15px; font-weight: 800; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1rem; }
+    .btn-whatsapp { background: #22c55e; color: white; padding: 18px; border-radius: 15px; font-weight: 800; text-decoration: none; border: none; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1rem; cursor: pointer; }
 
     /* --- Filters & Overlays --- */
-    .filter-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; opacity: 0; visibility: hidden; transition: 0.3s; backdrop-filter: blur(4px); }
-    .filter-overlay.show { opacity: 1; visibility: visible; }
+    .filter-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; opacity: 0; visibility: hidden; transition: 0.3s; backdrop-filter: blur(4px); display: none; }
+    .filter-overlay.show { opacity: 1; visibility: visible; display: flex !important; }
     .filter-drawer { position: fixed; right: -320px; top: 0; height: 100%; width: 320px; background: white; z-index: 2001; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding: 30px; display: flex; flex-direction: column; }
     .filter-drawer.open { right: 0; }
     .chip { padding: 8px 16px; border-radius: 10px; border: 1.5px solid #e2e8f0; font-size: 0.85rem; font-weight: 600; cursor: pointer; margin: 4px; display: inline-block; }
@@ -228,9 +228,9 @@
 
         <div class="button-group">
           <button id="dp-add-btn" class="btn-primary">Add to Cart</button>
-          <a href="" id="dp-whatsapp-btn" target="_blank" class="btn-whatsapp">
-            <i data-lucide="message-circle"></i> WhatsApp Order
-          </a>
+          <button id="dp-whatsapp-btn" class="btn-whatsapp">
+            <i data-lucide="message-circle"></i> Buy Now
+          </button>
         </div>
 
         <div class="features-section">
@@ -241,6 +241,34 @@
     </div>
   </div>
 </main>
+
+<div id="wa-modal" class="filter-overlay" style="align-items:center; justify-content:center; padding:20px;">
+  <div class="bg-white p-8 rounded-[30px] w-full max-w-[400px] shadow-2xl">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
+      <h3 style="font-weight:800; font-size:1.4rem;">Customer Details</h3>
+      <i data-lucide="x" style="cursor:pointer" onclick="closeWAModal()"></i>
+    </div>
+    
+    <div style="margin-bottom:20px;">
+      <label style="display:block; font-size:0.7rem; font-weight:800; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">Full Name</label>
+      <input type="text" id="wa-cust-name" placeholder="Enter your name" style="width:100%; padding:14px; border-radius:12px; border:1.5px solid #e2e8f0; outline:none; font-family:inherit;">
+    </div>
+
+    <div style="margin-bottom:30px;">
+      <label style="display:block; font-size:0.7rem; font-weight:800; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">WhatsApp Number</label>
+      <div style="display:flex; gap:10px;">
+        <span style="background:#f1f5f9; padding:14px; border-radius:12px; font-weight:700; border:1.5px solid #e2e8f0;">+91</span>
+        <input type="tel" id="wa-cust-phone" placeholder="10-digit number" style="flex:1; padding:14px; border-radius:12px; border:1.5px solid #e2e8f0; outline:none; font-family:inherit;">
+      </div>
+    </div>
+
+    <button onclick="sendWAOrder()" style="width:100%; background:#22c55e; color:white; padding:18px; border-radius:15px; border:none; font-weight:800; display:flex; align-items:center; justify-content:center; gap:10px; cursor:pointer;">
+      <i data-lucide="send" style="width:20px"></i> Confirm & WhatsApp
+    </button>
+    
+    <p onclick="closeWAModal()" style="text-align:center; margin-top:15px; font-size:0.8rem; font-weight:700; color:var(--primary); cursor:pointer;">Cancel</p>
+  </div>
+</div>
 
 <div id="toast">Added to cart!</div>
 
@@ -258,6 +286,7 @@
   let cart = JSON.parse(localStorage.getItem('hc-cart')) || [];
   let activeBrand = 'All';
   let activeSize = 'All';
+  let currentOrderProduct = null;
 
   async function init() {
     updateCartBadge();
@@ -266,13 +295,35 @@
       allProducts = data;
       renderGrid(allProducts);
       generateBrandChips();
+
+      // NEW LOGIC: This checks the URL for "?id=..."
+      const urlParams = new URLSearchParams(window.location.search);
+      const productId = urlParams.get('id');
+      
+      // If an ID is found, it automatically opens that product's detail view
+      if (productId) {
+          openProductPage(productId);
+      }
     }
     lucide.createIcons();
-  }
+}
+
+init(); // This line triggers the code when the page loads
 
   function toggleFilter(show) {
-    document.getElementById('filter-overlay').classList.toggle('show', show);
-    document.getElementById('filter-drawer').classList.toggle('open', show);
+    const overlay = document.getElementById('filter-overlay');
+    const drawer = document.getElementById('filter-drawer');
+    if(show) {
+      overlay.style.display = 'flex';
+      setTimeout(() => {
+        overlay.classList.add('show');
+        drawer.classList.add('open');
+      }, 10);
+    } else {
+      overlay.classList.remove('show');
+      drawer.classList.remove('open');
+      setTimeout(() => overlay.style.display = 'none', 300);
+    }
   }
 
   function generateBrandChips() {
@@ -308,7 +359,7 @@
     const container = document.getElementById("product-list");
     container.innerHTML = list.map((p) => `
       <div class="product-card" onclick="openProductPage('${p.id}')">
-        <div class="img-box"><img src="${p.images?.[0] || 'placeholder.png'}"></div>
+        <div class="img-box"><img src="${p.images?.[0] || 'logo.png'}"></div>
         <div class="details">
           <span class="p-category">${p.category}</span>
           <div class="p-name">${p.name}</div>
@@ -326,13 +377,14 @@
 
   function openProductPage(productId) {
     const product = allProducts.find(p => p.id == productId);
+    currentOrderProduct = product;
     document.getElementById('catalog-section').classList.add('hidden');
     document.getElementById('detail-section').classList.remove('hidden');
     
     // Gallery Logic
     const mainImg = document.getElementById('dp-image');
     const thumbRow = document.getElementById('thumb-row');
-    mainImg.src = product.images?.[0] || 'placeholder.png';
+    mainImg.src = product.images?.[0] || 'logo.png';
     thumbRow.innerHTML = '';
     
     if (product.images && product.images.length > 1) {
@@ -351,7 +403,7 @@
 
     // Pricing Logic
     const curPrice = Number(product.price);
-    const mrp = Number(product.mrp || curPrice + Math.round(curPrice * 0.25)); // Fallback MRP if not in DB
+    const mrp = Number(product.mrp || curPrice + Math.round(curPrice * 0.25));
     const disc = Math.round(((mrp - curPrice) / mrp) * 100);
 
     document.getElementById('dp-price').innerText = curPrice.toLocaleString('en-IN');
@@ -362,7 +414,9 @@
     document.getElementById('dp-name').innerText = product.name;
     document.getElementById('dp-category').innerText = product.category;
     document.getElementById('dp-description').innerText = product.description || "Premium quality protection and comfort.";
-    document.getElementById('dp-whatsapp-btn').href = `https://wa.me/919307760665?text=Order: ${encodeURIComponent(product.name)}`;
+    
+    // WhatsApp logic fix (re-binding)
+    document.getElementById('dp-whatsapp-btn').onclick = () => openWAModal();
     document.getElementById('dp-add-btn').onclick = () => addToCart(product.id);
     
     window.scrollTo(0,0);
@@ -397,6 +451,42 @@
   function handleSearch() {
     const term = document.getElementById("search-input").value.toLowerCase();
     renderGrid(allProducts.filter(p => p.name.toLowerCase().includes(term) || p.category.toLowerCase().includes(term)));
+  }
+
+  /* --- WhatsApp Modal Logic --- */
+  function openWAModal() {
+    const modal = document.getElementById('wa-modal');
+    modal.style.display = 'flex';
+    setTimeout(() => modal.classList.add('show'), 10);
+    lucide.createIcons();
+  }
+
+  function closeWAModal() {
+    const modal = document.getElementById('wa-modal');
+    modal.classList.remove('show');
+    setTimeout(() => modal.style.display = 'none', 300);
+  }
+
+  function sendWAOrder() {
+    const name = document.getElementById('wa-cust-name').value.trim();
+    const phone = document.getElementById('wa-cust-phone').value.trim();
+
+    if (!name || phone.length < 10) {
+      alert("Please enter a valid name and phone number.");
+      return;
+    }
+
+    const message = `*NEW ORDER INQUIRY*\n\n` +
+                    `*Product:* ${currentOrderProduct.name}\n` +
+                    `*Price:* ₹${currentOrderProduct.price}\n\n` +
+                    `*Customer Details*\n` +
+                    `*Name:* ${name}\n` +
+                    `*Phone:* +91 ${phone}\n\n` +
+                    `Is this available?`;
+
+    const waURL = `https://wa.me/919307760665?text=${encodeURIComponent(message)}`;
+    window.open(waURL, '_blank');
+    closeWAModal();
   }
 
   init();
