@@ -1,314 +1,337 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Your Cart | Hygienic & Comfort Co.</title>
-    <link rel="icon" type="image/png" href="logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Your Cart | Hygienic & Comfort Co.</title>
 
-    <style>
-        :root { 
-            --primary: #2563eb; 
-            --success: #22c55e;
-            --dark: #0f1111; 
-            --grey: #565959; 
-            --white: #fff; 
-            --bg: #f3f3f3;
-            --link: #007185;
-            --amazon-yellow: #FFD814;
-        }
+<link rel="icon" type="image/png" href="logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--dark); line-height: 1.5; overflow-x: hidden; }
+<style>
+:root {--yellow:#FFD814;--yellow-b:#FCD200;--blue:#007185;--dark:#111;--bg:#f3f3f3;--white:#fff;--grey:#565959;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif; -webkit-tap-highlight-color: transparent;}
+body{background:var(--bg);color:var(--dark); overflow-x: hidden;}
 
-        /* --- Header (Matching About Page Alignment) --- */
-        .main-header { 
-            background: var(--white); padding: 15px 5%; border-bottom: 1px solid #f1f5f9; 
-            position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-        }
-        .header-container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: left; gap: 12px; }
-        .header-top { display: flex; align-items: center; gap: 15px; text-decoration: none; color: inherit; width: 100%; justify-content: left; }
-         .header-logo { height: 65px; width: auto; display: block; flex-shrink: 0; }
-    
-    .brand-text { text-align: left; }
-    .brand-text h1 { font-size: 1.4rem; font-weight: 800; color: var(--dark); margin: 0; line-height: 1.1; }
-    .brand-text p { font-size: 0.9rem; color: var(--grey); font-weight: 600; margin: 0; }
-        
-        .nav-links { display: flex; gap: 20px; align-items: center; width: 100%; justify-content: space-between; border-top: 1px solid #eee; padding-top: 10px; margin-top: 5px;}
-        .nav-links a { text-decoration: none; color: var(--link); font-weight: 700; font-size: 0.9rem; }
+/* --- Fixed One-Line Header --- */
+header {
+  background: var(--white);
+  padding: 10px 15px;
+  border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+.head-container {
+  max-width: 1150px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+  flex: 1;
+  min-width: 0; 
+}
+header img { height: 35px; flex-shrink: 0; }
+header h1 { 
+  font-size: 0.9rem; 
+  font-weight: 800; 
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+}
+.back-link {
+  color: var(--blue);
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-decoration: none;
+  white-space: nowrap;
+  margin-left: 10px;
+}
 
-        /* --- Cart Layout --- */
-        .cart-wrapper { max-width: 1150px; margin: 20px auto; display: grid; grid-template-columns: 1fr 320px; gap: 20px; padding: 0 15px; }
-        
-        .cart-main { background: var(--white); padding: 20px; border-radius: 4px; }
-        .cart-title { font-size: 1.75rem; font-weight: 700; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
-        .price-header { text-align: right; font-size: 0.85rem; color: var(--grey); padding: 5px 0; border-bottom: 1px solid #eee; margin-bottom: 10px; display: block; }
+.page {
+  max-width: 1150px;
+  margin: 10px auto;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
-        /* --- Cart Items --- */
-        .cart-item { display: flex; gap: 15px; padding: 20px 0; border-bottom: 1px solid #eee; position: relative; }
-        .item-img-box { width: 120px; height: 120px; flex-shrink: 0; cursor: pointer; }
-        .item-img-box img { width: 100%; height: 100%; object-fit: contain; }
+/* --- Summary Box --- */
+.summary-card {
+  background: var(--white);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+}
+.sum-row { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.9rem; }
+.sum-total { font-weight: 800; font-size: 1.15rem; color: #b12704; margin-top: 5px; }
+.checkout-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 25px;
+  background: var(--yellow);
+  border: 1px solid var(--yellow-b);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
 
-        .item-details { flex: 1; display: flex; flex-direction: column; }
-        .item-name { font-size: 1.1rem; font-weight: 700; color: var(--link); text-decoration: none; margin-bottom: 4px; line-height: 1.3; }
-        .item-name:hover { color: #c45500; text-decoration: underline; }
-        
-        .stock-status { font-size: 0.8rem; font-weight: 700; margin-bottom: 5px; }
-        .in-stock { color: #007600; }
-        .low-stock { color: #b12704; }
+/* --- Cart Items --- */
+.cart-main { background: var(--white); border-radius: 8px; padding: 15px; }
+.cart-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+.price-label { text-align: right; font-size: 0.75rem; color: var(--grey); margin-bottom: 5px; display: block; }
 
-        .item-actions { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-        
-        .qty-box { display: flex; align-items: center; background: #F0F2F2; border: 1px solid #D5D9D9; border-radius: 8px; box-shadow: 0 2px 5px rgba(15,17,17,.15); }
-        .qty-btn { border: none; background: transparent; padding: 4px 10px; cursor: pointer; font-size: 1.1rem; }
-        .qty-val { padding: 0 8px; font-weight: 700; border-left: 1px solid #D5D9D9; border-right: 1px solid #D5D9D9; font-size: 0.85rem; }
+.cart-item {
+  display: flex;
+  gap: 12px;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+}
+.cart-img { width: 90px; height: 90px; object-fit: contain; flex-shrink: 0; background: #fff; }
+.item-content { flex: 1; min-width: 0; }
+.name-price-flex { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.item-name { font-weight: 700; font-size: 0.9rem; color: var(--dark); line-height: 1.2; text-decoration: none; }
+.item-price { font-size: 1.05rem; font-weight: 800; white-space: nowrap; }
 
-        .action-link { color: var(--link); font-size: 0.8rem; cursor: pointer; border-left: 1px solid #ddd; padding-left: 10px; }
-        .action-link:first-of-type { border: none; padding-left: 0; }
-        .action-link:hover { text-decoration: underline; color: #c45500; }
+.stock-msg { font-size: 0.75rem; font-weight: 700; margin: 4px 0; }
+.red { color: #B12704; } .green { color: #007600; }
 
-        .item-price-col { font-size: 1.2rem; font-weight: 800; text-align: right; min-width: 80px; }
+.action-row { margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.qty-ctrl { display: flex; background: #F0F2F2; border: 1px solid #D5D9D9; border-radius: 8px; overflow: hidden; }
+.qty-ctrl button { padding: 5px 12px; border: none; background: none; cursor: pointer; font-size: 1.1rem; font-weight: bold; }
+.qty-ctrl span { padding: 5px 8px; border-inline: 1px solid #D5D9D9; font-weight: 700; font-size: 0.85rem; background: #fff; }
+.link-action { cursor: pointer; font-size: 0.75rem; color: var(--blue); border-left: 1px solid #ddd; padding-left: 10px; }
+.link-action:first-of-type { border-left: none; padding-left: 0; }
 
-        /* --- Right Sidebar (Subtotal) --- */
-        .cart-sidebar { background: var(--white); padding: 20px; border-radius: 4px; height: fit-content; }
-        .subtotal-text { font-size: 1.1rem; margin-bottom: 15px; }
-        .subtotal-text b { font-size: 1.3rem; font-weight: 800; }
+/* Desktop View */
+@media(min-width: 860px) {
+  .page { display: grid; grid-template-columns: 1fr 320px; gap: 20px; margin-top: 20px; }
+  .summary-card { order: 2; position: sticky; top: 90px; }
+  .cart-main { order: 1; padding: 25px; }
+  header img { height: 40px; }
+  header h1 { font-size: 1.2rem; }
+  .cart-img { width: 140px; height: 140px; }
+}
 
-        .proceed-btn { 
-            width: 100%; background: var(--amazon-yellow); border: 1px solid #FCD200; 
-            border-radius: 20px; padding: 12px; font-weight: 600; cursor: pointer; 
-            box-shadow: 0 2px 5px rgba(213,217,217,.5); font-size: 0.95rem;
-        }
-        .proceed-btn:hover { background: #F7CA00; }
-
-        /* --- Modal --- */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(8px); }
-        .modal-content { background: white; width: 90%; max-width: 400px; padding: 25px; border-radius: 8px; }
-        .styled-input { width: 100%; padding: 12px; border: 1px solid #888; border-radius: 3px; margin-top: 5px; margin-bottom: 15px; outline: none; }
-
-        /* --- Mobile Friendly --- */
-        @media (max-width: 768px) {
-            .cart-wrapper { grid-template-columns: 1fr; }
-            .cart-sidebar { order: -1; }
-            .item-price-col { position: absolute; top: 20px; right: 0; font-size: 1rem; }
-            .price-header { display: none; }
-            .item-img-box { width: 90px; height: 90px; }
-            .brand-text h1 { font-size: 1.1rem; }
-            .header-logo { height: 50px; }
-        }
-    </style>
+/* Mobile Priority */
+@media(max-width: 859px) {
+  .summary-card { order: 1; }
+  .cart-main { order: 2; }
+}
+</style>
 </head>
-<body>
 
-<header class="main-header">
-    <div class="header-container">
-        <a href="index.html" class="header-top">
-            <img src="logo.png" alt="Logo" class="header-logo">
-            <div class="brand-text">
-                <h1>Hygienic & Comfort Co.</h1>
-                <p>Care, Comfort & Hygiene for Every Age</p>
-            </div>
-        </a>
-        <nav class="nav-links">
-            <a href="products.html">Back to Shop</a>
-            <span id="header-total-display" style="font-weight: 800; color: var(--dark);"></span>
-        </nav>
-    </div>
+<body>
+<header>
+  <div class="head-container">
+    <a href="index.html" class="logo-link">
+      <img src="logo.png" alt="Logo">
+      <h1>Hygienic & Comfort Co.</h1>
+    </a>
+    <a href="products.html" class="back-link">Back to Shop</a>
+  </div>
 </header>
 
-<div class="cart-wrapper">
-    <main class="cart-main">
-        <h2 class="cart-title">Shopping Cart</h2>
-        <span class="price-header">Price</span>
-        <div id="cart-items-container"></div>
-        
-        <div id="saved-section" style="margin-top: 40px; border-top: 2px solid #eee; padding-top: 20px; display: none;">
-            <h3 style="font-size: 1.3rem; margin-bottom: 15px;">Saved for later</h3>
-            <div id="saved-items-container"></div>
-        </div>
-    </main>
+<div class="page">
+  <aside class="summary-card" id="summary-section">
+    <div class="sum-row"><span id="items-count">Subtotal (0 items)</span><b id="sub-total">₹0</b></div>
+    <div class="sum-row sum-total"><span>Total</span><b id="grand-total">₹0</b></div>
+    <button type="button" class="checkout-btn" onclick="openModal()">Proceed to Checkout</button>
+  </aside>
 
-    <aside class="cart-sidebar" id="summary-section">
-        <div class="subtotal-text" id="subtotal-display">
-            Subtotal (0 items): <b>₹0</b>
-        </div>
-        <button onclick="openModal()" class="proceed-btn" id="proceed-btn">Proceed to Checkout</button>
-    </aside>
+  <section class="cart-main">
+    <h2 class="cart-title">Shopping Cart</h2>
+    <span class="price-label">Price</span>
+    <div id="cart-list"></div>
+
+    <div id="saved-section" style="display:none; margin-top: 30px; border-top: 2px solid #eee; padding-top: 15px;">
+      <h3 style="font-size: 1rem; margin-bottom: 10px;">Saved for later</h3>
+      <div id="saved-list"></div>
+    </div>
+  </section>
 </div>
 
-<div class="modal-overlay" id="checkout-modal">
-    <div class="modal-content">
-        <h3 style="margin-bottom:15px; font-weight: 800;">Customer Details</h3>
-        <form onsubmit="handleFormSubmit(event)">
-            <label style="font-size:0.85rem; font-weight:700;">Full Name</label>
-            <input type="text" id="cust-name" class="styled-input" required placeholder="Enter your name">
-            
-            <label style="font-size:0.85rem; font-weight:700;">WhatsApp Number</label>
-            <div style="display:flex; border:1px solid #888; border-radius:3px; overflow:hidden; margin-bottom:15px;">
-                <span style="background:#eee; padding:12px; font-weight:700;">+91</span>
-                <input type="tel" id="cust-phone" style="border:none; outline:none; padding:12px; flex:1;" required pattern="[0-9]{10}" maxlength="10">
-            </div>
-
-            <button type="submit" id="confirm-btn" class="proceed-btn" style="background:#22c55e; color:white; border:none;">Confirm Order</button>
-            <button type="button" onclick="closeModal()" style="width:100%; background:none; border:none; color:var(--link); margin-top:10px; cursor:pointer; font-weight: 700;">Cancel</button>
-        </form>
-    </div>
+<div id="checkout-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;justify-content:center;align-items:center;backdrop-filter:blur(4px); z-index: 2000;">
+  <div style="background:#fff;padding:25px;border-radius:12px;width:92%;max-width:380px;">
+    <h3 style="font-weight:800;margin-bottom:15px; font-size: 1.2rem;">Order Details</h3>
+    <form onsubmit="handleOrder(event)">
+      <label style="font-size: 0.8rem; font-weight: 700;">Full Name</label>
+      <input type="text" id="cust-name" required style="width:100%;padding:12px;margin:5px 0 15px;border:1px solid #ccc;border-radius:6px; outline: none;">
+      
+      <label style="font-size: 0.8rem; font-weight: 700;">WhatsApp Number</label>
+      <div style="display:flex;border:1px solid #ccc;border-radius:6px;margin: 5px 0 20px; overflow: hidden;">
+        <span style="padding:12px;background:#f3f3f3;font-weight:700;">+91</span>
+        <input type="tel" id="cust-phone" maxlength="10" pattern="[0-9]{10}" required style="flex:1;border:none;padding:12px; outline: none;">
+      </div>
+      
+      <button type="submit" class="checkout-btn" style="background:#22c55e; border:none; color:#fff; margin-top:0;">Confirm & Order</button>
+      <p onclick="closeModal()" style="margin-top:15px;text-align:center;color:var(--blue);font-weight:700;cursor:pointer;font-size:.85rem;">Cancel</p>
+    </form>
+  </div>
 </div>
 
 <script>
-    const supa = supabase.createClient(
-        "https://uhkheprfbxxwuojswyht.supabase.co",
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es"
-    );
+const supa = supabase.createClient(
+  "https://uhkheprfbxxwuojswyht.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es"
+);
 
-    let cart = JSON.parse(localStorage.getItem('hc-cart') || '[]');
-    let saved = JSON.parse(localStorage.getItem('hc-saved') || '[]');
+let cart = JSON.parse(localStorage.getItem('hc-cart')||'[]');
+let saved = JSON.parse(localStorage.getItem('hc-saved')||'[]');
 
-    function renderCart() {
-        const container = document.getElementById('cart-items-container');
-        const savedContainer = document.getElementById('saved-items-container');
-        const subtotalDisplay = document.getElementById('subtotal-display');
-        const headerTotal = document.getElementById('header-total-display');
+function updateStorage() {
+  localStorage.setItem('hc-cart', JSON.stringify(cart));
+  localStorage.setItem('hc-saved', JSON.stringify(saved));
+  renderUI();
+}
 
-        if (!cart.length) {
-            container.innerHTML = `<div style="padding:40px; text-align:center;"><h3>Your cart is empty</h3><br><a href="products.html" class="action-link" style="font-size:1rem">Shop today's deals</a></div>`;
-            document.getElementById('summary-section').style.display = 'none';
-            headerTotal.innerText = "";
-        } else {
-            document.getElementById('summary-section').style.display = 'block';
-            let total = 0, count = 0;
-            container.innerHTML = cart.map((item, i) => {
-                const qty = item.qty || 1;
-                total += item.price * qty;
-                count += qty;
-                const isLow = item.stock > 0 && item.stock <= 3;
-                return `
-                <div class="cart-item">
-                    <div class="item-img-box" onclick="location.href='products.html?id=${item.id}'"><img src="${item.images?.[0] || 'logo.png'}"></div>
-                    <div class="item-details">
-                        <a href="products.html?id=${item.id}" class="item-name">${item.name}</a>
-                        <div class="stock-status ${item.stock > 0 ? (isLow ? 'low-stock' : 'in-stock') : 'low-stock'}">
-                            ${item.stock > 0 ? (isLow ? `Only ${item.stock} left in stock - order soon.` : 'In Stock') : 'Out of Stock'}
-                        </div>
-                        <div class="item-actions">
-                            <div class="qty-box">
-                                <button class="qty-btn" onclick="updateQty(${i}, -1)">-</button>
-                                <span class="qty-val">${qty}</span>
-                                <button class="qty-btn" onclick="updateQty(${i}, 1)">+</button>
-                            </div>
-                            <span class="action-link" onclick="removeItem(${i})">Delete</span>
-                            <span class="action-link" onclick="saveLater(${i})">Save for later</span>
-                            <span class="action-link" onclick="shareItem('${item.id}', '${item.name}')">Share</span>
-                        </div>
-                    </div>
-                    <div class="item-price-col">₹${(item.price * qty).toLocaleString()}</div>
-                </div>`;
-            }).join('');
-            
-            const totalStr = `₹${total.toLocaleString()}`;
-            subtotalDisplay.innerHTML = `Subtotal (${count} items): <b>${totalStr}</b>`;
-            headerTotal.innerText = `Total: ${totalStr}`;
-        }
+function renderUI() {
+  const cartList = document.getElementById('cart-list');
+  const savedList = document.getElementById('saved-list');
+  const savedSection = document.getElementById('saved-section');
 
-        // Render Saved Items
-        if (saved.length) {
-            document.getElementById('saved-section').style.display = 'block';
-            savedContainer.innerHTML = saved.map((item, i) => `
-                <div class="cart-item" style="opacity: 0.8">
-                    <div class="item-img-box" style="width: 80px; height: 80px;"><img src="${item.images?.[0] || 'logo.png'}"></div>
-                    <div class="item-details">
-                        <span class="item-name" style="font-size: 0.95rem">${item.name}</span>
-                        <div class="item-actions">
-                            <span class="action-link" onclick="moveToCart(${i})">Move to cart</span>
-                            <span class="action-link" onclick="deleteSaved(${i})">Delete</span>
-                        </div>
-                    </div>
-                </div>`).join('');
-        } else {
-            document.getElementById('saved-section').style.display = 'none';
-        }
-        lucide.createIcons();
+  if(!cart.length && !saved.length) {
+    cartList.innerHTML = `<div style="padding:40px; text-align:center;"><p>Your cart is empty.</p></div>`;
+    document.getElementById('summary-section').style.display = 'none';
+    savedSection.style.display = 'none';
+    return;
+  }
+
+  document.getElementById('summary-section').style.display = cart.length ? 'block' : 'none';
+  let subtotal = 0, count = 0;
+
+  cartList.innerHTML = cart.map((p, i) => {
+    const qty = p.qty || 1;
+    subtotal += p.price * qty;
+    count += qty;
+    const isLow = p.stock > 0 && p.stock <= 3;
+    return `
+    <div class="cart-item">
+      <img class="cart-img" src="${p.images?.[0]||'logo.png'}" onclick="location.href='products.html?id=${p.id}'">
+      <div class="item-content">
+        <div class="name-price-flex">
+          <a href="products.html?id=${p.id}" class="item-name">${p.name}</a>
+          <span class="item-price">₹${(p.price * qty).toLocaleString()}</span>
+        </div>
+        <p class="stock-msg ${isLow ? 'red' : 'green'}">
+          ${p.stock <= 0 ? 'Out of Stock' : (isLow ? `Only ${p.stock} left in stock` : 'In Stock')}
+        </p>
+        <div class="action-row">
+          <div class="qty-ctrl">
+            <button type="button" onclick="changeQty(${i}, -1)">-</button>
+            <span>${qty}</span>
+            <button type="button" onclick="changeQty(${i}, 1)">+</button>
+          </div>
+          <span class="link-action" onclick="deleteItem(${i})">Delete</span>
+          <span class="link-action" onclick="saveItem(${i})">Save</span>
+          <span class="link-action" onclick="shareItem('${p.id}','${p.name}')">Share</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  if(saved.length) {
+    savedSection.style.display = 'block';
+    savedList.innerHTML = saved.map((p, i) => `
+      <div class="cart-item" style="opacity: 0.7; padding: 10px 0;">
+        <img class="cart-img" src="${p.images?.[0]||'logo.png'}" style="width: 60px; height: 60px;">
+        <div class="item-content">
+          <span class="item-name" style="font-size: 0.85rem;">${p.name}</span>
+          <div class="action-row">
+            <span class="link-action" onclick="moveToCart(${i})">Move to cart</span>
+            <span class="link-action" onclick="deleteSaved(${i})">Delete</span>
+          </div>
+        </div>
+      </div>`).join('');
+  } else { savedSection.style.display = 'none'; }
+
+  document.getElementById('items-count').innerText = `Subtotal (${count} items)`;
+  document.getElementById('sub-total').innerText = `₹${subtotal.toLocaleString()}`;
+  document.getElementById('grand-total').innerText = `₹${subtotal.toLocaleString()}`;
+}
+
+async function changeQty(idx, delta) {
+  const item = cart[idx];
+  const newQty = (item.qty || 1) + delta;
+  if(newQty < 1) return;
+
+  const {data} = await supa.from('products').select('stock').eq('id', item.id).maybeSingle();
+  if(!data || newQty > data.stock) return alert(`Limit: ${data ? data.stock : 0} available.`);
+  
+  cart[idx].qty = newQty;
+  updateStorage();
+}
+
+function deleteItem(i) { cart.splice(i, 1); updateStorage(); }
+function saveItem(i) { saved.push(cart.splice(i, 1)[0]); updateStorage(); }
+function deleteSaved(i) { saved.splice(i, 1); updateStorage(); }
+function moveToCart(i) { cart.push(saved.splice(i, 1)[0]); updateStorage(); }
+
+function shareItem(id, name) {
+  const url = `${location.origin}/products.html?id=${id}`;
+  if(navigator.share) navigator.share({title: name, url: url}).catch(()=>{});
+  else { 
+      const dummy = document.createElement('input');
+      document.body.appendChild(dummy);
+      dummy.value = url;
+      dummy.select();
+      document.execCommand('copy');
+      document.body.removeChild(dummy);
+      alert("Product link copied to clipboard!"); 
+  }
+}
+
+function openModal() { document.getElementById('checkout-modal').style.display='flex'; }
+function closeModal() { document.getElementById('checkout-modal').style.display='none'; }
+
+async function handleOrder(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('button');
+  btn.disabled = true; btn.innerText = 'Processing...';
+
+  const name = document.getElementById('cust-name').value.trim();
+  const phone = document.getElementById('cust-phone').value.trim();
+
+  try {
+    for(const item of cart) {
+      const {data} = await supa.from('products').select('stock').eq('id', item.id).maybeSingle();
+      if(!data || item.qty > data.stock) throw new Error(`${item.name} is out of stock!`);
     }
 
-    async function updateQty(index, change) {
-        const item = cart[index];
-        const newQty = (item.qty || 1) + change;
-        if (newQty < 1) return;
+    const total = cart.reduce((t, x) => t + x.price * x.qty, 0);
+    await supa.from('orders').insert([{
+      customer_name: name, phone_number: "+91" + phone,
+      items: cart.map(x => `${x.name} (x${x.qty})`).join(', '),
+      total_price: total, status: 'New'
+    }]);
 
-        // Stock check against database
-        const { data: p } = await supa.from('products').select('stock').eq('id', item.id).single();
-        if (p && newQty > p.stock) {
-            alert(`Only ${p.stock} units available in stock.`);
-            return;
-        }
-        cart[index].qty = newQty;
-        save();
+    for(const item of cart) {
+      const {data} = await supa.from('products').select('stock').eq('id', item.id).maybeSingle();
+      await supa.from('products').update({stock: data.stock - item.qty}).eq('id', item.id);
     }
 
-    function removeItem(i) { cart.splice(i, 1); save(); }
-    function saveLater(i) { saved.push(cart.splice(i, 1)[0]); save(); }
-    function moveToCart(i) { cart.push(saved.splice(i, 1)[0]); save(); }
-    function deleteSaved(i) { saved.splice(i, 1); save(); }
+    const msg = `*New Order*\nName: ${name}\nPhone: +91 ${phone}\nTotal: ₹${total.toLocaleString()}\n\nItems:\n` + cart.map(x => `• ${x.name} x${x.qty}`).join('\n');
+    window.open(`https://wa.me/919307760665?text=${encodeURIComponent(msg)}`, '_blank');
 
-    function shareItem(id, name) {
-        const url = `${window.location.origin}/products.html?id=${id}`;
-        if (navigator.share) {
-            navigator.share({ title: name, url: url }).catch(() => {});
-        } else {
-            navigator.clipboard.writeText(url);
-            alert("Product link copied!");
-        }
-    }
+    localStorage.removeItem('hc-cart');
+    location.href='index.html';
+  } catch(err) {
+    alert(err.message);
+    btn.disabled = false; btn.innerText = 'Confirm & Order';
+  }
+}
 
-    function save() {
-        localStorage.setItem('hc-cart', JSON.stringify(cart));
-        localStorage.setItem('hc-saved', JSON.stringify(saved));
-        renderCart();
-    }
-
-    function openModal() { document.getElementById('checkout-modal').style.display = 'flex'; }
-    function closeModal() { document.getElementById('checkout-modal').style.display = 'none'; }
-
-    async function handleFormSubmit(e) {
-        e.preventDefault();
-        const btn = document.getElementById('confirm-btn');
-        btn.disabled = true; btn.innerText = "Syncing Inventory...";
-
-        try {
-            const name = document.getElementById('cust-name').value.trim();
-            const phone = document.getElementById('cust-phone').value.trim();
-            const total = cart.reduce((acc, i) => acc + (i.price * i.qty), 0);
-
-            // 1. Database Entry
-            const { error } = await supa.from('orders').insert([{
-                customer_name: name, phone_number: "+91" + phone,
-                items: cart.map(i => `${i.name} (x${i.qty})`).join(', '),
-                total_price: total, status: 'New'
-            }]);
-            if (error) throw error;
-
-            // 2. Decrement Stock
-            for (const item of cart) {
-                const { data: p } = await supa.from('products').select('stock').eq('id', item.id).single();
-                await supa.from('products').update({ stock: Math.max(0, p.stock - item.qty) }).eq('id', item.id);
-            }
-
-            // 3. WhatsApp Redirect
-            const msg = `*New Order - Hygienic & Comfort Co.*\n👤 Name: ${name}\n📞 Phone: +91 ${phone}\n💰 Total: ₹${total.toLocaleString()}\n\n*Items:*\n` + cart.map(i => `• ${i.name} (x${i.qty})`).join('\n');
-            window.open(`https://wa.me/919307760665?text=${encodeURIComponent(msg)}`, '_blank');
-
-            localStorage.removeItem('hc-cart');
-            window.location.href = 'index.html';
-        } catch (err) {
-            alert("Order Error: " + err.message);
-            btn.disabled = false; btn.innerText = "Confirm Order";
-        }
-    }
-
-    renderCart();
+renderUI();
 </script>
 </body>
 </html>
