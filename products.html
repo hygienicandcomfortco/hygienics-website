@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Products | Hygienic & Comfort Co.</title>
   <link rel="icon" type="image/png" href="logo.png">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -20,13 +20,13 @@
       --bg: #f8fafc;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: 'Plus Jakarta Sans', sans-serif; color: var(--dark); background: var(--bg); line-height: 1.4; overflow-x: hidden; }
 
-    /* --- Fixed Professional Header --- */
+    /* --- Fixed Professional Header (Matching About Page Alignment) --- */
     .main-header { 
       background: var(--white); 
-      padding: 12px 5%; 
+      padding: 15px 5%; 
       border-bottom: 1px solid #f1f5f9; 
       position: sticky; 
       top: 0; 
@@ -38,26 +38,32 @@
       max-width: 1200px;
       margin: 0 auto;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column; 
+      align-items: center; 
+      gap: 12px;
     }
 
     .header-top {
       display: flex;
-      align-items: center;
+      align-items: center; 
       gap: 15px;
       text-decoration: none;
       color: inherit;
     }
 
-    .header-logo { height: 55px; width: auto; display: block; }
+    .header-logo { height: 65px; width: auto; display: block; flex-shrink: 0; }
     
     .brand-text { text-align: left; }
-    .brand-text h1 { font-size: 1.1rem; font-weight: 800; color: var(--dark); margin: 0; line-height: 1.2; }
-    .brand-text p { font-size: 0.75rem; color: var(--grey); font-weight: 600; margin: 0; }
+    .brand-text h1 { font-size: 1.4rem; font-weight: 800; color: var(--dark); margin: 0; line-height: 1.1; }
+    .brand-text p { font-size: 0.9rem; color: var(--grey); font-weight: 600; margin: 0; }
 
-    .nav-links { display: flex; gap: 25px; align-items: center; }
-    .nav-links a { text-decoration: none; color: #475569; font-weight: 700; font-size: 0.9rem; transition: 0.2s; position: relative; padding: 5px 0; }
+    .nav-links { 
+      display: flex; 
+      gap: 25px; 
+      align-items: center;
+      padding-top: 5px;
+    }
+    .nav-links a { text-decoration: none; color: #475569; font-weight: 700; font-size: 0.95rem; transition: 0.2s; position: relative; padding: 5px 0; }
     .nav-links a.active { color: var(--primary); }
     .nav-links a.active::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: var(--primary); border-radius: 2px; }
 
@@ -73,6 +79,10 @@
     .product-card { background: var(--white); border-radius: 20px; overflow: hidden; border: 1px solid #f1f5f9; display: flex; flex-direction: column; height: 100%; transition: 0.3s; cursor: pointer; }
     .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
     
+    /* Out of stock card styling - Clickable but visually distinct */
+    .product-card.out-of-stock { filter: grayscale(0.3); }
+    .stock-warning { color: #cc0c39; font-size: 0.75rem; font-weight: 800; margin-top: 4px; text-transform: uppercase; }
+    
     .img-box { width: 100%; aspect-ratio: 1/1; padding: 15px; display: flex; align-items: center; justify-content: center; background: #fff; }
     .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
     
@@ -83,17 +93,18 @@
     .price-row { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
     .price { font-size: 1.1rem; font-weight: 800; }
     .add-to-cart-icon-btn { background: var(--soft-blue); color: var(--primary); border: none; width: 38px; height: 38px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .add-to-cart-icon-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* --- Amazon Style Gallery & Detail Page --- */
+    /* --- Detail Page --- */
     .detail-view-container { max-width: 1200px; margin: 20px auto; padding: 0 5%; }
     .back-nav { display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 20px; font-weight: 700; color: var(--grey); }
     
     .gallery-container { display: flex; flex-direction: column; gap: 15px; }
-    .main-image-view { background: white; border-radius: 20px; padding: 20px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; height: 400px; }
+    .main-image-view { background: white; border-radius: 20px; padding: 20px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; height: 350px; }
     .main-image-view img { max-width: 100%; max-height: 100%; object-fit: contain; }
     
     .thumbnail-row { display: flex; gap: 10px; overflow-x: auto; padding: 5px; }
-    .thumb { width: 70px; height: 70px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; padding: 5px; background: white; transition: 0.2s; }
+    .thumb { flex-shrink: 0; width: 70px; height: 70px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; padding: 5px; background: white; }
     .thumb.active { border-color: var(--primary); }
     .thumb img { width: 100%; height: 100%; object-fit: contain; }
 
@@ -111,32 +122,42 @@
     .button-group { display: flex; flex-direction: column; gap: 12px; margin-top: 25px; }
     .btn-primary { background: var(--primary); color: white; padding: 18px; border-radius: 15px; font-weight: 800; border: none; cursor: pointer; transition: 0.2s; font-size: 1rem; }
     .btn-whatsapp { background: #22c55e; color: white; padding: 18px; border-radius: 15px; font-weight: 800; text-decoration: none; border: none; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1rem; cursor: pointer; }
+    .btn-primary:disabled, .btn-whatsapp:disabled { background: #cbd5e1; cursor: not-allowed; }
 
-    /* --- Filters & Overlays --- */
+    /* --- WhatsApp Modal --- */
+    #wa-modal.filter-overlay { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); }
+    .wa-modal-card {
+      background: rgba(255, 255, 255, 0.9) !important;
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      width: 90%;
+      max-width: 400px;
+      border-radius: 30px;
+      padding: 32px;
+      position: relative;
+    }
+
     .filter-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; opacity: 0; visibility: hidden; transition: 0.3s; backdrop-filter: blur(4px); display: none; }
     .filter-overlay.show { opacity: 1; visibility: visible; display: flex !important; }
-    .filter-drawer { position: fixed; right: -320px; top: 0; height: 100%; width: 320px; background: white; z-index: 2001; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding: 30px; display: flex; flex-direction: column; }
+    .filter-drawer { position: fixed; right: -320px; top: 0; height: 100%; width: 320px; background: white; z-index: 2001; transition: 0.3s; padding: 30px; display: flex; flex-direction: column; }
     .filter-drawer.open { right: 0; }
     .chip { padding: 8px 16px; border-radius: 10px; border: 1.5px solid #e2e8f0; font-size: 0.85rem; font-weight: 600; cursor: pointer; margin: 4px; display: inline-block; }
     .chip.selected { background: var(--primary); color: white; border-color: var(--primary); }
 
     .cart-icon-wrapper { position: fixed; bottom: 25px; right: 25px; background: var(--primary); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 1500; box-shadow: 0 8px 20px rgba(37,99,235,0.3); text-decoration: none; }
-    .cart-count { position: absolute; top: 0; right: 0; background: #ef4444; color: white; font-size: 0.75rem; min-width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid white; font-weight: 800; }
+    .cart-badge { position: absolute; top: 0; right: 0; background: #ef4444; color: white; font-size: 0.75rem; min-width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid white; font-weight: 800; }
 
     #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--dark); color: white; padding: 14px 28px; border-radius: 50px; font-weight: 600; font-size: 0.9rem; opacity: 0; visibility: hidden; transition: 0.3s; z-index: 3000; }
     #toast.show { opacity: 1; visibility: visible; }
     .hidden { display: none !important; }
 
-    /* --- Media Queries --- */
-    @media (max-width: 768px) {
-      .header-container { flex-direction: column; gap: 15px; }
-      .nav-links { gap: 15px; width: 100%; justify-content: center; border-top: 1px solid #f1f5f9; padding-top: 10px; }
-      .detail-grid { display: flex; flex-direction: column; gap: 20px; }
-      .main-image-view { height: 300px; }
-    }
     @media (min-width: 769px) {
+      .header-container { flex-direction: row; justify-content: space-between; align-items: center; }
+      .header-logo { height: 75px; }
       .product-list { grid-template-columns: repeat(3, 1fr); }
       .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+      .main-image-view { height: 450px; }
       .button-group { flex-direction: row; }
       .btn-primary, .btn-whatsapp { flex: 1; }
     }
@@ -215,6 +236,7 @@
       <div class="info-panel">
         <span id="dp-category" class="p-category" style="font-size:0.9rem"></span>
         <h2 id="dp-name" style="font-size:1.8rem; font-weight:800; margin-bottom:10px;"></h2>
+        <div id="dp-stock-warning" class="stock-warning"></div>
         
         <div class="pricing-box">
           <div class="discount-row">
@@ -243,29 +265,28 @@
 </main>
 
 <div id="wa-modal" class="filter-overlay" style="align-items:center; justify-content:center; padding:20px;">
-  <div class="bg-white p-8 rounded-[30px] w-full max-w-[400px] shadow-2xl">
+  <div class="wa-modal-card">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
-      <h3 style="font-weight:800; font-size:1.4rem;">Customer Details</h3>
+      <h3 style="font-weight:800; font-size:1.4rem; color: #1e293b;">Customer Details</h3>
       <i data-lucide="x" style="cursor:pointer" onclick="closeWAModal()"></i>
     </div>
     
     <div style="margin-bottom:20px;">
       <label style="display:block; font-size:0.7rem; font-weight:800; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">Full Name</label>
-      <input type="text" id="wa-cust-name" placeholder="Enter your name" style="width:100%; padding:14px; border-radius:12px; border:1.5px solid #e2e8f0; outline:none; font-family:inherit;">
+      <input type="text" id="wa-cust-name" placeholder="Enter your name" style="width:100%; padding:14px; border-radius:12px; border:1.5px solid #e2e8f0; outline:none; font-family:inherit; background:white;">
     </div>
 
     <div style="margin-bottom:30px;">
       <label style="display:block; font-size:0.7rem; font-weight:800; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">WhatsApp Number</label>
       <div style="display:flex; gap:10px;">
-        <span style="background:#f1f5f9; padding:14px; border-radius:12px; font-weight:700; border:1.5px solid #e2e8f0;">+91</span>
-        <input type="tel" id="wa-cust-phone" placeholder="10-digit number" style="flex:1; padding:14px; border-radius:12px; border:1.5px solid #e2e8f0; outline:none; font-family:inherit;">
+        <span style="background:#f1f5f9; padding:14px; border-radius:12px; font-weight:700; border:1.5px solid #e2e8f0; display:flex; align-items:center;">+91</span>
+        <input type="tel" id="wa-cust-phone" placeholder="10-digit number" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" style="flex:1; padding:14px; border-radius:12px; border:1.5px solid #e2e8f0; outline:none; font-family:inherit; background:white;">
       </div>
     </div>
 
     <button onclick="sendWAOrder()" style="width:100%; background:#22c55e; color:white; padding:18px; border-radius:15px; border:none; font-weight:800; display:flex; align-items:center; justify-content:center; gap:10px; cursor:pointer;">
       <i data-lucide="send" style="width:20px"></i> Confirm & WhatsApp
     </button>
-    
     <p onclick="closeWAModal()" style="text-align:center; margin-top:15px; font-size:0.8rem; font-weight:700; color:var(--primary); cursor:pointer;">Cancel</p>
   </div>
 </div>
@@ -274,7 +295,7 @@
 
 <a href="cart.html" class="cart-icon-wrapper">
   <i data-lucide="shopping-basket"></i>
-  <span class="cart-count" id="cart-badge">0</span>
+  <span class="cart-badge" id="cart-badge-count">0</span>
 </a>
 
 <script>
@@ -296,32 +317,25 @@
       renderGrid(allProducts);
       generateBrandChips();
 
-      // NEW LOGIC: This checks the URL for "?id=..."
       const urlParams = new URLSearchParams(window.location.search);
       const productId = urlParams.get('id');
-      
-      // If an ID is found, it automatically opens that product's detail view
       if (productId) {
           openProductPage(productId);
       }
     }
     lucide.createIcons();
-}
+  }
 
-init(); // This line triggers the code when the page loads
+  init(); 
 
   function toggleFilter(show) {
     const overlay = document.getElementById('filter-overlay');
     const drawer = document.getElementById('filter-drawer');
     if(show) {
       overlay.style.display = 'flex';
-      setTimeout(() => {
-        overlay.classList.add('show');
-        drawer.classList.add('open');
-      }, 10);
+      setTimeout(() => { overlay.classList.add('show'); drawer.classList.add('open'); }, 10);
     } else {
-      overlay.classList.remove('show');
-      drawer.classList.remove('open');
+      overlay.classList.remove('show'); drawer.classList.remove('open');
       setTimeout(() => overlay.style.display = 'none', 300);
     }
   }
@@ -357,21 +371,27 @@ init(); // This line triggers the code when the page loads
 
   function renderGrid(list) {
     const container = document.getElementById("product-list");
-    container.innerHTML = list.map((p) => `
-      <div class="product-card" onclick="openProductPage('${p.id}')">
-        <div class="img-box"><img src="${p.images?.[0] || 'logo.png'}"></div>
-        <div class="details">
-          <span class="p-category">${p.category}</span>
-          <div class="p-name">${p.name}</div>
-          <div class="price-row">
-            <div class="price">₹${p.price}</div>
-            <button class="add-to-cart-icon-btn" onclick="event.stopPropagation(); addToCart('${p.id}')">
-                <i data-lucide="plus" style="width:20px"></i>
-            </button>
+    container.innerHTML = list.map((p) => {
+        const stockCount = parseInt(p.stock) || 0;
+        const stockStatusMsg = (stockCount > 0 && stockCount <= 3) ? `<div class="stock-warning">Only ${stockCount} left!</div>` : '';
+        const isOut = stockCount <= 0;
+        return `
+          <div class="product-card ${isOut ? 'out-of-stock' : ''}" onclick="openProductPage('${p.id}')">
+            <div class="img-box"><img src="${p.images?.[0] || 'logo.png'}"></div>
+            <div class="details">
+              <span class="p-category">${p.category} ${isOut ? '<span style="color:red; font-size:0.6rem;">(Sold Out)</span>' : ''}</span>
+              <div class="p-name">${p.name}</div>
+              ${stockStatusMsg}
+              <div class="price-row">
+                <div class="price">₹${p.price}</div>
+                <button class="add-to-cart-icon-btn" onclick="event.stopPropagation(); addToCart('${p.id}')" ${isOut ? 'disabled' : ''}>
+                    <i data-lucide="plus" style="width:20px"></i>
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    `).join('');
+        `;
+    }).join('');
     lucide.createIcons();
   }
 
@@ -381,19 +401,16 @@ init(); // This line triggers the code when the page loads
     document.getElementById('catalog-section').classList.add('hidden');
     document.getElementById('detail-section').classList.remove('hidden');
     
-    // Gallery Logic
-    const mainImg = document.getElementById('dp-image');
+    document.getElementById('dp-image').src = product.images?.[0] || 'logo.png';
     const thumbRow = document.getElementById('thumb-row');
-    mainImg.src = product.images?.[0] || 'logo.png';
     thumbRow.innerHTML = '';
-    
     if (product.images && product.images.length > 1) {
       product.images.forEach((url, i) => {
         const t = document.createElement('div');
         t.className = `thumb ${i === 0 ? 'active' : ''}`;
         t.innerHTML = `<img src="${url}">`;
         t.onclick = () => {
-          mainImg.src = url;
+          document.getElementById('dp-image').src = url;
           document.querySelectorAll('.thumb').forEach(thumb => thumb.classList.remove('active'));
           t.classList.add('active');
         };
@@ -401,7 +418,6 @@ init(); // This line triggers the code when the page loads
       });
     }
 
-    // Pricing Logic
     const curPrice = Number(product.price);
     const mrp = Number(product.mrp || curPrice + Math.round(curPrice * 0.25));
     const disc = Math.round(((mrp - curPrice) / mrp) * 100);
@@ -409,15 +425,31 @@ init(); // This line triggers the code when the page loads
     document.getElementById('dp-price').innerText = curPrice.toLocaleString('en-IN');
     document.getElementById('dp-mrp').innerText = `₹${mrp.toLocaleString('en-IN')}`;
     document.getElementById('dp-discount').innerText = `-${disc}%`;
-    
-    // Info Logic
     document.getElementById('dp-name').innerText = product.name;
     document.getElementById('dp-category').innerText = product.category;
     document.getElementById('dp-description').innerText = product.description || "Premium quality protection and comfort.";
+
+    const sw = document.getElementById('dp-stock-warning');
+    const addBtn = document.getElementById('dp-add-btn');
+    const waBtn = document.getElementById('dp-whatsapp-btn');
+    const stockVal = parseInt(product.stock) || 0;
     
-    // WhatsApp logic fix (re-binding)
-    document.getElementById('dp-whatsapp-btn').onclick = () => openWAModal();
-    document.getElementById('dp-add-btn').onclick = () => addToCart(product.id);
+    if (stockVal > 0 && stockVal <= 3) {
+        sw.innerText = `Only ${stockVal} left in stock!`;
+        addBtn.disabled = false; waBtn.disabled = false;
+        addBtn.innerText = "Add to Cart";
+    } else if (stockVal <= 0) {
+        sw.innerText = "Currently Out of Stock";
+        addBtn.disabled = true; waBtn.disabled = true;
+        addBtn.innerText = "Sold Out";
+    } else {
+        sw.innerText = "";
+        addBtn.disabled = false; waBtn.disabled = false;
+        addBtn.innerText = "Add to Cart";
+    }
+    
+    waBtn.onclick = () => openWAModal();
+    addBtn.onclick = () => addToCart(product.id);
     
     window.scrollTo(0,0);
     lucide.createIcons();
@@ -430,8 +462,28 @@ init(); // This line triggers the code when the page loads
 
   function addToCart(productId) {
     const product = allProducts.find(p => p.id == productId);
-    const existing = cart.find(item => item.id == productId);
-    if(existing) existing.qty += 1; else cart.push({ ...product, qty: 1 });
+    const stockAvailable = parseInt(product.stock) || 0;
+
+    if (stockAvailable <= 0) {
+        alert("This item is out of stock.");
+        return;
+    }
+
+    const existingInCart = cart.find(item => item.id == productId);
+    const currentQtyInCart = existingInCart ? existingInCart.qty : 0;
+
+    // STOCK LIMIT CHECK: Don't allow adding more than available stock
+    if (currentQtyInCart + 1 > stockAvailable) {
+        alert(`Only ${stockAvailable} units are available in stock. You already have ${currentQtyInCart} in your cart.`);
+        return;
+    }
+
+    if(existingInCart) {
+        existingInCart.qty += 1; 
+    } else { 
+        cart.push({ ...product, qty: 1 }); 
+    }
+    
     localStorage.setItem('hc-cart', JSON.stringify(cart));
     updateCartBadge();
     showToast();
@@ -439,7 +491,7 @@ init(); // This line triggers the code when the page loads
 
   function updateCartBadge() {
     const totalQty = cart.reduce((sum, item) => sum + (item.qty || 1), 0);
-    document.getElementById('cart-badge').innerText = totalQty;
+    document.getElementById('cart-badge-count').innerText = totalQty;
   }
 
   function showToast() {
@@ -453,7 +505,6 @@ init(); // This line triggers the code when the page loads
     renderGrid(allProducts.filter(p => p.name.toLowerCase().includes(term) || p.category.toLowerCase().includes(term)));
   }
 
-  /* --- WhatsApp Modal Logic --- */
   function openWAModal() {
     const modal = document.getElementById('wa-modal');
     modal.style.display = 'flex';
@@ -467,29 +518,63 @@ init(); // This line triggers the code when the page loads
     setTimeout(() => modal.style.display = 'none', 300);
   }
 
-  function sendWAOrder() {
+  async function sendWAOrder() {
     const name = document.getElementById('wa-cust-name').value.trim();
     const phone = document.getElementById('wa-cust-phone').value.trim();
 
     if (!name || phone.length < 10) {
-      alert("Please enter a valid name and phone number.");
+      alert("Please enter a valid name and 10-digit phone number.");
       return;
     }
 
-    const message = `*NEW ORDER INQUIRY*\n\n` +
-                    `*Product:* ${currentOrderProduct.name}\n` +
-                    `*Price:* ₹${currentOrderProduct.price}\n\n` +
-                    `*Customer Details*\n` +
-                    `*Name:* ${name}\n` +
-                    `*Phone:* +91 ${phone}\n\n` +
-                    `Is this available?`;
+    try {
+      const currentStock = parseInt(currentOrderProduct.stock) || 0;
+      if (currentStock <= 0) {
+          alert("Sorry, this item just sold out.");
+          return;
+      }
 
-    const waURL = `https://wa.me/919307760665?text=${encodeURIComponent(message)}`;
-    window.open(waURL, '_blank');
-    closeWAModal();
+      const { data, error } = await _supabase
+        .from('orders')
+        .insert([
+          {
+            customer_name: name,
+            phone_number: '+91' + phone,
+            items: `${currentOrderProduct.name} (x1)`, 
+            total_price: currentOrderProduct.price,
+            status: 'New', 
+            created_at: new Date().toISOString()
+          }
+        ]);
+
+      if (error) throw error;
+
+      const { error: stockError } = await _supabase
+        .from('products')
+        .update({ stock: currentStock - 1 })
+        .eq('id', currentOrderProduct.id);
+
+      if (stockError) throw stockError;
+
+      const orderMessage = `*NEW ORDER*\n\n` +
+                           `*Customer Details*\n` +
+                           `*Name:* ${name}\n` +
+                           `*Phone:* +91 ${phone}\n\n` +
+                           `*Product:* ${currentOrderProduct.name}\n` +
+                           `*Price:* ₹${currentOrderProduct.price}\n\n`;
+
+      const waURL = `https://wa.me/919307760665?text=${encodeURIComponent(orderMessage)}`;
+      window.open(waURL, '_blank');
+      
+      closeWAModal();
+      showToast("Order Saved & WhatsApp Opened!");
+      init();
+
+    } catch (err) {
+      console.error("Backend Error:", err.message);
+      alert("Error processing order: " + err.message);
+    }
   }
-
-  init();
 </script>
 </body>
 </html>
