@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Your Cart | Hygienic & Comfort Co.</title>
+
+<title>Your Cart | Hygienic & Comfort Co. - Review Your Order</title>
+<meta name="description" content="View your shopping cart at Hygienic & Comfort Co. Review your selected baby and adult hygiene products before secure checkout and WhatsApp ordering.">
+<link rel="canonical" href="https://hygienicandcomfortco.shop/cart.html" />
 
 <link rel="icon" type="image/png" href="logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -135,7 +138,7 @@ header h1 {
 <header>
   <div class="head-container">
     <a href="index.html" class="logo-link">
-      <img src="logo.png" alt="Logo">
+      <img src="logo.png" alt="Hygienic & Comfort Co. Logo">
       <h1>Hygienic & Comfort Co.</h1>
     </a>
     <a href="products.html" class="back-link">Back to Shop</a>
@@ -217,7 +220,7 @@ function renderUI() {
     const isLow = p.stock > 0 && p.stock <= 3;
     return `
     <div class="cart-item">
-      <img class="cart-img" src="${p.images?.[0]||'logo.png'}" onclick="location.href='products.html?id=${p.id}'">
+      <img class="cart-img" src="${p.images?.[0]||'logo.png'}" onclick="location.href='products.html?id=${p.id}'" alt="${p.name}">
       <div class="item-content">
         <div class="name-price-flex">
           <a href="products.html?id=${p.id}" class="item-name">${p.name}</a>
@@ -244,7 +247,7 @@ function renderUI() {
     savedSection.style.display = 'block';
     savedList.innerHTML = saved.map((p, i) => `
       <div class="cart-item" style="opacity: 0.7; padding: 10px 0;">
-        <img class="cart-img" src="${p.images?.[0]||'logo.png'}" style="width: 60px; height: 60px;">
+        <img class="cart-img" src="${p.images?.[0]||'logo.png'}" style="width: 60px; height: 60px;" alt="${p.name}">
         <div class="item-content">
           <span class="item-name" style="font-size: 0.85rem;">${p.name}</span>
           <div class="action-row">
