@@ -28,7 +28,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: 'Plus Jakarta Sans', sans-serif; color: var(--dark); background: var(--bg); line-height: 1.4; overflow-x: hidden; }
 
-    /* --- Header Navigation --- */
+    /* --- Fixed Professional Header --- */
     .main-header { 
       background: var(--white); 
       padding: 10px 5%; 
@@ -74,6 +74,7 @@
     .nav-links a.active { color: var(--primary); }
     .nav-links a.active::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: var(--primary); border-radius: 2px; }
 
+    /* Desktop Adjustments */
     @media (min-width: 769px) {
       .header-container { flex-direction: row; justify-content: space-between; align-items: center; gap: 0; }
       .header-logo { height: 65px; }
@@ -101,7 +102,7 @@
       display: flex; 
       flex-direction: column; 
       height: auto;
-      min-height: 440px; /* Aligns all boxes to same size */
+      min-height: 420px; /* Aligns all boxes to same size */
       transition: 0.3s; 
       cursor: pointer; 
       position: relative; 
@@ -180,6 +181,7 @@
         align-items: center; 
         justify-content: center; 
         overflow: hidden; 
+        touch-action: none;
     }
     .viewer-content img { 
         max-width: 90%; 
@@ -203,10 +205,11 @@
         z-index: 5001;
     }
     .control-btn {
-        background: rgba(255,255,255,0.1);
+        background: rgba(255,255,255,0.2);
         color: white;
-        border: 1px solid rgba(255,255,255,0.2);
-        padding: 10px;
+        border: 1px solid rgba(255,255,255,0.3);
+        width: 45px;
+        height: 45px;
         border-radius: 50%;
         cursor: pointer;
         display: flex;
@@ -263,7 +266,7 @@
     .hidden { display: none !important; }
 
     @media (min-width: 769px) {
-      .header-container { flex-direction: row; justify-content: space-between; align-items: center; }
+      .header-container { flex-direction: row; justify-content: space-between; align-items: center; gap: 0; }
       .header-logo { height: 75px; }
       .product-list { grid-template-columns: repeat(3, 1fr); }
       .product-card { height: 480px; }
@@ -442,7 +445,7 @@
         } else if (url.includes("id=")) {
           fileId = url.split("id=")[1].split("&")[0];
         }
-        return fileId ? `http://googleusercontent.com/profile/picture/5{fileId}` : url;
+        return fileId ? `https://drive.google.com/uc?export=view&id=${fileId}` : url;
       } catch (e) { return url; }
     }
     return url;
@@ -470,7 +473,7 @@
 
   init(); 
 
-  // --- Interactive Zoom Logic ---
+  // --- Mobile-Optimized Interactive Zoom Logic ---
   function openImageViewer(url) {
       const viewer = document.getElementById('image-viewer');
       const viewerImg = document.getElementById('viewer-img');
@@ -580,7 +583,7 @@
 
             <div class="price-row">
                 <button class="add-to-cart-full-btn" onclick="event.stopPropagation(); addToCart('${p.id}')" ${isOut ? 'disabled' : ''}>
-                    <i data-lucide="shopping-Cart"></i>
+                    <i data-lucide="shopping-cart"></i>
                     <span>${isOut ? 'Sold Out' : 'Add to Cart'}</span>
                 </button>
             </div>
