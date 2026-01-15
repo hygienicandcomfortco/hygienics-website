@@ -404,10 +404,10 @@
     </div>
 
     <div style="margin-bottom:30px;">
-      <label style="display:block; font-size:0.7rem; font-weight:800; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">WhatsApp Number</label>
-      <div style="display:flex; gap:10px;">
-        <span style="background:#f1f5f9; padding:14px; border-radius:12px; font-weight:700; border:1.5px solid #e2e8f0; display:flex; align-items:center;">+91</span>
-        <input type="tel" id="wa-cust-phone" placeholder="10-digit number" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" style="flex:1; padding:14px; border-radius:12px; border:1.5px solid #e2e8f0; outline:none; font-family:inherit; background:white;">
+      <label style="font-size: 0.8rem; font-weight: 700;">WhatsApp Number</label>
+      <div style="display:flex;border:1px solid #ccc;border-radius:6px;margin: 5px 0 20px; overflow: hidden;">
+        <span style="padding:12px;background:#f3f3f3;font-weight:700;">+91</span>
+        <input type="tel" id="cust-phone" maxlength="10" pattern="[0-9]{10}" required style="flex:1;border:none;padding:12px; outline: none;">
       </div>
     </div>
 
