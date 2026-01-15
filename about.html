@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<link rel="icon" type="image/png" href="logo.png">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About Us | Hygienic & Comfort Co.</title>
-  <meta name="description" content="Learn about Hygienic & Comfort Co., a trusted provider of hygienic and comfortable daily care products for babies and adults.">
   
+  <title>About Us | Hygienic & Comfort Co. - Our Story & Mission</title>
+  <meta name="description" content="Learn about Hygienic & Comfort Co., your trusted provider for premium baby and adult hygiene products. Discover our commitment to quality, comfort, and safety.">
+  <link rel="canonical" href="https://hygienicandcomfortco.shop/about.html" />
+  
+  <link rel="icon" type="image/png" href="logo.png">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
   
   <style>
     :root {
@@ -49,7 +52,7 @@
 
     .logo-link {
       text-decoration: none; 
-      color: inherit;        
+      color: inherit;         
       display: block;
     }
 
@@ -143,6 +146,43 @@
 
     .feature-box p { color: var(--grey); font-size: 0.95rem; }
 
+    /* --- Floating Cart --- */
+    .cart-icon-wrapper {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--primary);
+      color: white;
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+      z-index: 2000;
+      text-decoration: none;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .cart-count {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      background: #ef4444;
+      color: white;
+      font-size: 0.75rem;
+      min-width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-weight: 800;
+      border: 2px solid white;
+    }
+
     footer {
       text-align: center;
       padding: 40px;
@@ -163,7 +203,7 @@
   <div class="header-container">
     <a href="index.html" class="logo-link">
       <div class="logo-area">
-        <img src="logo.png" alt="H&C Logo" class="header-logo">
+        <img src="logo.png" alt="Hygienic & Comfort Co. Logo" class="header-logo">
         <div class="brand-text">
           <h1>Hygienic & Comfort Co.</h1>
           <p>Care, Comfort & Hygiene for Every Age</p>
@@ -209,11 +249,29 @@
   </section>
 </main>
 
+<a href="cart.html" class="cart-icon-wrapper">
+  <i data-lucide="shopping-basket"></i>
+  <span class="cart-count" id="cart-badge">0</span>
+</a>
+
 <footer>
-  <p>© 2026 Hygienic & Comfort Co.</p>
+  <p>© 2026 Hygienic & Comfort Co. All rights reserved.</p>
 </footer>
+
+<script>
+  // Initialize Cart Count and Icons
+  function updateCartBadge() {
+    const cart = JSON.parse(localStorage.getItem('hc-cart')) || [];
+    const totalQty = cart.reduce((sum, item) => sum + (Number(item.qty) || 1), 0);
+    const badge = document.getElementById('cart-badge');
+    if (badge) badge.innerText = totalQty;
+  }
+
+  window.onload = () => {
+    updateCartBadge();
+    lucide.createIcons();
+  };
+</script>
 
 </body>
 </html>
-
-
