@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Contact | Hygienic & Comfort Co. - Order Baby & Adult Diapers</title>
-  <meta name="description" content="Get in touch with Hygienic & Comfort Co. Reach us via Phone, WhatsApp, or Email for bulk orders and product inquiries. Visit our store in Ambernath East.">
+  <meta name="description" content="Get in touch with Hygienic & Comfort Co. Reach us via Phone, WhatsApp, Email, or Instagram for bulk orders and product inquiries. Visit our store in Ambernath East.">
   <link rel="canonical" href="https://hygienicandcomfortco.shop/contact.html" />
   
   <link rel="icon" type="image/png" href="logo.png">
@@ -148,7 +148,7 @@
       width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center;
       justify-content: center; cursor: pointer; z-index: 1500; text-decoration: none;
     }
-    .cart-count { position: absolute; top: -2px; right: -2px; background: #ef4444; color: white; font-size: 0.7rem; min-width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid white; }
+    .cart-count { position: absolute; top: -2px; right: -2px; background: #ef4444; color: white; font-size: 0.7rem; min-width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid white; font-weight: 800; }
 
     footer {
       text-align: center;
@@ -213,6 +213,14 @@
     </div>
 
     <div class="contact-item">
+      <div class="icon-box"><i data-lucide="instagram"></i></div>
+      <div>
+        <h4>Instagram</h4>
+        <a href="https://www.instagram.com/hygienic_and_comfort_co._/" target="_blank">hygienic_and_comfort_co._</a>
+      </div>
+    </div>
+
+    <div class="contact-item">
       <div class="icon-box"><i data-lucide="mail"></i></div>
       <div>
         <h4>Email</h4>
@@ -226,7 +234,7 @@
         <h4>Our Store</h4>
         <p>Shop No. 01, Bhausaheb Paranjapee CHS,<br>
            Near Shiv Mandir, Barkhupada Road,<br>
-           Ambernath East – 421502</p>
+           Ambernath East – 421505</p>
       </div>
     </div>
 
@@ -264,7 +272,7 @@
     if (url.includes("drive.google.com")) {
       try {
         const fileId = url.split('/d/')[1].split('/')[0];
-        return `https://lh3.googleusercontent.com/u/0/d/${fileId}`;
+        return `https://drive.google.com/uc?export=view&id=${fileId}`;
       } catch (e) {
         return url;
       }
