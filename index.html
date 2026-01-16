@@ -55,19 +55,8 @@
     }
 
     .logo-link { text-decoration: none; color: inherit; display: block; }
-
-    .logo-area {
-      display: flex;
-      align-items: center;
-      gap: 15px; 
-      cursor: pointer;
-    }
-
-    .header-logo {
-      height: 50px;
-      width: auto;
-      display: block;
-    }
+    .logo-area { display: flex; align-items: center; gap: 15px; cursor: pointer; }
+    .header-logo { height: 50px; width: auto; display: block; }
 
     .brand-text h1 {
       font-size: 1.2rem;
@@ -93,10 +82,42 @@
       font-size: 0.95rem;
       transition: color 0.2s;
     }
-
     .nav-links a:hover, .nav-links a.active { color: var(--primary); }
 
-    /* --- Hero Section Fixes --- */
+    /* --- FIXED CONTINUOUS MARQUEE --- */
+    .announcement-bar {
+      background: var(--soft-blue);
+      color: var(--primary);
+      padding: 10px 0;
+      font-weight: 700;
+      font-size: 0.9rem;
+      overflow: hidden;
+      white-space: nowrap;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+    }
+
+    .marquee-content {
+      display: flex;
+      /* Speed increased to 20s */
+      animation: continuous-scroll 20s linear infinite;
+    }
+
+    .marquee-text {
+      padding-right: 4rem;
+      flex-shrink: 0;
+    }
+
+    @keyframes continuous-scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    
+    .announcement-bar:hover .marquee-content {
+        animation-play-state: paused;
+    }
+
+    /* --- Hero Section --- */
     .hero-container {
       display: flex;
       align-items: center;
@@ -142,7 +163,6 @@
       gap: 0.75rem;
       color: var(--dark);
     }
-
     .trust-item i { color: var(--primary); width: 20px; }
 
     /* --- Floating Cart --- */
@@ -182,23 +202,17 @@
       border: 2px solid var(--white);
     }
 
-    /* --- MOBILE REVERSE ALIGNMENT FIXES --- */
     @media (max-width: 968px) {
       .hero-container {
-        flex-direction: column-reverse; /* Image goes to TOP */
+        flex-direction: column-reverse;
         text-align: center;
         padding: 40px 5%;
         gap: 30px;
       }
       .header-container { flex-direction: column; gap: 15px; }
+      .nav-links { gap: 15px; }
       .hero-text-side { display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%; }
-      .hero-text-side p { margin-bottom: 30px; }
-      
-      .hero-btn-container { 
-        justify-content: center !important; 
-        width: 100%; 
-      }
-      
+      .hero-btn-container { justify-content: center !important; width: 100%; }
       .trust-bar { flex-wrap: wrap; gap: 2rem; }
     }
   </style>
@@ -224,6 +238,14 @@
     </nav>
   </div>
 </header>
+
+<div class="announcement-bar">
+    <div class="marquee-content">
+      <span class="marquee-text">Thank you for visiting Hygienic & Comfort Co! We are now available locally in Ambernath. Stay tuned for expansion — follow us via the links on our Contact page.</span>
+        <span class="marquee-text">Thank you for visiting Hygienic & Comfort Co! We are now available locally in Ambernath. Stay tuned for expansion — follow us via the links on our Contact page.</span>
+        
+    </div>
+</div>
 
 <main>
   <section class="hero-container">
