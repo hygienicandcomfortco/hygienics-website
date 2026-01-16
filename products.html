@@ -74,7 +74,6 @@
     .nav-links a.active { color: var(--primary); }
     .nav-links a.active::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: var(--primary); border-radius: 2px; }
 
-    /* Desktop Adjustments */
     @media (min-width: 769px) {
       .header-container { flex-direction: row; justify-content: space-between; align-items: center; gap: 0; }
       .header-logo { height: 65px; }
@@ -91,7 +90,7 @@
     .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 20px; color: var(--grey); }
     .filter-trigger-btn { background: var(--white); border: 1.5px solid #e2e8f0; padding: 14px 20px; border-radius: 15px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--dark); transition: 0.2s; }
 
-    /* --- Product Grid & Box Uniformity Fix --- */
+    /* --- Product Grid & Uniform Box Height Fix --- */
     .product-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 10px 4%; max-width: 1200px; margin: 0 auto 100px; }
     
     .product-card { 
@@ -102,7 +101,7 @@
       display: flex; 
       flex-direction: column; 
       height: auto;
-      min-height: 420px; /* Aligns all boxes to same size */
+      min-height: 440px; 
       transition: 0.3s; 
       cursor: pointer; 
       position: relative; 
@@ -114,7 +113,7 @@
     
     .img-box { 
       width: 100%; 
-      height: 200px; /* Fixed image container height */
+      height: 200px;
       padding: 15px; 
       display: flex; 
       align-items: center; 
@@ -127,7 +126,7 @@
     .p-category { font-size: 0.65rem; text-transform: uppercase; font-weight: 800; color: var(--primary); margin-bottom: 3px; }
     .p-name { font-weight: 700; font-size: 0.85rem; margin-bottom: 8px; color: var(--dark); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.6em; }
     
-    /* --- Catalog Price Styling --- */
+    /* --- Price Display --- */
     .p-discount-tag { color: var(--amazon-orange); font-size: 1.1rem; font-weight: 400; margin-right: 4px; }
     .p-main-price { font-size: 1.2rem; font-weight: 800; color: #0F1111; }
     .p-mrp-line { font-size: 0.75rem; color: #565959; margin-top: 2px; }
@@ -158,7 +157,7 @@
     .add-to-cart-full-btn:active { transform: scale(0.98); }
     .add-to-cart-full-btn:disabled { background: #cbd5e1; cursor: not-allowed; box-shadow: none; }
 
-    /* --- Interactive Zoom Image Viewer Overlay --- */
+    /* --- Interactive Zoom Overlay --- */
     .image-viewer-overlay {
       position: fixed;
       inset: 0;
@@ -219,7 +218,7 @@
     }
     .control-btn:hover { background: var(--primary); }
 
-    /* --- Detail Page Styling --- */
+    /* --- Detail Page --- */
     .detail-view-container { max-width: 1200px; margin: 20px auto; padding: 0 5%; }
     .back-nav { display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 20px; font-weight: 700; color: var(--grey); }
     
@@ -258,8 +257,8 @@
     .chip { padding: 8px 16px; border-radius: 10px; border: 1.5px solid #e2e8f0; font-size: 0.85rem; font-weight: 600; cursor: pointer; margin: 4px; display: inline-block; }
     .chip.selected { background: var(--primary); color: white; border-color: var(--primary); }
 
-    .cart-icon-wrapper { position: fixed; bottom: 25px; right: 25px; background: var(--primary); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 1500; box-shadow: 0 8px 20px rgba(37,99,235,0.3); text-decoration: none; }
     .cart-badge { position: absolute; top: 0; right: 0; background: #ef4444; color: white; font-size: 0.75rem; min-width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid white; font-weight: 800; }
+    .cart-icon-wrapper { position: fixed; bottom: 25px; right: 25px; background: var(--primary); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 1500; box-shadow: 0 8px 20px rgba(37,99,235,0.3); text-decoration: none; }
 
     #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--dark); color: white; padding: 14px 28px; border-radius: 50px; font-weight: 600; font-size: 0.9rem; opacity: 0; visibility: hidden; transition: 0.3s; z-index: 3000; }
     #toast.show { opacity: 1; visibility: visible; }
@@ -406,8 +405,8 @@
     <div style="margin-bottom:30px;">
       <label style="font-size: 0.8rem; font-weight: 700;">WhatsApp Number</label>
       <div style="display:flex;border:1px solid #ccc;border-radius:6px;margin: 5px 0 20px; overflow: hidden;">
-        <span style="padding:12px;background:#f3f3f3;font-weight:700;">+91</span>
-        <input type="tel" id="cust-phone" maxlength="10" pattern="[0-9]{10}" required style="flex:1;border:none;padding:12px; outline: none;">
+        <span style="padding:14px;background:#f3f3f3;font-weight:700;">+91</span>
+        <input type="tel" id="cust-phone" maxlength="10" placeholder="10-digit number" required style="flex:1;border:none;padding:14px; outline: none;">
       </div>
     </div>
 
@@ -459,10 +458,17 @@
         ...p,
         images: (p.images || []).map(img => fixDriveLink(img))
       }));
+
+      // CATEGORY FILTER LOGIC FROM HOME PAGE REDIRECT
+      const urlParams = new URLSearchParams(window.location.search);
+      const catParam = urlParams.get('category');
+      if (catParam) {
+          activeBrand = catParam; 
+      }
+
       renderGrid(allProducts);
       generateBrandChips();
 
-      const urlParams = new URLSearchParams(window.location.search);
       const productId = urlParams.get('id');
       if (productId) {
           openProductPage(productId);
@@ -473,7 +479,6 @@
 
   init(); 
 
-  // --- Mobile-Optimized Interactive Zoom Logic ---
   function openImageViewer(url) {
       const viewer = document.getElementById('image-viewer');
       const viewerImg = document.getElementById('viewer-img');
@@ -545,7 +550,11 @@
 
   function renderGrid(list) {
     const container = document.getElementById("product-list");
-    container.innerHTML = list.map((p) => {
+    // Apply initial filter if redirected from Home
+    let filteredList = list;
+    if (activeBrand !== 'All') filteredList = list.filter(p => p.category === activeBrand);
+
+    container.innerHTML = filteredList.map((p) => {
         const stockCount = parseInt(p.stock) || 0;
         const stockStatusMsg = (stockCount > 0 && stockCount <= 3) ? `<div class="stock-warning">Only ${stockCount} left!</div>` : '';
         const isOut = stockCount <= 0;
@@ -718,7 +727,7 @@
 
   async function sendWAOrder() {
     const name = document.getElementById('wa-cust-name').value.trim();
-    const phone = document.getElementById('wa-cust-phone').value.trim();
+    const phone = document.getElementById('cust-phone').value.trim();
 
     if (!name || phone.length < 10) {
       alert("Please enter a valid name and 10-digit phone number.");
