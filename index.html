@@ -10,6 +10,7 @@
   
   <link rel="icon" type="image/png" href="logo.png">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
@@ -35,7 +36,7 @@
       overflow-x: hidden;
     }
 
-    /* --- Header Navigation --- */
+    /* --- Navigation --- */
     .main-header {
       background: rgba(255, 255, 255, 0.9);
       padding: 12px 5%;
@@ -84,7 +85,7 @@
     }
     .nav-links a:hover, .nav-links a.active { color: var(--primary); }
 
-    /* --- FIXED CONTINUOUS MARQUEE --- */
+    /* --- Top Announcement Bar --- */
     .announcement-bar {
       background: var(--soft-blue);
       color: var(--primary);
@@ -99,32 +100,103 @@
 
     .marquee-content {
       display: flex;
-      /* Speed increased to 20s */
       animation: continuous-scroll 20s linear infinite;
-    }
-
-    .marquee-text {
-      padding-right: 4rem;
-      flex-shrink: 0;
     }
 
     @keyframes continuous-scroll {
       0% { transform: translateX(0); }
       100% { transform: translateX(-50%); }
     }
-    
-    .announcement-bar:hover .marquee-content {
-        animation-play-state: paused;
+
+    /* --- Search Bar Container (BELOW ANNOUNCEMENT) --- */
+    .search-section-bar {
+      background: #fff;
+      padding: 15px 5%;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      justify-content: center;
     }
 
-    /* --- Hero Section --- */
+    .search-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .search-input-container {
+      display: flex;
+      align-items: center;
+      background: #f1f5f9;
+      border-radius: 12px;
+      padding: 0 20px;
+      border: 2px solid transparent;
+      transition: 0.3s;
+    }
+
+    .search-input-container:focus-within {
+      background: white;
+      border-color: var(--primary);
+      box-shadow: var(--shadow);
+    }
+
+    .search-input-container input {
+      border: none;
+      background: transparent;
+      padding: 14px;
+      width: 100%;
+      outline: none;
+      font-family: inherit;
+      font-size: 1rem;
+    }
+
+    .suggestion-box {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      background: white;
+      border-radius: 0 0 14px 14px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      z-index: 2000;
+      display: none;
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid #e2e8f0;
+    }
+
+    .suggestion-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-decoration: none;
+      color: inherit;
+      border-bottom: 1px solid #f8fafc;
+    }
+
+    .suggestion-item:hover { background: #f1f5f9; }
+
+    .suggestion-img {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    .suggestion-info h4 { font-size: 0.95rem; margin: 0; color: var(--dark); font-weight: 700; }
+    .suggestion-info p { font-size: 0.8rem; margin: 0; color: var(--grey); }
+
+    /* --- Hero --- */
     .hero-container {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 60px 5%;
       gap: 40px;
-      min-height: 80vh;
+      min-height: 70vh;
       max-width: 1300px;
       margin: 0 auto;
       background: #ffffff;
@@ -146,24 +218,118 @@
       gap: 8px;
     }
 
+    /* --- UPDATED: Professional Responsive Review Section --- */
+    .reviews-section {
+      padding: 80px 5%;
+      background: #ffffff;
+    }
+
+    .reviews-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 25px;
+    }
+
+    @media (max-width: 768px) {
+      .reviews-container {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding: 10px 0 30px 0;
+        gap: 20px;
+        -webkit-overflow-scrolling: touch;
+      }
+      .reviews-container::-webkit-scrollbar { display: none; }
+      .testimonial-card { min-width: 85vw; scroll-snap-align: center; }
+    }
+
+    .testimonial-card {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 24px;
+      border: 1px solid #f1f5f9;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+      transition: 0.3s;
+    }
+
+    /* --- Form Styling --- */
+    .form-section {
+      padding: 80px 5%;
+      background: #f8fafc;
+    }
+    .form-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 40px;
+    }
+    .form-card {
+      background: var(--white);
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 0.9rem; color: var(--dark); }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 1rem;
+    }
+
+    /* Star Rating */
+    .star-rating {
+      display: flex;
+      gap: 12px;
+      margin: 10px 0;
+    }
+    .star-rating svg {
+      width: 32px !important;
+      height: 32px !important;
+      cursor: pointer;
+      color: #cbd5e1;
+      fill: transparent;
+      transition: all 0.2s;
+    }
+    .star-rating .star-item.active svg {
+      color: #fbbf24 !important;
+      fill: #fbbf24 !important;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 800;
+      cursor: pointer;
+      color: white;
+    }
+    .btn-primary { background: var(--primary); }
+    .btn-dark { background: var(--dark); }
+
     /* --- Trust Bar --- */
     .trust-bar {
       display: flex;
       justify-content: center;
       gap: 4rem;
-      padding: 3rem 5%;
-      background: var(--soft-blue);
-      border-top: 1px solid #e2e8f0;
+      padding: 4rem 5%;
+      background: #ffffff;
+      border-top: 1px solid #f1f5f9;
     }
-
     .trust-item {
       font-weight: 700;
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      color: var(--dark);
     }
-    .trust-item i { color: var(--primary); width: 20px; }
+    .trust-item svg { color: var(--primary); width: 22px; height: 22px; }
 
     /* --- Floating Cart --- */
     .cart-icon-wrapper {
@@ -171,49 +337,28 @@
       bottom: 30px;
       right: 30px;
       background: var(--primary);
-      color: var(--white);
-      width: 65px;
-      height: 65px;
+      color: white;
+      width: 65px; height: 65px;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
-      z-index: 2000;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 10px 25px rgba(37,99,235,0.3);
       text-decoration: none;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 2000;
     }
-
     .cart-count {
       position: absolute;
-      top: -2px;
-      right: -2px;
-      background: #ef4444;
-      color: white;
+      top: -2px; right: -2px;
+      background: #ef4444; color: white;
       font-size: 0.75rem;
-      min-width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      font-weight: 800;
-      border: 2px solid var(--white);
+      min-width: 24px; height: 24px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; font-weight: 800; border: 2px solid white;
     }
 
     @media (max-width: 968px) {
-      .hero-container {
-        flex-direction: column-reverse;
-        text-align: center;
-        padding: 40px 5%;
-        gap: 30px;
-      }
-      .header-container { flex-direction: column; gap: 15px; }
-      .nav-links { gap: 15px; }
-      .hero-text-side { display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%; }
-      .hero-btn-container { justify-content: center !important; width: 100%; }
-      .trust-bar { flex-wrap: wrap; gap: 2rem; }
+      .hero-container { flex-direction: column-reverse; text-align: center; }
+      .header-container { flex-direction: column; }
+      .trust-bar { flex-wrap: wrap; gap: 2rem; justify-content: center; }
     }
   </style>
 </head>
@@ -223,7 +368,7 @@
   <div class="header-container">
     <a href="index.html" class="logo-link">
       <div class="logo-area">
-        <img src="logo.png" alt="Hygienic & Comfort Co. Logo" class="header-logo">
+        <img src="logo.png" alt="Logo" class="header-logo">
         <div class="brand-text">
           <h1>Hygienic & Comfort Co.</h1>
           <p>Care, Comfort & Hygiene for Every Age</p>
@@ -241,50 +386,96 @@
 
 <div class="announcement-bar">
     <div class="marquee-content">
-      <span class="marquee-text">Thank you for visiting Hygienic & Comfort Co! We are now available locally in Ambernath. Stay tuned for expansion — follow us via the links on our Contact page.</span>
-        <span class="marquee-text">Thank you for visiting Hygienic & Comfort Co! We are now available locally in Ambernath. Stay tuned for expansion — follow us via the links on our Contact page.</span>
-        
+      <span class="marquee-text" style="padding-right: 4rem;">Thank you for visiting Hygienic & Comfort Co! Available locally in Ambernath.</span>
+      <span class="marquee-text" style="padding-right: 4rem;">Thank you for visiting Hygienic & Comfort Co! Available locally in Ambernath.</span>
     </div>
 </div>
 
+<section class="search-section-bar">
+    <div class="search-wrapper">
+        <div class="search-input-container">
+            <i data-lucide="search" style="color: var(--grey); width: 22px;"></i>
+            <input type="text" id="main-search" placeholder="Search brands or products" autocomplete="off">
+        </div>
+        <div id="suggestion-box" class="suggestion-box"></div>
+    </div>
+</section>
+
 <main>
   <section class="hero-container">
-    
     <div class="hero-text-side">
         <p style="color: #2563eb; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.85rem; margin-bottom: 15px;">Premium Daily Care</p>
-        <h2 style="font-size: clamp(2.5rem, 5vw, 4.2rem); font-weight: 900; line-height: 1.05; color: #1e293b; margin-bottom: 25px; letter-spacing: -1px;">Trusted Quality For Your Family</h2>
-        <p style="color: #64748b; font-size: 1.15rem; line-height: 1.7; margin-bottom: 40px; max-width: 520px;">Providing high-quality baby and adult hygiene products designed with dermatologically tested materials for ultimate skin protection.</p>
-        
-        <div class="hero-btn-container" style="display: flex; gap: 15px; flex-wrap: wrap;">
-            <a href="products.html" style="background: #2563eb; color: white; padding: 18px 38px; border-radius: 14px; text-decoration: none; font-weight: 700; transition: 0.3s; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);">View Products</a>
-            <a href="contact.html" style="border: 2px solid #e2e8f0; color: #1e293b; padding: 18px 38px; border-radius: 14px; text-decoration: none; font-weight: 700; transition: 0.3s;">Contact Us</a>
+        <h2 style="font-size: clamp(2.5rem, 5vw, 4.2rem); font-weight: 900; line-height: 1.05; color: #1e293b; margin-bottom: 25px;">Trusted Quality For Your Family</h2>
+        <p style="color: #64748b; font-size: 1.15rem; margin-bottom: 40px;">Providing high-quality baby and adult hygiene products for ultimate skin protection.</p>
+        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+            <a href="products.html" style="background: #2563eb; color: white; padding: 18px 38px; border-radius: 14px; text-decoration: none; font-weight: 700;">View Products</a>
+            <a href="contact.html" style="border: 2px solid #e2e8f0; color: #1e293b; padding: 18px 38px; border-radius: 14px; text-decoration: none; font-weight: 700;">Contact Us</a>
         </div>
     </div>
-
     <div class="hero-image-side">
-        <a href="products.html?category=Healvite" style="display: block; width: 100%; text-decoration: none; transition: transform 0.4s ease;">
-            <img src="homepage.png" alt="Healvite Premium Diapers" 
-                  style="width: 100%; height: auto; border-radius: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); cursor: pointer;"
-                  onmouseover="this.parentElement.style.transform='scale(1.03) translateY(-5px)'" 
-                  onmouseout="this.parentElement.style.transform='scale(1) translateY(0)'">
-        </a>
-        <div class="selling-badge">
-            <i data-lucide="trending-up"></i> MOST SELLING BRAND
-        </div>
+        <img src="homepage.png" alt="Products" style="width: 100%; border-radius: 40px; box-shadow: var(--shadow);">
+        <div class="selling-badge"><i data-lucide="trending-up"></i> MOST SELLING BRAND</div>
     </div>
+  </section>
 
+  <section class="reviews-section">
+    <div style="text-align: center; margin-bottom: 50px;">
+      <p style="color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 2px; font-size: 0.85rem;">Community Trust</p>
+      <h2 style="font-size: 2.5rem; font-weight: 900; color: var(--dark);">Real Experiences</h2>
+    </div>
+    <div id="reviews-container" class="reviews-container">
+      <div id="reviews-loader" style="text-align: center; color: var(--grey); grid-column: 1/-1; padding: 40px;">
+        <p>Loading verified community feedback...</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="form-section">
+    <div class="form-grid">
+      <div class="form-card">
+        <h3>Share Feedback</h3>
+        <p style="color: var(--grey); margin-bottom: 25px; font-size: 0.85rem;">Help us improve our service.</p>
+        <form id="feedback-form">
+          <div class="form-group"><label>Full Name</label><input type="text" id="fb-name" required></div>
+          <div class="form-group">
+            <label>Mobile Number</label>
+            <input type="text" id="fb-mobile" class="num-only" maxlength="10" placeholder="10-digit number" required>
+          </div>
+          <div class="form-group">
+            <label>Your Rating</label>
+            <div class="star-rating" id="star-container">
+              <span class="star-item" data-value="1"><i data-lucide="star"></i></span>
+              <span class="star-item" data-value="2"><i data-lucide="star"></i></span>
+              <span class="star-item" data-value="3"><i data-lucide="star"></i></span>
+              <span class="star-item" data-value="4"><i data-lucide="star"></i></span>
+              <span class="star-item" data-value="5"><i data-lucide="star"></i></span>
+            </div>
+          </div>
+          <div class="form-group"><label>Experience</label><textarea id="fb-exp" rows="3" required></textarea></div>
+          <button type="submit" class="submit-btn btn-primary" id="fb-btn">Submit Feedback</button>
+        </form>
+      </div>
+
+      <div class="form-card">
+        <h3>Product Suggestion</h3>
+        <p style="color: var(--grey); margin-bottom: 25px; font-size: 0.85rem;">Tell us what you want to see next.</p>
+        <form id="suggestion-form">
+          <div class="form-group"><label>Your Name</label><input type="text" id="sug-name" required></div>
+          <div class="form-group">
+            <label>Mobile Number</label>
+            <input type="text" id="sug-mobile" class="num-only" maxlength="10" placeholder="10-digit number" required>
+          </div>
+          <div class="form-group"><label>Suggested Product</label><input type="text" id="sug-product" required></div>
+          <button type="submit" class="submit-btn btn-dark" id="sug-btn">Send Suggestion</button>
+        </form>
+      </div>
+    </div>
   </section>
 
   <section class="trust-bar">
-    <div class="trust-item">
-      <i data-lucide="shield-check"></i> 100% Skin Safe
-    </div>
-    <div class="trust-item">
-      <i data-lucide="heart"></i> Soft Materials
-    </div>
-    <div class="trust-item">
-      <i data-lucide="truck"></i> Island-wide Delivery
-    </div>
+    <div class="trust-item"><i data-lucide="shield-check"></i> 100% Skin Safe</div>
+    <div class="trust-item"><i data-lucide="heart"></i> Soft Materials</div>
+    <div class="trust-item"><i data-lucide="truck"></i> Island-wide Delivery</div>
   </section>
 </main>
 
@@ -293,23 +484,164 @@
   <span class="cart-count" id="cart-badge">0</span>
 </a>
 
-<footer style="text-align: center; padding: 60px 20px; color: var(--grey); border-top: 1px solid #f1f5f9; background: #fff;">
+<footer style="text-align: center; padding: 40px; color: var(--grey); background: #fff; border-top: 1px solid #f1f5f9;">
   <p>© 2026 Hygienic & Comfort Co. All rights reserved.</p>
 </footer>
 
 <script>
-  function updateCartBadge() {
-    const cart = JSON.parse(localStorage.getItem('hc-cart')) || [];
-    const totalQty = cart.reduce((sum, item) => sum + (Number(item.qty) || 1), 0);
-    const badge = document.getElementById('cart-badge');
-    if (badge) badge.innerText = totalQty;
+  // --- SUPABASE CONFIG ---
+  const supabaseUrl = 'https://uhkheprfbxxwuojswyht.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es';
+  const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+  let realProducts = []; // To store products from database
+
+  // --- GOOGLE DRIVE IMAGE FIXER ---
+  function fixDriveLink(url) {
+    if (!url) return 'logo.png';
+    if (url.includes("drive.google.com")) {
+      try {
+        let fileId = "";
+        if (url.includes("/d/")) {
+          fileId = url.split("/d/")[1].split("/")[0];
+        } else if (url.includes("id=")) {
+          fileId = url.split("id=")[1].split("&")[0];
+        }
+        return fileId ? `https://drive.google.com/uc?export=view&id=${fileId}` : url;
+      } catch (e) { return url; }
+    }
+    return url;
   }
 
+  // --- FETCH PRODUCTS FOR SEARCH ---
+  async function fetchSearchProducts() {
+    const { data, error } = await _supabase.from("products").select("*").order('name');
+    if (!error) {
+      realProducts = data.map(p => ({
+        ...p,
+        image: fixDriveLink(p.images?.[0]) // Using the first image from database
+      }));
+    }
+  }
+
+  // --- SEARCH LOGIC ---
+  const searchInput = document.getElementById('main-search');
+  const suggestionBox = document.getElementById('suggestion-box');
+
+  searchInput.addEventListener('input', (e) => {
+    const val = e.target.value.toLowerCase();
+    suggestionBox.innerHTML = '';
+    
+    if (val.length > 0) {
+      const filtered = realProducts.filter(p => 
+        p.name.toLowerCase().includes(val) || 
+        p.category?.toLowerCase().includes(val)
+      );
+      
+      if (filtered.length > 0) {
+        suggestionBox.style.display = 'block';
+        filtered.forEach(p => {
+          const item = document.createElement('a');
+          // Pass details to products.html URL
+          item.href = `products.html?id=${p.id}&name=${encodeURIComponent(p.name)}&img=${encodeURIComponent(p.image)}&price=${p.price}`;
+          item.className = 'suggestion-item';
+          item.innerHTML = `
+            <img src="${p.image}" class="suggestion-img" onerror="this.src='logo.png'">
+            <div class="suggestion-info">
+              <h4>${p.name}</h4>
+              <p>${p.category || 'General'}</p>
+            </div>
+          `;
+          suggestionBox.appendChild(item);
+        });
+      } else { suggestionBox.style.display = 'none'; }
+    } else { suggestionBox.style.display = 'none'; }
+  });
+
+  // --- REVIEWS FETCH ---
+  async function fetchReviews() {
+    const container = document.getElementById('reviews-container');
+    const loader = document.getElementById('reviews-loader');
+    try {
+      const { data, error } = await _supabase.from('user_submissions').select('*').eq('type', 'feedback').order('created_at', { ascending: false }).limit(6);
+      if (error) throw error;
+      if (data && data.length > 0) {
+        if(loader) loader.remove();
+        container.innerHTML = data.map(review => {
+          let stars = '';
+          for(let i=1; i<=5; i++) { stars += `<span style="color: ${i <= review.rating ? '#fbbf24' : '#e2e8f0'}; font-size: 1.1rem;">★</span>`; }
+          return `
+            <div class="testimonial-card">
+              <div><div style="margin-bottom: 12px;">${stars}</div>
+              <p style="color: #475569; font-style: italic; margin-bottom: 20px; line-height: 1.6; font-size: 0.95rem;">"${review.message}"</p></div>
+              <div style="display: flex; align-items: center; gap: 12px; border-top: 1px solid #f8fafc; padding-top: 15px;">
+                <div style="width: 42px; height: 42px; background: var(--soft-blue); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800;">${review.name.charAt(0).toUpperCase()}</div>
+                <div><h4 style="font-size: 0.9rem; font-weight: 700; color: var(--dark); margin: 0;">${review.name}</h4>
+                <div style="color: #10b981; font-size: 0.75rem; font-weight: 600;"><i data-lucide="check-circle-2" style="width: 12px; height: 12px; vertical-align: middle;"></i> Verified Purchase</div></div>
+              </div>
+            </div>`;
+        }).join('');
+        lucide.createIcons();
+      } else { loader.innerText = "No feedback yet."; }
+    } catch (err) { console.error(err); if(loader) loader.innerText = "Check back soon."; }
+  }
+
+  // --- FORM HANDLING ---
+  document.querySelectorAll('.num-only').forEach(inp => {
+    inp.addEventListener('input', function() { this.value = this.value.replace(/[^0-9]/g, ''); });
+  });
+
+  let userRating = 0;
+  function initStars() {
+    const starItems = document.querySelectorAll('.star-item');
+    starItems.forEach(item => {
+      item.addEventListener('click', () => {
+        userRating = item.getAttribute('data-value');
+        starItems.forEach(s => { s.classList.toggle('active', s.getAttribute('data-value') <= userRating); });
+      });
+    });
+  }
+
+  document.getElementById('feedback-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if(userRating == 0) return alert("Select a rating!");
+    const btn = document.getElementById('fb-btn');
+    btn.innerText = "Sending..."; btn.disabled = true;
+    const { error } = await _supabase.from('user_submissions').insert([{
+      type: 'feedback', name: document.getElementById('fb-name').value,
+      mobile: document.getElementById('fb-mobile').value, rating: parseInt(userRating),
+      message: document.getElementById('fb-exp').value
+    }]);
+    if(!error) { alert("Submitted!"); e.target.reset(); userRating = 0; fetchReviews(); }
+    else alert("Error: " + error.message);
+    btn.innerText = "Submit Feedback"; btn.disabled = false;
+  });
+
+  document.getElementById('suggestion-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('sug-btn');
+    btn.innerText = "Sending..."; btn.disabled = true;
+    const { error } = await _supabase.from('user_submissions').insert([{
+      type: 'suggestion', name: document.getElementById('sug-name').value,
+      mobile: document.getElementById('sug-mobile').value, message: document.getElementById('sug-product').value
+    }]);
+    if(!error) { alert("Sent!"); e.target.reset(); }
+    else alert("Error: " + error.message);
+    btn.innerText = "Send Suggestion"; btn.disabled = false;
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-wrapper')) { suggestionBox.style.display = 'none'; }
+  });
+
   window.onload = () => {
-    updateCartBadge();
     lucide.createIcons();
+    initStars();
+    fetchReviews();
+    fetchSearchProducts(); // Load products from database
+    const cart = JSON.parse(localStorage.getItem('hc-cart')) || [];
+    document.getElementById('cart-badge').innerText = cart.length;
   };
 </script>
-
 </body>
 </html>
