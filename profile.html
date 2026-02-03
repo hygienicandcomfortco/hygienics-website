@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>My Profile | Hygienic & Comfort Co.</title>
+  
+  <link rel="icon" type="image/png" href="logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <style>
+    :root {
+      --primary: #2563eb;
+      --soft-blue: #eef4ff;
+      --dark: #1e293b;
+      --grey: #64748b;
+      --white: #ffffff;
+      --bg: #f8fafc;
+      --radius: 16px;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      --border: #e2e8f0;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: var(--dark); line-height: 1.6; }
+
+    /* --- Navigation --- */
+    .nav-header {
+      background: var(--white); padding: 12px 5%; border-bottom: 1px solid #e2e8f0;
+      display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px);
+    }
+    .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+    .logo-img { height: 40px; }
+
+    /* --- Layout --- */
+    .account-layout {
+      max-width: 1200px; margin: 40px auto; padding: 0 5%;
+      display: grid; grid-template-columns: 280px 1fr; gap: 30px;
+    }
+
+    /* --- Sidebar --- */
+    .sidebar { background: var(--white); padding: 25px; border-radius: var(--radius); box-shadow: var(--shadow); height: fit-content; }
+    .user-profile-brief { text-align: center; margin-bottom: 30px; }
+    .avatar-box { 
+        width: 70px; height: 70px; background: var(--soft-blue); color: var(--primary);
+        border-radius: 50%; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center;
+        font-size: 1.8rem; font-weight: 800; border: 2px solid white; box-shadow: var(--shadow);
+    }
+    .menu-item { 
+        display: flex; align-items: center; gap: 12px; padding: 12px 15px;
+        text-decoration: none; color: var(--grey); font-weight: 600; border-radius: 12px; transition: 0.3s;
+        margin-bottom: 5px; cursor: pointer;
+    }
+    .menu-item:hover, .menu-item.active { background: var(--soft-blue); color: var(--primary); }
+
+    /* --- Main Content --- */
+    .card { background: var(--white); padding: 30px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 25px; border: 1px solid #f1f5f9; }
+    .card-head { font-size: 1.1rem; font-weight: 800; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; }
+
+    /* --- Amazon Style Form --- */
+    .form-section-title { font-size: 0.9rem; font-weight: 800; color: var(--dark); margin: 20px 0 15px; border-left: 4px solid var(--primary); padding-left: 10px; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label { font-size: 0.75rem; font-weight: 700; color: #444; }
+    .form-group input, .form-group select { 
+        padding: 12px; border-radius: 8px; border: 1px solid #888c8c; outline: none; 
+        font-family: inherit; font-size: 0.95rem; transition: 0.2s;
+    }
+    .form-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+    
+    .action-btn { 
+        padding: 12px 24px; background: #FFD814; color: #111;
+        border: 1px solid #FCD200; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s;
+        box-shadow: 0 2px 5px rgba(213,217,217,.5);
+    }
+    .action-btn:hover { background: #f7ca00; }
+
+    /* --- Saved Address List --- */
+    .address-card { 
+        border: 1px solid var(--border); padding: 20px; border-radius: 12px; 
+        display: flex; justify-content: space-between; align-items: flex-start; background: #fdfdfd;
+    }
+    .addr-meta b { display: block; font-size: 0.95rem; margin-bottom: 4px; color: var(--dark); }
+    .addr-meta p { font-size: 0.85rem; color: #555; line-height: 1.4; }
+    .tag-blue { font-size: 0.65rem; background: var(--soft-blue); color: var(--primary); padding: 2px 8px; border-radius: 4px; font-weight: 800; text-transform: uppercase; }
+    .delete-btn { color: #cc0c39; cursor: pointer; font-size: 0.8rem; font-weight: 700; text-decoration: underline; }
+
+    @media (max-width: 900px) {
+        .account-layout { grid-template-columns: 1fr; }
+        .sidebar { display: none; }
+        .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="nav-header">
+  <a href="index.html" class="logo-area">
+    <img src="logo.png" alt="Logo" class="logo-img">
+    <h2 style="font-size: 1rem; font-weight: 800;">Hygienic & Comfort Co.</h2>
+  </a>
+  <a href="products.html" style="text-decoration:none; color:var(--primary); font-weight:700; font-size: 0.9rem;">Back to Shop</a>
+</header>
+
+<div class="account-layout">
+    <aside class="sidebar">
+        <div class="user-profile-brief">
+            <div class="avatar-box" id="user-circle">?</div>
+            <h3 id="side-name" style="font-size: 1rem;">Welcome!</h3>
+            <p id="side-email" style="font-size: 0.75rem; color: var(--grey);"></p>
+        </div>
+        <nav class="side-nav">
+            <div class="menu-item active" onclick="scrollToSec('profile-sec')"><i data-lucide="user"></i> Personal Info</div>
+            <a href="orders.html" class="menu-item"><i data-lucide="package"></i> My Orders</a>
+            <div class="menu-item" onclick="scrollToSec('address-sec')"><i data-lucide="map-pin"></i> Saved Addresses</div>
+            <div class="menu-item" style="color:#ef4444; margin-top: 20px;" onclick="handleLogout()"><i data-lucide="log-out"></i> Logout</div>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="card" id="profile-sec">
+            <h2 class="card-head"><i data-lucide="user-cog"></i> Login & Security</h2>
+            <form id="profile-form">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>Full Name</label>
+                        <input type="text" id="prof-name" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mobile Number</label>
+                        <input type="tel" id="prof-mobile" placeholder="10-digit mobile number">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="prof-email" placeholder="example@mail.com">
+                    </div>
+                </div>
+                <div style="margin-top: 25px;">
+                    <button type="submit" class="action-btn">Update Profile</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card" id="address-sec">
+            <h2 class="card-head"><i data-lucide="map-pin"></i> Enter a new delivery address</h2>
+            
+            <form id="address-form">
+                <div class="form-group full" style="margin-bottom: 15px;">
+                    <label>Country/Region</label>
+                    <select id="addr-country" required>
+                        <option value="India">India</option>
+                    </select>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>Full name (First and Last name)</label>
+                        <input type="text" id="addr-contact-name" placeholder="Name for delivery" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Pincode</label>
+                        <input type="text" id="addr-pin" maxlength="6" placeholder="6 digits [0-9] PIN code" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Town/City</label>
+                        <input type="text" id="addr-city" placeholder="City name" required>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>Flat, House no., Building, Company, Apartment</label>
+                        <input type="text" id="addr-flat" placeholder="e.g. Flat No 102, Shanti Sadan" required>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>Area, Street, Sector, Village</label>
+                        <input type="text" id="addr-area" placeholder="e.g. MG Road, Kharghar" required>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>Landmark</label>
+                        <input type="text" id="addr-landmark" placeholder="e.g. Near Apollo Hospital">
+                    </div>
+
+                    <div class="form-group">
+                        <label>State</label>
+                        <select id="addr-state" required>
+                            <option value="">Choose a state</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                            <option value="Delhi">Delhi</option>
+                            <option value="Karnataka">Karnataka</option>
+                            <option value="Gujarat">Gujarat</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Address Type</label>
+                        <select id="addr-type">
+                            <option value="Home">Home</option>
+                            <option value="Office">Office</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 25px;">
+                    <button type="submit" class="action-btn" id="save-addr-btn">Add Address</button>
+                </div>
+            </form>
+
+            <h3 class="form-section-title">Your Saved Addresses</h3>
+            <div id="address-container" class="address-list">
+                <p style="color:var(--grey); font-size: 0.9rem;">No addresses saved yet.</p>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+  const _supabase = supabase.createClient('https://uhkheprfbxxwuojswyht.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es');
+
+  async function initializeProfile() {
+    const { data: { user } } = await _supabase.auth.getUser();
+    if (!user) return window.location.href = "products.html";
+
+    // Auto-fill available Auth info
+    document.getElementById('prof-email').value = user.email || "";
+    document.getElementById('prof-mobile').value = user.phone ? user.phone.replace('+91', '') : "";
+    document.getElementById('side-email').innerText = user.email || user.phone;
+
+    // Load custom details from profiles/customer_signup table
+    const { data: profile } = await _supabase.from('customer_signup').select('*').eq('id', user.id).maybeSingle();
+    if (profile) {
+        document.getElementById('prof-name').value = profile.full_name || "";
+        document.getElementById('side-name').innerText = profile.full_name || "Account User";
+        document.getElementById('user-circle').innerText = (profile.full_name || "U").charAt(0).toUpperCase();
+        if(profile.phone_number) document.getElementById('prof-mobile').value = profile.phone_number;
+    }
+
+    loadAddresses(user.id);
+    lucide.createIcons();
+  }
+
+  async function loadAddresses(userId) {
+    const { data, error } = await _supabase.from('customer_addresses').select('*').eq('user_id', userId);
+    const container = document.getElementById('address-container');
+    
+    if (data && data.length > 0) {
+        container.innerHTML = data.map(addr => `
+            <div class="address-card">
+                <div class="addr-meta">
+                    <span class="tag-blue">${addr.address_type}</span>
+                    <b>${addr.full_name || 'Recipient'}</b>
+                    <p>${addr.full_address}</p>
+                    <p>${addr.city}, ${addr.state} - ${addr.pincode}</p>
+                </div>
+                <div class="delete-btn" onclick="deleteAddress('${addr.id}')">Remove</div>
+            </div>
+        `).join('');
+    }
+  }
+
+  // Handle Address Addition (Amazon Logic)
+  document.getElementById('address-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const { data: { user } } = await _supabase.auth.getUser();
+    const btn = document.getElementById('save-addr-btn');
+    btn.innerText = "Saving...";
+
+    const fullAddrString = `${document.getElementById('addr-flat').value}, ${document.getElementById('addr-area').value}, ${document.getElementById('addr-landmark').value}`;
+
+    const newAddr = {
+        user_id: user.id,
+        full_name: document.getElementById('addr-contact-name').value,
+        address_type: document.getElementById('addr-type').value,
+        full_address: fullAddrString,
+        pincode: document.getElementById('addr-pin').value,
+        city: document.getElementById('addr-city').value,
+        state: document.getElementById('addr-state').value
+    };
+
+    const { error } = await _supabase.from('customer_addresses').insert([newAddr]);
+    if (!error) location.reload();
+    else { alert(error.message); btn.innerText = "Add Address"; }
+  });
+
+  // Handle Profile Update
+  document.getElementById('profile-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const { data: { user } } = await _supabase.auth.getUser();
+    const { error } = await _supabase.from('customer_signup').upsert({
+        id: user.id,
+        full_name: document.getElementById('prof-name').value,
+        phone_number: document.getElementById('prof-mobile').value,
+        email: document.getElementById('prof-email').value,
+        signup_date: new Date()
+    });
+    if (!error) alert("Security details updated!");
+    else alert(error.message);
+  });
+
+  async function deleteAddress(id) {
+    if(confirm("Delete this address?")) {
+        await _supabase.from('customer_addresses').delete().eq('id', id);
+        location.reload();
+    }
+  }
+
+  async function handleLogout() {
+    await _supabase.auth.signOut();
+    window.location.href = "index.html";
+  }
+
+  function scrollToSec(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
+  window.onload = initializeProfile;
+</script>
+</body>
+</html>
