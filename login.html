@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Hygienic & Comfort Co.</title>
+    
+    <link rel="icon" type="image/png" href="logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+
+        .login-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .logo-box { margin-bottom: 24px; }
+        .logo-box img { height: 50px; object-fit: contain; }
+        
+        h2 { font-weight: 800; color: var(--text-main); margin-bottom: 8px; font-size: 1.6rem; letter-spacing: -0.5px; }
+        p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 32px; }
+
+        .form-group { text-align: left; margin-bottom: 20px; position: relative; }
+        label { display: block; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; color: var(--text-muted); letter-spacing: 0.5px; }
+        
+        .input-wrapper { position: relative; }
+        .input-wrapper .icon-left { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 18px; }
+        .input-wrapper .icon-right { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 18px; cursor: pointer; transition: 0.2s; }
+        .input-wrapper .icon-right:hover { color: var(--primary); }
+
+        input {
+            width: 100%;
+            padding: 14px 44px;
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            outline: none;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            color: var(--text-main);
+            background: #fff;
+        }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .login-btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        .login-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+        .switch-text { margin-top: 25px; font-size: 0.9rem; color: var(--text-muted); font-weight: 600; }
+        .switch-text span { color: var(--primary); cursor: pointer; font-weight: 800; }
+
+        #error-msg { 
+            background: #fef2f2;
+            color: #ef4444;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-top: 20px;
+            display: none;
+            border: 1px solid #fee2e2;
+        }
+
+        .footer-links { margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 0.9rem; font-weight: 700; }
+        .footer-links a { color: var(--primary); text-decoration: none; }
+
+        .hidden { display: none; }
+
+        @media (max-width: 480px) {
+            .login-card { padding: 30px 20px; border: none; box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <div class="logo-box">
+        <img src="logo.png" alt="Logo">
+    </div>
+
+    <div id="signin-container">
+        <h2>Welcome Back</h2>
+        <p>Login to your account to continue</p>
+        
+        <form id="login-form">
+            <div class="form-group">
+                <label>Email ID / Phone Number</label>
+                <div class="input-wrapper">
+                    <i data-lucide="mail" class="icon-left"></i>
+                    <input type="text" id="login-identifier" placeholder="Enter email or phone" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Password</label>
+                <div class="input-wrapper">
+                    <i data-lucide="lock" class="icon-left"></i>
+                    <input type="password" id="login-password" placeholder="••••••••" required>
+                    <i data-lucide="eye" class="icon-right" onclick="togglePass('login-password', this)"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="login-btn" id="login-submit-btn">
+                <span>Sign In</span>
+                <i data-lucide="arrow-right" style="width: 18px;"></i>
+            </button>
+        </form>
+        <div class="switch-text">New user? <span onclick="toggleAuth('signup')">Create Account</span></div>
+    </div>
+
+    <div id="signup-container" class="hidden">
+        <h2>Create Account</h2>
+        <p>Join us for a better shopping experience</p>
+        
+        <form id="signup-form">
+            <div class="form-group">
+                <label>Email ID / Phone Number</label>
+                <div class="input-wrapper">
+                    <i data-lucide="user" class="icon-left"></i>
+                    <input type="text" id="signup-identifier" placeholder="Enter email or phone" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Create Password</label>
+                <div class="input-wrapper">
+                    <i data-lucide="lock" class="icon-left"></i>
+                    <input type="password" id="signup-password" placeholder="Min 6 characters" required>
+                    <i data-lucide="eye" class="icon-right" onclick="togglePass('signup-password', this)"></i>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <div class="input-wrapper">
+                    <i data-lucide="shield-check" class="icon-left"></i>
+                    <input type="password" id="signup-confirm" placeholder="Repeat password" required>
+                </div>
+            </div>
+
+            <button type="submit" class="login-btn" id="signup-submit-btn">
+                <span>Create Account</span>
+                <i data-lucide="user-plus" style="width: 18px;"></i>
+            </button>
+        </form>
+        <div class="switch-text">Already have an account? <span onclick="toggleAuth('signin')">Sign In</span></div>
+    </div>
+
+    <div id="error-msg"></div>
+
+    <div class="footer-links">
+        <a href="index.html">← Return to Store</a>
+    </div>
+</div>
+
+<script>
+    const SUPABASE_URL = "https://uhkheprfbxxwuojswyht.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es";
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    lucide.createIcons();
+
+    function toggleAuth(type) {
+        const signin = document.getElementById('signin-container');
+        const signup = document.getElementById('signup-container');
+        const error = document.getElementById('error-msg');
+        error.style.display = 'none';
+        
+        if (type === 'signup') {
+            signin.classList.add('hidden');
+            signup.classList.remove('hidden');
+        } else {
+            signup.classList.add('hidden');
+            signin.classList.remove('hidden');
+        }
+    }
+
+    function togglePass(inputId, icon) {
+        const input = document.getElementById(inputId);
+        if (input.type === "password") {
+            input.type = "text";
+            icon.innerHTML = lucide.icons['eye-off'].toSvg({ width: 18 });
+        } else {
+            input.type = "password";
+            icon.innerHTML = lucide.icons['eye'].toSvg({ width: 18 });
+        }
+    }
+
+    // REDIRECT LOGIC
+    function getRedirectUrl() {
+        const item = localStorage.getItem('checkout-item');
+        return item ? 'checkout.html' : 'products.html';
+    }
+
+    // LOGIN HANDLER
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('login-identifier').value;
+        const pass = document.getElementById('login-password').value;
+        const btn = document.getElementById('login-submit-btn');
+        const errorEl = document.getElementById('error-msg');
+
+        btn.disabled = true;
+        btn.querySelector('span').innerText = "Checking...";
+
+        const { data, error } = await _supabase.auth.signInWithPassword(
+            id.includes('@') ? { email: id, password: pass } : { phone: id, password: pass }
+        );
+
+        if (error) {
+            errorEl.innerText = error.message;
+            errorEl.style.display = 'block';
+            btn.disabled = false;
+            btn.querySelector('span').innerText = "Sign In";
+        } else {
+            window.location.href = getRedirectUrl();
+        }
+    });
+
+    // SIGNUP HANDLER
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('signup-identifier').value;
+        const pass = document.getElementById('signup-password').value;
+        const confirm = document.getElementById('signup-confirm').value;
+        const btn = document.getElementById('signup-submit-btn');
+        const errorEl = document.getElementById('error-msg');
+
+        if (pass !== confirm) {
+            errorEl.innerText = "Passwords do not match!";
+            errorEl.style.display = 'block';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.querySelector('span').innerText = "Creating...";
+
+        const { data, error } = await _supabase.auth.signUp(
+            id.includes('@') ? { email: id, password: pass } : { phone: id, password: pass }
+        );
+
+        if (error) {
+            errorEl.innerText = error.message;
+            errorEl.style.display = 'block';
+            btn.disabled = false;
+            btn.querySelector('span').innerText = "Create Account";
+        } else {
+            alert("Signup successful! Please Sign In.");
+            toggleAuth('signin');
+        }
+    });
+</script>
+</body>
+</html>
