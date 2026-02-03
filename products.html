@@ -104,7 +104,7 @@
       padding: 15px;
       z-index: 1001;
     }
-    .dropdown-menu.active { display: flex; }
+    .dropdown-menu.active { display: flex !important; }
 
     .dropdown-header { margin-bottom: 12px; padding: 10px; border-bottom: 1px solid #f1f5f9; }
     .dropdown-header h4 { font-size: 1.1rem; font-weight: 800; color: var(--dark); margin: 0; }
@@ -146,8 +146,38 @@
       .nav-links a { font-size: 0.95rem; }
     }
 
+    /* --- Category Filter Bar --- */
+    .category-bar {
+      max-width: 1200px;
+      margin: 20px auto 0;
+      padding: 0 4%;
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .category-bar::-webkit-scrollbar { display: none; }
+    
+    .cat-btn {
+      padding: 10px 20px;
+      background: white;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 50px;
+      white-space: nowrap;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--grey);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .cat-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
     /* --- Catalog Controls --- */
-    .controls-container { max-width: 1200px; margin: 20px auto; padding: 0 4%; display: flex; gap: 10px; align-items: center; }
+    .controls-container { max-width: 1200px; margin: 15px auto; padding: 0 4%; display: flex; gap: 10px; align-items: center; }
     .search-wrapper { position: relative; flex: 1; }
     .search-input { width: 100%; padding: 14px 14px 14px 45px; border-radius: 15px; border: 1.5px solid #e2e8f0; outline: none; font-size: 0.95rem; background: white; }
     .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 20px; color: var(--grey); }
@@ -222,25 +252,6 @@
     .rich-description { color: #334155; font-size: 0.95rem; line-height: 1.7; white-space: pre-wrap; }
     .btn-whatsapp { background: #22c55e; color: white; padding: 18px; border-radius: 15px; font-weight: 800; text-decoration: none; border: none; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1rem; cursor: pointer; }
 
-    /* --- Auth Modals --- */
-    .auth-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; }
-    .auth-modal.active { display: flex; }
-    .modal-card { background: white; width: 100%; max-width: 400px; padding: 35px; border-radius: 24px; position: relative; animation: slideUp 0.4s ease; }
-    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    .close-modal { position: absolute; top: 20px; right: 20px; cursor: pointer; color: var(--grey); }
-
-    .auth-form-group { margin-bottom: 18px; text-align: left; }
-    .auth-form-group label { display: block; font-size: 0.75rem; font-weight: 800; margin-bottom: 6px; text-transform: uppercase; color: var(--grey); }
-    .pass-input-wrap { position: relative; display: flex; align-items: center; width: 100%; }
-    .pass-input-wrap input { width: 100%; padding-right: 45px !important; }
-    .pass-input-wrap .eye-icon-btn { position: absolute; right: 14px; cursor: pointer; color: var(--grey); width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; z-index: 5; }
-    .auth-form-group input { width: 100%; padding: 14px; border-radius: 12px; border: 1.5px solid #e2e8f0; font-family: inherit; font-size: 0.95rem; outline: none; transition: 0.2s; }
-    .auth-form-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
-    .forgot-link { display: block; text-align: right; font-size: 0.8rem; font-weight: 700; color: var(--primary); text-decoration: none; margin-top: -10px; margin-bottom: 20px; }
-    .auth-submit { width: 100%; padding: 16px; border-radius: 14px; border: none; background: var(--primary); color: white; font-weight: 800; cursor: pointer; font-size: 1rem; }
-    .switch-auth { text-align: center; margin-top: 25px; font-size: 0.85rem; font-weight: 600; color: var(--grey); }
-    .switch-auth span { color: var(--primary); cursor: pointer; font-weight: 800; }
-
     /* --- App Generic UI --- */
     .filter-overlay {
       position: fixed;
@@ -298,17 +309,6 @@
     @media (min-width: 1024px) { 
         .product-list { grid-template-columns: repeat(4, 1fr); } 
     }
-    .info-panel {
-      position: relative;
-      z-index: 1200;
-    }
-
-    .btn-whatsapp,
-    .add-to-cart-full-btn {
-      position: relative;
-      z-index: 1300;
-      pointer-events: auto;
-    }
   </style>
 </head>
 <body>
@@ -335,14 +335,10 @@
               <p id="user-display-sub">Manage your account</p>
           </div>
           <div id="guest-items">
-            <div class="dropdown-item" onclick="toggleModal('login-modal')">
+            <a href="login.html" class="dropdown-item">
               <i data-lucide="log-in"></i>
               <div class="item-info"><b>Sign In</b><span>Access orders</span></div>
-            </div>
-            <div class="dropdown-item" onclick="toggleModal('signup-modal')">
-              <i data-lucide="user-plus"></i>
-              <div class="item-info"><b>Create Account</b><span>Join for local delivery</span></div>
-            </div>
+            </a>
           </div>
           <div id="auth-items" style="display:none">
             <a href="profile.html" class="dropdown-item">
@@ -367,80 +363,6 @@
   </div>
 </header>
 
-<div class="auth-modal" id="login-modal">
-  <div class="modal-card">
-    <i data-lucide="x" class="close-modal" onclick="toggleModal('login-modal')"></i>
-    <h3>Sign In</h3>
-    <p>Login with your identifier and password.</p>
-    <form id="login-form">
-      <div class="auth-form-group">
-        <label>Email ID / Phone Number</label>
-        <input type="text" id="login-identifier" placeholder="Enter identifier" required>
-      </div>
-      <div class="auth-form-group">
-        <label>Password</label>
-        <div class="pass-input-wrap">
-            <input type="password" id="login-password" placeholder="••••••••" required>
-            <div class="eye-icon-btn" onclick="togglePass('login-password', this)">
-                <i data-lucide="eye"></i>
-            </div>
-        </div>
-      </div>
-      <a href="#" class="forgot-link" onclick="toggleModal('forgot-modal')">Forgot Password?</a>
-      <button type="submit" class="auth-submit" id="login-btn-action">Sign In</button>
-    </form>
-    <div class="switch-auth">New user? <span onclick="switchAuth('signup')">Create Account</span></div>
-  </div>
-</div>
-
-<div class="auth-modal" id="signup-modal">
-  <div class="modal-card">
-    <i data-lucide="x" class="close-modal" onclick="toggleModal('signup-modal')"></i>
-    <h3>Verify & Signup</h3>
-    <p>We'll send a verification code to your ID.</p>
-    <form id="signup-form">
-      <div class="auth-form-group">
-        <label>Email / Mobile Number</label>
-        <input type="text" id="signup-identifier" placeholder="Your identifier" required>
-      </div>
-      <div class="auth-form-group">
-        <label>Create Password</label>
-        <div class="pass-input-wrap">
-            <input type="password" id="signup-password" placeholder="Min 6 characters" required>
-            <div class="eye-icon-btn" onclick="togglePass('signup-password', this)">
-                <i data-lucide="eye"></i>
-            </div>
-        </div>
-      </div>
-      <div class="auth-form-group">
-        <label>Confirm Password</label>
-        <div class="pass-input-wrap">
-            <input type="password" id="signup-confirm" placeholder="Repeat password" required>
-            <div class="eye-icon-btn" onclick="togglePass('signup-confirm', this)">
-                <i data-lucide="eye"></i>
-            </div>
-        </div>
-      </div>
-      <button type="submit" class="auth-submit" id="signup-btn-action">Verify & Sign Up</button>
-    </form>
-    <div class="switch-auth">Already have an account? <span onclick="switchAuth('login')">Sign In</span></div>
-  </div>
-</div>
-
-<div class="auth-modal" id="forgot-modal">
-  <div class="modal-card">
-    <i data-lucide="x" class="close-modal" onclick="toggleModal('forgot-modal')"></i>
-    <h3>Reset Password</h3>
-    <form id="forgot-form">
-      <div class="auth-form-group">
-        <label>Your Identifier</label>
-        <input type="text" id="forgot-identifier" placeholder="Enter Email or Phone" required>
-      </div>
-      <button type="submit" class="auth-submit" id="forgot-btn-submit">Send Reset Link</button>
-    </form>
-  </div>
-</div>
-
 <div id="image-viewer" class="image-viewer-overlay">
     <div class="viewer-controls">
         <button class="control-btn" id="zoom-toggle" onclick="toggleZoom()"><i data-lucide="zoom-in"></i></button>
@@ -452,6 +374,13 @@
 </div>
 
 <main id="catalog-section">
+  <div class="category-bar">
+    <button class="cat-btn active" onclick="filterByCategory('All', this)">All Products</button>
+    <button class="cat-btn" onclick="filterByCategory('Baby Diaper', this)">Baby Diaper</button>
+    <button class="cat-btn" onclick="filterByCategory('Adult Diaper', this)">Adult Diaper</button>
+    <button class="cat-btn" onclick="filterByCategory('Other', this)">Others</button>
+  </div>
+
   <div class="controls-container">
     <div class="search-wrapper">
       <i data-lucide="search" class="search-icon"></i>
@@ -492,8 +421,7 @@
 <main id="detail-section" class="hidden">
   <div class="detail-view-container">
     <div class="back-nav" onclick="showCatalog()"><i data-lucide="arrow-left"></i> Back</div>
-    <div id="detail-grid-container">
-        </div>
+    <div id="detail-grid-container"></div>
   </div>
 </main>
 
@@ -513,8 +441,8 @@
   let cart = JSON.parse(localStorage.getItem('hc-cart')) || [];
   let activeBrand = 'All';
   let activeSize = 'All';
+  let activeCategory = 'All';
   let currentUser = null;
-  let savedProfile = null;
 
   /* --- AUTH LOGIC --- */
   async function checkUserSession() {
@@ -531,9 +459,6 @@
       userDisplay.innerText = "Welcome Back!";
       userSub.innerText = user.email || user.phone || "User Account";
       document.querySelector('.profile-btn i').setAttribute('data-lucide', 'user-check');
-
-      const { data: profile } = await _supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
-      savedProfile = profile;
     } else {
       guestItems.style.display = 'block';
       authItems.style.display = 'none';
@@ -544,108 +469,17 @@
     lucide.createIcons();
   }
 
-  async function handleLogout() {
-    await _supabase.auth.signOut();
-    localStorage.removeItem('sb-' + (new URL(SUPABASE_URL)).hostname.split('.')[0] + '-auth-token');
-    window.location.reload();
-  }
-
-  function toggleModal(id) {
-    const modal = document.getElementById(id);
-    if (!modal) return;
-    const isVisible = modal.style.display === 'flex';
-    document.querySelectorAll('.auth-modal').forEach(m => m.style.display = 'none');
-    modal.style.display = isVisible ? 'none' : 'flex';
-    document.getElementById('profile-dropdown').classList.remove('active');
-  }
-
-  function switchAuth(to) {
-    const loginModal = document.getElementById('login-modal');
-    const signupModal = document.getElementById('signup-modal');
-    if (to === 'signup') {
-        loginModal.style.display = 'none';
-        signupModal.style.display = 'flex';
-    } else {
-        signupModal.style.display = 'none';
-        loginModal.style.display = 'flex';
-    }
-  }
-
-  function togglePass(inputId, iconContainer) {
-    const el = document.getElementById(inputId);
-    const iconEl = iconContainer.querySelector('i');
-    if(el.type === "password") {
-        el.type = "text";
-        iconEl.setAttribute('data-lucide', 'eye-off');
-    } else {
-        el.type = "password";
-        iconEl.setAttribute('data-lucide', 'eye');
-    }
-    lucide.createIcons();
-  }
-
+  // Handle Profile Dropdown Toggle
   document.getElementById('profile-btn').addEventListener('click', (e) => {
     e.stopPropagation();
     document.getElementById('profile-dropdown').classList.toggle('active');
   });
 
-  document.getElementById('login-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const identifier = document.getElementById('login-identifier').value;
-    const pass = document.getElementById('login-password').value;
-    const btn = document.getElementById('login-btn-action');
-    btn.innerText = "Checking..."; btn.disabled = true;
-
-    const { data, error } = await _supabase.auth.signInWithPassword(
-        identifier.includes('@') ? { email: identifier, password: pass } : { phone: identifier, password: pass }
-    );
-    
-    if (!error && data.user) {
-      window.location.reload();
-    } else {
-      alert("Login Failed: " + error.message);
-      btn.innerText = "Sign In"; btn.disabled = false;
-    }
-  });
-
-  document.getElementById('signup-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const id = document.getElementById('signup-identifier').value;
-    const pass = document.getElementById('signup-password').value;
-    const confirm = document.getElementById('signup-confirm').value;
-    const btn = document.getElementById('signup-btn-action');
-
-    if (pass !== confirm) return alert("Passwords mismatch!");
-    btn.innerText = "Verifying..."; btn.disabled = true;
-
-    const { data, error } = await _supabase.auth.signUp(
-        id.includes('@') ? { email: id, password: pass } : { phone: id, password: pass }
-    );
-    
-    if (!error && data.user) {
-        alert("Registration Successful!");
-        toggleModal('signup-modal');
-    } else {
-        alert("Signup Error: " + error.message);
-    }
-    btn.innerText = "Verify & Sign Up"; btn.disabled = false;
-  });
-
-  document.getElementById('forgot-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const id = document.getElementById('forgot-identifier').value;
-    const btn = document.getElementById('forgot-btn-submit');
-    btn.innerText = "Sending..."; btn.disabled = true;
-
-    const { error } = await _supabase.auth.resetPasswordForEmail(id);
-    if(!error) {
-        alert("Reset link sent.");
-        toggleModal('forgot-modal');
-    } else {
-        alert(error.message);
-    }
-    btn.innerText = "Send Reset Link"; btn.disabled = false;
-  });
+  async function handleLogout() {
+    await _supabase.auth.signOut();
+    localStorage.clear(); 
+    window.location.reload();
+  }
 
   /* --- CATALOG LOGIC --- */
   function fixDriveLink(url) {
@@ -678,6 +512,19 @@
       generateBrandChips();
     }
     lucide.createIcons();
+  }
+
+  // 🟢 NEW CATEGORY FILTER LOGIC
+  function filterByCategory(cat, btn) {
+    activeCategory = cat;
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    let list = allProducts;
+    if (cat !== 'All') {
+      list = allProducts.filter(p => p.category === cat);
+    }
+    renderGrid(list);
   }
 
   function toggleFilter(show) {
@@ -715,6 +562,7 @@
 
   function applyFilters() {
     let filtered = allProducts;
+    if (activeCategory !== 'All') filtered = filtered.filter(p => p.category === activeCategory);
     if (activeBrand !== 'All') filtered = filtered.filter(p => p.category === activeBrand);
     if (activeSize !== 'All') filtered = filtered.filter(p => p.name.toLowerCase().includes(activeSize.toLowerCase()));
     renderGrid(filtered);
@@ -723,9 +571,7 @@
 
   function renderGrid(list) {
     const container = document.getElementById("product-list");
-    let filteredList = (activeBrand === 'All') ? list : list.filter(p => p.category === activeBrand);
-
-    container.innerHTML = filteredList.map((p) => {
+    container.innerHTML = list.map((p) => {
         const stockCount = parseInt(p.stock) || 0;
         const isOut = stockCount <= 0;
         const curPrice = Number(p.price);
@@ -759,7 +605,6 @@
 
   function openProductPage(productId) {
     const product = allProducts.find(p => p.id == productId);
-    
     document.getElementById('catalog-section').classList.add('hidden');
     document.getElementById('detail-section').classList.remove('hidden');
     
@@ -795,11 +640,9 @@
             <button class="add-to-cart-full-btn" style="padding:18px;" onclick="window.addToCart('${product.id}')" ${stockVal <= 0 ? 'disabled' : ''}>
               ${stockVal <= 0 ? 'Sold Out' : 'Add to Cart'}
             </button>
-            
             <button class="btn-whatsapp" onclick="event.stopPropagation(); buyNow('${product.id}')" ${stockVal <= 0 ? 'disabled' : ''}>
               <i data-lucide="shopping-bag"></i> Buy Now
             </button>
-
           </div>
           <div class="features-section" style="margin-top:30px; border-top:1px solid #e2e8f0; padding-top:20px;">
             <h3 class="section-title">Features & Details</h3>
@@ -817,53 +660,49 @@
     document.getElementById('detail-section').classList.add('hidden');
   }
 
-  // GLOBAL ADD TO CART WITH STOCK VALIDATION
   window.addToCart = function(productId) {
     const product = allProducts.find(p => p.id == productId);
     const stockAvailable = parseInt(product.stock) || 0;
-    
     const existingInCart = cart.find(item => item.id == productId);
     const currentQtyInCart = existingInCart ? existingInCart.qty : 0;
 
     if (stockAvailable <= 0 || currentQtyInCart >= stockAvailable) {
-        alert("Cannot add more! Stock limit reached (" + stockAvailable + " available).");
+        alert("Limit reached (" + stockAvailable + " available).");
         return;
     }
 
-    if(existingInCart) {
-        existingInCart.qty += 1;
-    } else {
-        cart.push({ ...product, qty: 1 });
-    }
+    if(existingInCart) { existingInCart.qty += 1; } 
+    else { cart.push({ ...product, qty: 1 }); }
     
     localStorage.setItem('hc-cart', JSON.stringify(cart));
     updateCartBadge();
     showToast();
   };
 
-  // 🔥 FINAL BUY NOW → CHECKOUT PAGE (STABLE)
+  /* 🟢 REDIRECT GUEST TO LOGIN ON BUY NOW */
   window.buyNow = function(productId) {
     const product = allProducts.find(p => p.id == productId);
-
-    if (!product) {
-      alert("Product not found. Please refresh.");
+    if (!product || parseInt(product.stock) <= 0) {
+      alert("Item out of stock.");
       return;
     }
 
-    const stock = parseInt(product.stock) || 0;
-    if (stock <= 0) {
-      alert("Sorry, this item is out of stock.");
+    // Redirect guest to login
+    if (!currentUser) {
+      localStorage.setItem('checkout-item', JSON.stringify({
+        id: product.id,
+        name: product.name,
+        price: Number(product.price)
+      }));
+      window.location.href = "login.html";
       return;
     }
 
-    // Save only what checkout.html needs
     localStorage.setItem('checkout-item', JSON.stringify({
       id: product.id,
       name: product.name,
       price: Number(product.price)
     }));
-
-    // Go to checkout page
     window.location.href = "checkout.html";
   }
 
@@ -884,7 +723,6 @@
     renderGrid(allProducts.filter(p => p.name.toLowerCase().includes(term) || p.category.toLowerCase().includes(term)));
   }
 
-  /* --- VIEWER --- */
   function openImageViewer(url) {
     document.getElementById('viewer-img').src = url;
     document.getElementById('image-viewer').classList.add('show');
