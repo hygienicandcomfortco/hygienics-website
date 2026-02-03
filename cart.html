@@ -14,95 +14,109 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <style>
-:root {--yellow:#FFD814;--yellow-b:#FCD200;--blue:#007185;--dark:#111;--bg:#f3f3f3;--white:#fff;--grey:#565959;--primary: #2563eb;}
+:root {--yellow:#FFD814;--yellow-b:#FCD200;--blue:#007185;--dark:#111;--bg:#f3f3f3;--white:#fff;--grey:#565959;--primary: #2563eb; --soft-blue: #eef4ff; --radius: 12px;}
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif; -webkit-tap-highlight-color: transparent;}
 body{background:var(--bg);color:var(--dark); overflow-x: hidden;}
 
-/* --- Fixed One-Line Header --- */
-header {
-  background: var(--white);
-  padding: 10px 15px;
-  border-bottom: 1px solid #ddd;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-.head-container {
-  max-width: 1150px;
-  margin: auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.logo-link {
-  display: flex;
-  align-items: center; gap: 8px; text-decoration: none; color: inherit; flex: 1; min-width: 0; 
-}
+/* --- Integrated Professional Header --- */
+header { background: var(--white); padding: 10px 15px; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 1000; }
+.head-container { max-width: 1150px; margin: auto; display: flex; align-items: center; justify-content: space-between; }
+.logo-link { display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; flex: 1; min-width: 0; }
 header img { height: 35px; flex-shrink: 0; }
 header h1 { font-size: 0.9rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.back-link { color: var(--blue); font-weight: 700; font-size: 0.8rem; text-decoration: none; white-space: nowrap; margin-left: 10px; }
+/* --- Profile & Auth UI Styles (Synced) --- */
+.profile-section { position: relative; margin-left: 10px; z-index: 1002; }
+.profile-btn { 
+  background: var(--soft-blue); 
+  color: var(--primary); 
+  width: 38px; height: 38px; 
+  border-radius: 50%; 
+  display: flex; align-items: center; justify-content: center; 
+  cursor: pointer; border: 2px solid transparent; 
+  transition: 0.3s;
+}
+.dropdown-menu {
+  position: absolute;
+  top: 50px; right: 0;
+  background: white;
+  width: 280px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  border: 1px solid #f1f5f9;
+  display: none;
+  flex-direction: column;
+  padding: 10px;
+  z-index: 1001;
+}
+.dropdown-menu.active { display: flex; }
+.dropdown-header { padding: 10px; border-bottom: 1px solid #f1f5f9; margin-bottom: 5px; }
+.dropdown-header h4 { font-size: 0.9rem; font-weight: 800; }
+.dropdown-header p { font-size: 0.75rem; color: var(--grey); }
+.dropdown-item {
+  padding: 12px;
+  text-decoration: none;
+  color: var(--dark);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: 0.2s;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.dropdown-item:hover { background: var(--soft-blue); color: var(--primary); }
+.item-info b { font-size: 0.9rem; display: block; }
+.item-info span { font-size: 0.75rem; color: var(--grey); }
 
+/* --- Auth Modals (Synced) --- */
+.auth-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; }
+.modal-card { background: white; width: 100%; max-width: 400px; padding: 30px; border-radius: 20px; position: relative; animation: slideUp 0.3s ease; }
+@keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.close-modal { position: absolute; top: 15px; right: 15px; cursor: pointer; color: var(--grey); z-index: 10; }
+.auth-form-group { margin-bottom: 15px; text-align: left;}
+.auth-form-group label { display: block; font-size: 0.7rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: var(--grey); }
+.auth-form-group input, .auth-form-group textarea { width: 100%; padding: 12px; border-radius: 10px; border: 1.5px solid #e2e8f0; outline: none; font-size: 0.95rem; }
+.pass-input-wrap { position: relative; display: flex; align-items: center; }
+.eye-icon-btn { position: absolute; right: 14px; cursor: pointer; color: var(--grey); }
+.auth-submit { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 800; cursor: pointer; }
+.switch-auth { text-align: center; margin-top: 20px; font-size: 0.8rem; font-weight: 600; color: var(--grey); }
+.switch-auth span { color: var(--primary); cursor: pointer; font-weight: 800; }
+.forgot-link { display: block; text-align: right; font-size: 0.8rem; font-weight: 700; color: var(--primary); text-decoration: none; margin-bottom: 10px; }
+
+/* --- Original Page Layout --- */
 .page { max-width: 1150px; margin: 10px auto; padding: 0 10px; display: flex; flex-direction: column; gap: 12px; }
-
-/* --- Summary Box --- */
 .summary-card { background: var(--white); padding: 20px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
 .sum-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
 .sum-total { font-weight: 800; font-size: 1.25rem; color: #b12704; margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px; }
-
-/* --- Shipping Progress Bar --- */
 .shipping-goal { margin-bottom: 20px; }
 .goal-text { font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; color: #444; }
 .progress-bg { background: #e0e0e0; height: 8px; border-radius: 10px; overflow: hidden; }
 .progress-fill { background: #007600; height: 100%; width: 0%; transition: 0.5s ease; }
-
-/* --- Pincode Section --- */
-.pincode-section { 
-    background: #f7fafa; 
-    border: 1px solid #d5d9d9; 
-    border-radius: 8px; 
-    padding: 12px; 
-    margin: 15px 0; 
-}
-.pincode-label { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--grey); margin-bottom: 8px; display: block; }
+.pincode-section { background: #f7fafa; border: 1px solid #d5d9d9; border-radius: 8px; padding: 12px; margin: 15px 0; }
 .pincode-flex { display: flex; gap: 8px; }
 .pincode-flex input { flex: 1; padding: 10px; border: 1px solid #adb1b1; border-radius: 6px; outline: none; font-size: 0.9rem; font-weight: 600;}
 .pincode-flex button { background: #e7e9ec; border: 1px solid #adb1b1; padding: 0 15px; border-radius: 6px; font-weight: 700; cursor: pointer; }
-
-.delivery-estimate-box { 
-    margin-top: 10px; 
-    padding: 8px; 
-    background: #fff; 
-    border-radius: 6px; 
-    font-size: 0.8rem; 
-    color: #007600; 
-    font-weight: 700; 
-    display: none; 
-    align-items: center; 
-    gap: 6px; 
-}
+.delivery-estimate-box { margin-top: 10px; padding: 8px; background: #fff; border-radius: 6px; font-size: 0.8rem; color: #007600; font-weight: 700; display: none; align-items: center; gap: 6px; }
 .pincode-error { color: #B12704; font-size: 0.75rem; font-weight: 700; margin-top: 8px; display: none; }
-
 .checkout-btn { width: 100%; margin-top: 12px; padding: 14px; border-radius: 25px; background: var(--yellow); border: 1px solid var(--yellow-b); font-size: 1rem; font-weight: 700; cursor: pointer; }
 .checkout-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-/* --- Cart Items --- */
 .cart-main { background: var(--white); border-radius: 8px; padding: 15px; }
 .cart-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
 .price-label { text-align: right; font-size: 0.75rem; color: var(--grey); margin-bottom: 5px; display: block; }
-
 .cart-item { display: flex; gap: 12px; padding: 15px 0; border-bottom: 1px solid #eee; }
-.cart-img { width: 100px; height: 100px; object-fit: contain; flex-shrink: 0; background: #fff; border: 1px solid #f0f0f0; border-radius: 4px; }
+.cart-img-link { display: block; flex-shrink: 0; }
+.cart-img { width: 100px; height: 100px; object-fit: contain; background: #fff; border: 1px solid #f0f0f0; border-radius: 4px; }
 .item-content { flex: 1; min-width: 0; }
 .name-price-flex { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
 .item-name { font-weight: 700; font-size: 0.95rem; color: #007185; line-height: 1.2; text-decoration: none; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .item-price { font-size: 1.1rem; font-weight: 800; color: #0F1111; }
-
 .action-row { margin-top: 12px; display: flex; gap: 15px; flex-wrap: wrap; align-items: center; }
 .qty-ctrl { display: flex; background: #F0F2F2; border: 1px solid #D5D9D9; border-radius: 8px; overflow: hidden; }
 .qty-ctrl button { padding: 4px 12px; border: none; background: none; cursor: pointer; font-size: 1.1rem; font-weight: bold; color: #555; }
 .qty-ctrl span { padding: 4px 12px; border-inline: 1px solid #D5D9D9; font-weight: 700; font-size: 0.9rem; background: #fff; }
 .link-action { cursor: pointer; font-size: 0.8rem; color: var(--blue); }
+.back-link { color: var(--blue); font-weight: 700; font-size: 0.8rem; text-decoration: none; white-space: nowrap; margin-right: 5px; }
 
 @media(min-width: 860px) {
   .page { display: grid; grid-template-columns: 1fr 350px; gap: 20px; margin-top: 20px; }
@@ -118,23 +132,96 @@ header h1 { font-size: 0.9rem; font-weight: 800; white-space: nowrap; overflow: 
 </head>
 
 <body>
-<header>
+<header id="main-header">
   <div class="head-container">
     <a href="index.html" class="logo-link">
       <img src="logo.png" alt="Logo">
       <h1>Hygienic & Comfort Co.</h1>
     </a>
-    <a href="products.html" class="back-link">Back to Shop</a>
+    <div style="display: flex; align-items: center;">
+        <a href="products.html" class="back-link">Back to Shop</a>
+        <div class="profile-section">
+            <div class="profile-btn" id="profile-btn"><i data-lucide="user"></i></div>
+            <div class="dropdown-menu" id="profile-dropdown">
+                <div class="dropdown-header">
+                    <h4 id="user-display-name">Welcome Guest</h4>
+                    <p id="user-display-sub">Manage your account</p>
+                </div>
+                <div id="guest-items">
+                    <div class="dropdown-item" onclick="toggleModal('login-modal')"><i data-lucide="log-in"></i> <div class="item-info"><b>Sign In</b><span>Access orders</span></div></div>
+                    <div class="dropdown-item" onclick="toggleModal('signup-modal')"><i data-lucide="user-plus"></i> <div class="item-info"><b>Register</b><span>Create account</span></div></div>
+                </div>
+                <div id="auth-items" style="display:none">
+                    <div class="dropdown-item" onclick="handleLogout()"><i data-lucide="log-out"></i> <div class="item-info"><b>Logout</b><span>End session</span></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
   </div>
 </header>
 
-<div class="page">
+<div class="auth-modal" id="login-modal">
+  <div class="modal-card">
+    <i data-lucide="x" class="close-modal" onclick="closeAllModals()"></i>
+    <h3>Sign In</h3>
+    <form id="login-form" style="margin-top:20px;">
+      <div class="auth-form-group"><label>Email / Phone</label><input type="text" id="login-identifier" required></div>
+      <div class="auth-form-group">
+        <label>Password</label>
+        <div class="pass-input-wrap">
+            <input type="password" id="login-password" required>
+            <div class="eye-icon-btn" onclick="togglePass('login-password', this)"><i data-lucide="eye"></i></div>
+        </div>
+      </div>
+      <button type="submit" class="auth-submit" id="login-btn-action">Sign In</button>
+    </form>
+    <div class="switch-auth">New user? <span onclick="switchAuth('signup')">Create Account</span></div>
+  </div>
+</div>
+
+<div class="auth-modal" id="signup-modal">
+  <div class="modal-card">
+    <i data-lucide="x" class="close-modal" onclick="closeAllModals()"></i>
+    <h3>Create Account</h3>
+    <form id="signup-form">
+      <div class="auth-form-group"><label>Email / Mobile</label><input type="text" id="signup-identifier" required></div>
+      <div class="auth-form-group">
+        <label>Password</label>
+        <div class="pass-input-wrap">
+            <input type="password" id="signup-password" required>
+            <div class="eye-icon-btn" onclick="togglePass('signup-password', this)"><i data-lucide="eye"></i></div>
+        </div>
+      </div>
+      <div class="auth-form-group">
+        <label>Confirm Password</label>
+        <div class="pass-input-wrap">
+            <input type="password" id="signup-confirm" required>
+            <div class="eye-icon-btn" onclick="togglePass('signup-confirm', this)"><i data-lucide="eye"></i></div>
+        </div>
+      </div>
+      <button type="submit" class="auth-submit" id="signup-btn-action">Verify & Register</button>
+    </form>
+    <div class="switch-auth">Already have an account? <span onclick="switchAuth('login')">Sign In</span></div>
+  </div>
+</div>
+
+<div class="auth-modal" id="forgot-modal">
+  <div class="modal-card">
+    <i data-lucide="x" class="close-modal" onclick="closeAllModals()"></i>
+    <h3>Reset Password</h3>
+    <form id="forgot-form" style="margin-top:20px;">
+      <div class="auth-form-group"><label>Your Identifier</label><input type="text" id="forgot-identifier" required></div>
+      <button type="submit" class="auth-submit" id="forgot-btn-submit">Send Link</button>
+    </form>
+  </div>
+</div>
+
+<div class="page" id="cart-main-page">
   <aside class="summary-card" id="summary-section">
     <div class="shipping-goal">
         <div class="goal-text" id="goal-message">Add more for FREE delivery</div>
         <div class="progress-bg"><div class="progress-fill" id="goal-bar"></div></div>
     </div>
-
     <div class="sum-row"><span>Items Subtotal</span><b id="sub-total">₹0</b></div>
     <div class="sum-row"><span>Delivery Fee</span><b id="delivery-fee">₹0</b></div>
     <div class="sum-row sum-total"><span>Total</span><b id="grand-total">₹0</b></div>
@@ -147,48 +234,20 @@ header h1 { font-size: 0.9rem; font-weight: 800; white-space: nowrap; overflow: 
         </div>
         <div id="pincode-error-msg" class="pincode-error">Please write a valid 6-digit Indian Pincode</div>
         <div id="delivery-info-box" class="delivery-estimate-box">
-            <i data-lucide="truck" style="width: 16px;"></i>
-            <span id="est-days-text">Calculated!</span>
+            <i data-lucide="truck" style="width: 16px;"></i><span id="est-days-text">Calculated!</span>
         </div>
     </div>
-    
-    <button type="button" class="checkout-btn" id="proceed-btn" disabled onclick="openModal()">Proceed to Buy</button>
+    <button type="button" class="checkout-btn" id="proceed-btn" disabled onclick="checkAuthAndProceed()">Proceed to Buy</button>
   </aside>
 
   <section class="cart-main">
     <h2 class="cart-title">Shopping Cart</h2>
-    <span class="price-label">Price</span>
     <div id="cart-list"></div>
-
     <div id="saved-section" style="display:none; margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px;">
       <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;">Saved for later</h3>
       <div id="saved-list"></div>
     </div>
   </section>
-</div>
-
-<div id="checkout-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;justify-content:center;align-items:center;backdrop-filter:blur(5px); z-index: 2000;">
-  <div style="background:#fff;padding:30px;border-radius:16px;width:92%;max-width:400px; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
-    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h3 style="font-weight:800; font-size: 1.4rem;">Final Step</h3>
-        <i data-lucide="x" style="cursor:pointer; color:#666;" onclick="closeModal()"></i>
-    </div>
-    <form onsubmit="handleOrder(event)">
-      <label style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: #666;">Full Name</label>
-      <input type="text" id="cust-name" placeholder="Enter your full name" required style="width:100%;padding:14px;margin:5px 0 20px;border:1.5px solid #e2e8f0;border-radius:10px; outline: none; font-size: 1rem;">
-      
-      <label style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: #666;">WhatsApp Number</label>
-      <div style="display:flex;border:1.5px solid #e2e8f0;border-radius:10px;margin: 5px 0 25px; overflow: hidden; background: #fff;">
-        <span style="padding:14px;background:#f8fafc;font-weight:700; color:#444; border-right: 1.5px solid #e2e8f0;">+91</span>
-        <input type="tel" id="cust-phone" maxlength="10" pattern="[0-9]{10}" placeholder="10-digit mobile" required style="flex:1;border:none;padding:14px; outline: none; font-size: 1rem;">
-      </div>
-      
-      <button type="submit" class="checkout-btn" style="background:#22c55e; border:none; color:#fff; margin-top:0; padding:18px;">
-        <i data-lucide="send" style="display: inline-block; width: 18px; vertical-align: middle; margin-right: 8px;"></i>
-        Confirm & Order
-      </button>
-    </form>
-  </div>
 </div>
 
 <script>
@@ -200,110 +259,149 @@ let currentDeliveryFee = 0;
 let currentEstDays = "";
 let currentZone = 4;
 let pincodeVerified = false;
+let currentUser = null;
+let savedProfile = null;
 
-// Block letters in pincode
-document.getElementById('cart-pincode').addEventListener('input', function(e) {
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
+/* --- AUTH & PROFILE LOGIC --- */
+async function checkUserSession() {
+    const { data: { user } } = await supa.auth.getUser();
+    currentUser = user;
+    const guestItems = document.getElementById('guest-items');
+    const authItems = document.getElementById('auth-items');
+    const userDisplay = document.getElementById('user-display-name');
+    const userSub = document.getElementById('user-display-sub');
+    
+    if (user) {
+        guestItems.style.display = 'none';
+        authItems.style.display = 'block';
+        userDisplay.innerText = "Welcome Back!";
+        userSub.innerText = user.email || user.phone || "Active Account";
+
+        const { data: profile } = await supa.from('profiles').select('*').eq('id', user.id).maybeSingle();
+        savedProfile = profile;
+    } else {
+        guestItems.style.display = 'block';
+        authItems.style.display = 'none';
+        userDisplay.innerText = "Welcome Guest";
+        userSub.innerText = "Manage your account";
+    }
+    lucide.createIcons();
+}
+
+function toggleModal(id) {
+    closeAllModals();
+    const modal = document.getElementById(id);
+    if(modal) modal.style.display = 'flex';
+}
+
+function closeAllModals() {
+    document.querySelectorAll('.auth-modal').forEach(m => m.style.display = 'none');
+    document.getElementById('profile-dropdown').classList.remove('active');
+}
+
+function switchAuth(to) { toggleModal(to === 'signup' ? 'signup-modal' : 'login-modal'); }
+async function handleLogout() { await supa.auth.signOut(); location.reload(); }
+
+function togglePass(inputId, iconContainer) {
+    const el = document.getElementById(inputId);
+    const iconEl = iconContainer.querySelector('i');
+    el.type = el.type === "password" ? "text" : "password";
+    iconEl.setAttribute('data-lucide', el.type === "password" ? 'eye' : 'eye-off');
+    lucide.createIcons();
+}
+
+function checkAuthAndProceed() {
+    if (!currentUser) { toggleModal('login-modal'); } 
+    else { handleProceedToBuy(); }
+}
+
+async function handleProceedToBuy() {
+    const { data: { user } } = await supa.auth.getUser();
+    
+    if (!user) {
+        toggleModal('login-modal');
+        return;
+    }
+
+    if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+    }
+
+    // Prepare data for checkout page
+    const subtotal = cart.reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
+    const itemsSummary = cart.map(x => `${x.name} (x${x.qty || 1})`).join(', ');
+
+    // 🟢 STORE CART DATA AND SET FLAG TO CLEAR CART ON ORDER CONFIRMATION
+    localStorage.setItem('checkout-item', JSON.stringify({
+        id: "CART_ORDER",
+        name: itemsSummary,
+        price: subtotal + currentDeliveryFee,
+        cartItems: cart,
+        isFromCart: true // Flag used by checkout.html to clear "hc-cart"
+    }));
+
+    window.location.href = "checkout.html";
+}
+
+/* --- CART ENGINE --- */
+document.getElementById('cart-pincode').addEventListener('input', function(e) { this.value = this.value.replace(/[^0-9]/g, ''); });
 
 async function calculateDelivery() {
     const pinStr = document.getElementById('cart-pincode').value;
     const btn = document.getElementById('apply-pin-btn');
-    const infoBox = document.getElementById('delivery-info-box');
-    const errorEl = document.getElementById('pincode-error-msg');
-    const proceedBtn = document.getElementById('proceed-btn');
-    const feeEl = document.getElementById('delivery-fee');
-    const totalEl = document.getElementById('grand-total');
-    const daysEl = document.getElementById('est-days-text');
-
-    if (pinStr.length !== 6 || pinStr.startsWith('0')) {
-        errorEl.style.display = 'block';
-        return;
-    }
-
-    btn.disabled = true;
-    btn.innerText = "...";
-
+    if (pinStr.length !== 6 || pinStr.startsWith('0')) return alert("Enter valid 6-digit Pincode");
+    btn.disabled = true; btn.innerText = "...";
     try {
-        // Indian Pincode API Check
         const res = await fetch(`https://api.postalpincode.in/pincode/${pinStr}`);
         const data = await res.json();
-
         if (data[0].Status !== "Success") {
-            errorEl.innerText = "Please write a valid Indian Pincode";
-            errorEl.style.display = 'block';
-            infoBox.style.display = 'none';
-            pincodeVerified = false;
-            proceedBtn.disabled = true;
+            alert("Pincode not found"); pincodeVerified = false;
         } else {
-            errorEl.style.display = 'none';
             const state = data[0].PostOffice[0].State.toUpperCase();
             const pinNum = parseInt(pinStr);
             let zone = 4; let days = "7-8 Days";
-
-            // Zone Logic
-            if (pinNum >= 421501 && pinNum <= 421505) { 
-                zone = 1; 
-                const now = new Date(); // 5:00 PM CUTOFF
-                days = now.getHours() < 17 ? "Same Day Delivery" : "Next Day Delivery";
-            } 
+            if (pinNum >= 421501 && pinNum <= 421505) { zone = 1; days = (new Date().getHours() < 17) ? "Same Day Delivery" : "Next Day Delivery"; } 
             else if (state === "MAHARASHTRA") { zone = 2; days = "3-4 Days"; } 
             else if (["WEST BENGAL", "KARNATAKA", "TAMIL NADU", "DELHI", "TELANGANA"].includes(state)) { zone = 3; days = "5-6 Days"; }
             else if (["KERALA", "JAMMU & KASHMIR", "ASSAM", "MANIPUR", "ARUNACHAL PRADESH", "MEGHALAYA", "MIZORAM", "NAGALAND", "SIKKIM", "TRIPURA"].includes(state)) { zone = 5; days = "9-10 Days"; }
 
             currentZone = zone;
-            const totalQty = cart.reduce((s, i) => s + (i.qty || 1), 0);
-            const weightGrams = totalQty * 500; // Slab per 500g
-
             const rates = { 1: { base: 33, add: 31 }, 2: { base: 36, add: 33 }, 3: { base: 50, add: 44 }, 4: { base: 58, add: 50 }, 5: { base: 70, add: 59 } };
             const zRate = rates[zone];
+            const weightGrams = cart.reduce((s,i)=>s+(i.qty||1),0) * 500;
             let fee = zRate.base;
             if (weightGrams > 500) fee += (Math.ceil((weightGrams - 500) / 500) * zRate.add);
-
             let subtotal = cart.reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
-            
-            // FREE DELIVERY RULES
-            if (zone === 1 && subtotal >= 499) fee = 0;
-            else if (subtotal >= 999) fee = 0;
+            if ((zone === 1 && subtotal >= 499) || subtotal >= 999) fee = 0;
 
-            currentDeliveryFee = fee;
-            currentEstDays = days;
-            pincodeVerified = true;
-            proceedBtn.disabled = false;
-            
-            feeEl.innerText = `₹${fee}`;
-            daysEl.innerText = days;
-            totalEl.innerText = `₹${(subtotal + fee).toLocaleString()}`;
-            infoBox.style.display = 'flex';
+            currentDeliveryFee = fee; currentEstDays = days; pincodeVerified = true;
+            document.getElementById('proceed-btn').disabled = false;
+            document.getElementById('delivery-fee').innerText = `₹${fee}`;
+            document.getElementById('est-days-text').innerText = days;
+            document.getElementById('delivery-info-box').style.display = 'flex';
             renderUI();
         }
-    } catch (e) {
-        errorEl.innerText = "Check your internet connection.";
-        errorEl.style.display = 'block';
-    } finally {
-        btn.disabled = false; btn.innerText = "Apply";
-    }
+    } catch (e) { alert("Check internet"); } finally { btn.disabled = false; btn.innerText = "Apply"; }
 }
 
 function renderUI() {
   const cartList = document.getElementById('cart-list');
-  const summarySection = document.getElementById('summary-section');
-  if(!cart.length && !saved.length) {
-    cartList.innerHTML = `<div style="padding:40px; text-align:center;"><p>Your cart is empty.</p></div>`;
-    summarySection.style.display = 'none';
-    return;
-  }
-
-  summarySection.style.display = cart.length ? 'block' : 'none';
-  let subtotal = 0, count = 0;
+  if(!cart.length && !saved.length) { cartList.innerHTML = `<p style="text-align:center;padding:40px;">Your cart is empty.</p>`; document.getElementById('summary-section').style.display = 'none'; return; }
+  document.getElementById('summary-section').style.display = cart.length ? 'block' : 'none';
+  let subtotal = 0;
   cartList.innerHTML = cart.map((p, i) => {
-    const qty = p.qty || 1;
-    subtotal += p.price * qty;
-    count += qty;
+    const qty = p.qty || 1; subtotal += p.price * qty;
+    const prodLink = `products.html?id=${p.id}`;
     return `<div class="cart-item">
-      <img class="cart-img" src="${p.images?.[0]||'logo.png'}">
+      <a href="${prodLink}" class="cart-img-link">
+        <img class="cart-img" src="${p.images?.[0]||'logo.png'}" alt="${p.name}">
+      </a>
       <div class="item-content">
-        <div class="name-price-flex"><span class="item-name">${p.name}</span><span class="item-price">₹${(p.price * qty).toLocaleString()}</span></div>
+        <div class="name-price-flex">
+          <a href="${prodLink}" class="item-name">${p.name}</a>
+          <span class="item-price">₹${(p.price * qty).toLocaleString()}</span>
+        </div>
         <div class="action-row">
           <div class="qty-ctrl"><button onclick="changeQty(${i},-1)">-</button><span>${qty}</span><button onclick="changeQty(${i},1)">+</button></div>
           <span class="link-action" onclick="deleteItem(${i})">Delete</span>
@@ -313,18 +411,15 @@ function renderUI() {
       </div>
     </div>`;
   }).join('');
-
-  const goal = (currentZone === 1) ? 499 : 999;
-  const bar = document.getElementById('goal-bar');
-  const msg = document.getElementById('goal-message');
-  const pct = Math.min((subtotal / goal) * 100, 100);
-  bar.style.width = `${pct}%`;
-  msg.innerHTML = subtotal >= goal ? "🎉 <b>FREE Delivery</b> unlocked!" : `Add <b>₹${(goal - subtotal).toLocaleString()}</b> more for FREE delivery`;
-
   document.getElementById('sub-total').innerText = `₹${subtotal.toLocaleString()}`;
   document.getElementById('grand-total').innerText = `₹${(subtotal + currentDeliveryFee).toLocaleString()}`;
-  lucide.createIcons();
   renderSaved();
+  lucide.createIcons();
+}
+
+function shareItem(id, name) {
+    const url = `${location.origin}/products.html?id=${id}`;
+    navigator.clipboard.writeText(url); alert("Link copied!");
 }
 
 async function changeQty(idx, delta) {
@@ -338,66 +433,45 @@ async function changeQty(idx, delta) {
   renderUI();
 }
 
-function shareItem(id, name) {
-    const url = `${location.origin}/products.html?id=${id}`;
-    navigator.clipboard.writeText(url); alert("Link copied!");
-}
-
+function updateStorage() { localStorage.setItem('hc-cart', JSON.stringify(cart)); localStorage.setItem('hc-saved', JSON.stringify(saved)); renderUI(); }
 function deleteItem(i) { cart.splice(i, 1); updateStorage(); }
 function saveItem(i) { saved.push(cart.splice(i, 1)[0]); updateStorage(); }
 function deleteSaved(i) { saved.splice(i, 1); updateStorage(); }
 function moveToCart(i) { cart.push(saved.splice(i, 1)[0]); updateStorage(); }
-function openModal() { document.getElementById('checkout-modal').style.display='flex'; }
-function closeModal() { document.getElementById('checkout-modal').style.display='none'; }
-
-async function handleOrder(e) {
-  e.preventDefault();
-  const btn = e.target.querySelector('button');
-  const name = document.getElementById('cust-name').value.trim();
-  const phone = document.getElementById('cust-phone').value.trim();
-  const pin = document.getElementById('cart-pincode').value;
-
-  btn.disabled = true; btn.innerHTML = 'Ordering...';
-
-  try {
-    for(const item of cart) {
-        const { data } = await supa.from('products').select('stock').eq('id', item.id).single();
-        await supa.from('products').update({ stock: data.stock - item.qty }).eq('id', item.id);
-    }
-    const total = cart.reduce((t, x) => t + x.price * x.qty, 0) + currentDeliveryFee;
-    await supa.from('orders').insert([{ customer_name: name, phone_number: "+91"+phone, items: cart.map(x => `${x.name} (x${x.qty})`).join(', '), total_price: total, status: 'New' }]);
-    const msg = `*NEW ORDER*\nName: ${name}\nPhone: +91 ${phone}\nPin: ${pin}\nTotal: ₹${total.toLocaleString()}\nEst: ${currentEstDays}\n\nItems:\n` + cart.map(x => `• ${x.name} x${x.qty}`).join('\n');
-    window.open(`https://wa.me/919307760665?text=${encodeURIComponent(msg)}`, '_blank');
-    localStorage.removeItem('hc-cart');
-    location.href='index.html';
-  } catch(err) { alert(err.message); btn.disabled = false; btn.innerText = 'Confirm & Order'; }
-}
-
-function updateStorage() {
-  localStorage.setItem('hc-cart', JSON.stringify(cart));
-  localStorage.setItem('hc-saved', JSON.stringify(saved));
-  renderUI();
-}
 
 function renderSaved() {
-    const section = document.getElementById('saved-section');
     const list = document.getElementById('saved-list');
-    if(!saved.length) { section.style.display = 'none'; return; }
-    section.style.display = 'block';
-    list.innerHTML = saved.map((p, i) => `
-        <div class="cart-item" style="opacity: 0.8; padding: 10px 0;">
-            <img class="cart-img" src="${p.images?.[0]||'logo.png'}" style="width:60px; height:60px;">
+    if(!saved.length) { document.getElementById('saved-section').style.display = 'none'; return; }
+    document.getElementById('saved-section').style.display = 'block';
+    list.innerHTML = saved.map((p, i) => {
+        const prodLink = `products.html?id=${p.id}`;
+        return `<div class="cart-item" style="opacity:0.8;">
+            <a href="${prodLink}" class="cart-img-link">
+                <img class="cart-img" src="${p.images?.[0]||'logo.png'}" style="width:60px;height:60px;">
+            </a>
             <div class="item-content">
-                <span class="item-name" style="font-size:0.85rem;">${p.name}</span>
-                <div class="action-row" style="margin-top:5px;">
+                <a href="${prodLink}" class="item-name" style="font-size:0.85rem;">${p.name}</a>
+                <div class="action-row">
                     <span class="link-action" onclick="moveToCart(${i})">Move to Cart</span>
                     <span class="link-action" onclick="deleteSaved(${i})">Remove</span>
                 </div>
             </div>
-        </div>`).join('');
+        </div>`
+    }).join('');
 }
 
-window.onload = renderUI;
+document.getElementById('profile-btn').addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('profile-dropdown').classList.toggle('active'); });
+
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('login-identifier').value;
+    const pass = document.getElementById('login-password').value;
+    const { error } = await supa.auth.signInWithPassword(id.includes('@') ? { email: id, password: pass } : { phone: id, password: pass });
+    if (error) alert(error.message); else location.reload();
+});
+
+window.onload = () => { renderUI(); checkUserSession(); };
+window.onclick = (e) => { if (!e.target.closest('.profile-section')) document.getElementById('profile-dropdown').classList.remove('active'); };
 </script>
 </body>
 </html>
