@@ -96,17 +96,16 @@
       .brand-text h1 { font-size: 1.1rem; }
       .brand-text p { display: block; }
       
-      /* Move Nav and Profile to the right */
       .nav-links { 
         width: auto; 
         border-top: none; 
         padding-top: 0; 
         gap: 25px; 
-        margin-left: auto; /* Pushes nav to the right */
+        margin-left: auto; 
         order: 2;
       }
       .profile-section {
-        order: 3; /* Pushes profile to the far right after nav */
+        order: 3; 
         margin-left: 15px;
       }
       .header-logo { height: 50px; }
@@ -129,16 +128,16 @@
       position: absolute;
       top: 55px; right: 0;
       background: white;
-      width: 350px;
+      width: 280px;
       border-radius: 20px;
       box-shadow: 0 15px 40px rgba(0,0,0,0.12);
       border: 1px solid #f1f5f9;
       display: none;
       flex-direction: column;
       padding: 15px;
-      z-index: 1001;
+      z-index: 2001;
     }
-    .dropdown-menu.active { display: flex; }
+    .dropdown-menu.active { display: flex !important; }
 
     .dropdown-header { margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid #f1f5f9; }
     .dropdown-header h4 { font-size: 0.9rem; font-weight: 800; color: var(--dark); }
@@ -163,64 +162,6 @@
     .item-info span { font-size: 0.7rem; color: var(--grey); }
 
     .logout-btn-item { color: #ef4444 !important; }
-
-    /* --- Auth Modal --- */
-    .auth-modal {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(4px);
-      z-index: 3000;
-      display: none;
-      align-items: center; justify-content: center;
-      padding: 20px;
-    }
-    .auth-modal.active { display: flex; }
-
-    .modal-card {
-      background: white;
-      width: 100%; max-width: 400px;
-      padding: 35px;
-      border-radius: 24px;
-      position: relative;
-      animation: slideUp 0.4s ease;
-    }
-    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-    .close-modal { position: absolute; top: 20px; right: 20px; cursor: pointer; color: var(--grey); }
-
-    .auth-form-group { margin-bottom: 18px; text-align: left; }
-    .auth-form-group label { display: block; font-size: 0.75rem; font-weight: 800; margin-bottom: 6px; text-transform: uppercase; color: var(--grey); }
-    
-    .pass-input-wrap { position: relative; display: flex; align-items: center; width: 100%; }
-    .pass-input-wrap input { width: 100%; padding-right: 45px !important; }
-    .pass-input-wrap .eye-icon-btn { 
-        position: absolute; 
-        right: 14px; 
-        cursor: pointer; 
-        color: var(--grey); 
-        width: 20px; 
-        height: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 5;
-    }
-
-    .auth-form-group input { 
-      width: 100%; padding: 14px; border-radius: 12px; border: 1.5px solid #e2e8f0; 
-      font-family: inherit; font-size: 0.95rem; outline: none; transition: 0.2s;
-    }
-    .auth-form-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
-
-    .forgot-link { display: block; text-align: right; font-size: 0.8rem; font-weight: 700; color: var(--primary); text-decoration: none; margin-top: -10px; margin-bottom: 20px; }
-
-    .auth-submit { 
-      width: 100%; padding: 16px; border-radius: 14px; border: none; 
-      background: var(--primary); color: white; font-weight: 800; cursor: pointer; font-size: 1rem;
-    }
-
-    .switch-auth { text-align: center; margin-top: 25px; font-size: 0.85rem; font-weight: 600; color: var(--grey); }
-    .switch-auth span { color: var(--primary); cursor: pointer; font-weight: 800; }
 
     /* --- Announcement Bar --- */
     .announcement-bar {
@@ -406,14 +347,10 @@
               <p id="user-display-sub">Manage your account</p>
           </div>
           <div id="guest-items">
-            <div class="dropdown-item" onclick="toggleModal('login-modal')">
+            <a href="login.html" class="dropdown-item">
               <i data-lucide="log-in"></i>
               <div class="item-info"><b>Sign In</b><span>Access orders & profile</span></div>
-            </div>
-            <div class="dropdown-item" onclick="toggleModal('signup-modal')">
-              <i data-lucide="user-plus"></i>
-              <div class="item-info"><b>Create Account</b><span>Join for local delivery</span></div>
-            </div>
+            
           </div>
           <div id="auth-items" style="display:none">
             <a href="profile.html" class="dropdown-item">
@@ -441,80 +378,6 @@
     </nav>
   </div>
 </header>
-
-<div class="auth-modal" id="login-modal">
-  <div class="modal-card">
-    <i data-lucide="x" class="close-modal" onclick="toggleModal('login-modal')"></i>
-    <h3>Sign In</h3>
-    <p>Login with your identifier and password.</p>
-    <form id="login-form">
-      <div class="auth-form-group">
-        <label>Email ID / Phone Number</label>
-        <input type="text" id="login-identifier" placeholder="Enter identifier" required>
-      </div>
-      <div class="auth-form-group">
-        <label>Password</label>
-        <div class="pass-input-wrap">
-            <input type="password" id="login-password" placeholder="••••••••" required>
-            <div class="eye-icon-btn" onclick="togglePass('login-password', this)">
-                <i data-lucide="eye"></i>
-            </div>
-        </div>
-      </div>
-      <a href="#" class="forgot-link" onclick="toggleModal('forgot-modal')">Forgot Password?</a>
-      <button type="submit" class="auth-submit" id="login-btn-action">Sign In</button>
-    </form>
-    <div class="switch-auth">New user? <span onclick="switchAuth('signup')">Create Account</span></div>
-  </div>
-</div>
-
-<div class="auth-modal" id="signup-modal">
-  <div class="modal-card">
-    <i data-lucide="x" class="close-modal" onclick="toggleModal('signup-modal')"></i>
-    <h3>Verify & Signup</h3>
-    <p>We'll send a verification code to your ID.</p>
-    <form id="signup-form">
-      <div class="auth-form-group">
-        <label>Email / Mobile Number</label>
-        <input type="text" id="signup-identifier" placeholder="Your identifier" required>
-      </div>
-      <div class="auth-form-group">
-        <label>Create Password</label>
-        <div class="pass-input-wrap">
-            <input type="password" id="signup-password" placeholder="Min 6 characters" required>
-            <div class="eye-icon-btn" onclick="togglePass('signup-password', this)">
-                <i data-lucide="eye"></i>
-            </div>
-        </div>
-      </div>
-      <div class="auth-form-group">
-        <label>Confirm Password</label>
-        <div class="pass-input-wrap">
-          <input type="password" id="signup-confirm" placeholder="Repeat password" required>
-          <div class="eye-icon-btn" onclick="togglePass('signup-confirm', this)">
-              <i data-lucide="eye"></i>
-          </div>
-        </div>
-      </div>
-      <button type="submit" class="auth-submit" id="signup-btn-action">Verify & Sign Up</button>
-    </form>
-    <div class="switch-auth">Already have an account? <span onclick="switchAuth('login')">Sign In</span></div>
-  </div>
-</div>
-
-<div class="auth-modal" id="forgot-modal">
-  <div class="modal-card">
-    <i data-lucide="x" class="close-modal" onclick="toggleModal('forgot-modal')"></i>
-    <h3>Reset Password</h3>
-    <form id="forgot-form">
-      <div class="auth-form-group">
-        <label>Your Identifier</label>
-        <input type="text" id="forgot-identifier" placeholder="Enter Email or Phone" required>
-      </div>
-      <button type="submit" class="auth-submit" id="forgot-btn-submit">Send Reset Link</button>
-    </form>
-  </div>
-</div>
 
 <div class="announcement-bar">
     <div class="marquee-content">
@@ -640,106 +503,16 @@
     lucide.createIcons();
   }
 
-  function toggleModal(id) {
-    const modal = document.getElementById(id);
-    if(!modal) return;
-    const isVisible = modal.style.display === 'flex';
-    document.querySelectorAll('.auth-modal').forEach(m => m.style.display = 'none');
-    modal.style.display = isVisible ? 'none' : 'flex';
-    document.getElementById('profile-dropdown').classList.remove('active');
-  }
-
-  function switchAuth(to) {
-    toggleModal(to === 'signup' ? 'login-modal' : 'signup-modal');
-    toggleModal(to === 'signup' ? 'signup-modal' : 'login-modal');
-  }
-
-  function togglePass(inputId, iconContainer) {
-    const el = document.getElementById(inputId);
-    const iconEl = iconContainer.querySelector('i');
-    if(el.type === "password") {
-        el.type = "text";
-        iconEl.setAttribute('data-lucide', 'eye-off');
-    } else {
-        el.type = "password";
-        iconEl.setAttribute('data-lucide', 'eye');
-    }
-    lucide.createIcons();
-  }
-
+  // Handle Profile Dropdown Toggle
   document.getElementById('profile-btn').addEventListener('click', (e) => {
     e.stopPropagation();
     document.getElementById('profile-dropdown').classList.toggle('active');
   });
 
-  document.getElementById('login-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const identifier = document.getElementById('login-identifier').value;
-    const pass = document.getElementById('login-password').value;
-    const btn = document.getElementById('login-btn-action');
-    
-    btn.innerText = "Checking..."; btn.disabled = true;
-
-    const { data, error } = await _supabase.auth.signInWithPassword(
-        identifier.includes('@') ? { email: identifier, password: pass } : { phone: identifier, password: pass }
-    );
-    
-    if (!error && data.user) {
-      await _supabase.from('customer_login').insert([{ user_id: data.user.id, identifier_used: identifier }]);
-      window.location.reload();
-    } else {
-      alert("Login Failed: " + error.message);
-      btn.innerText = "Sign In"; btn.disabled = false;
-    }
-  });
-
-  document.getElementById('signup-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const id = document.getElementById('signup-identifier').value;
-    const pass = document.getElementById('signup-password').value;
-    const confirm = document.getElementById('signup-confirm').value;
-    const btn = document.getElementById('signup-btn-action');
-
-    if (pass !== confirm) return alert("Passwords mismatch!");
-    btn.innerText = "Verifying..."; btn.disabled = true;
-
-    const { data, error } = await _supabase.auth.signUp(
-        id.includes('@') ? { email: id, password: pass } : { phone: id, password: pass }
-    );
-    
-    if (!error && data.user) {
-        await _supabase.from('customer_signup').insert([{ id: data.user.id, email_or_phone: id }]);
-        alert("Registration Successful!");
-        toggleModal('signup-modal');
-    } else if (error && error.message.includes("already registered")) {
-        alert("User already registered. Try to Sign In or Reset Password.");
-    } else {
-        alert("Signup Error: " + error.message);
-    }
-    btn.innerText = "Verify & Sign Up"; btn.disabled = false;
-  });
-
-  document.getElementById('forgot-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const id = document.getElementById('forgot-identifier').value;
-    const btn = document.getElementById('forgot-btn-submit');
-    btn.innerText = "Sending..."; btn.disabled = true;
-
-    const { error } = await _supabase.auth.resetPasswordForEmail(id);
-    if(!error) {
-        alert("Reset link has been sent to your ID.");
-        toggleModal('forgot-modal');
-    } else {
-        alert(error.message);
-    }
-    btn.innerText = "Send Reset Link"; btn.disabled = false;
-  });
-
   async function handleLogout() {
     try {
         await _supabase.auth.signOut();
-        const hostname = (new URL('https://uhkheprfbxxwuojswyht.supabase.co')).hostname.split('.')[0];
-        localStorage.removeItem('sb-' + hostname + '-auth-token');
+        localStorage.clear(); // Clears all local auth tokens
         window.location.href = 'index.html'; 
     } catch (err) {
         console.error("Logout Error:", err);
@@ -847,7 +620,10 @@
 
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.search-wrapper')) { suggestionBox.style.display = 'none'; }
-    if (!e.target.closest('.profile-section')) { document.getElementById('profile-dropdown').classList.remove('active'); }
+    if (!e.target.closest('.profile-section')) { 
+      const dropdown = document.getElementById('profile-dropdown');
+      if(dropdown) dropdown.classList.remove('active');
+    }
   });
 
   window.onload = () => {
