@@ -47,7 +47,7 @@
         
         .input-wrapper { position: relative; }
         .input-wrapper .icon-left { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 18px; }
-        .input-wrapper .icon-right { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 18px; cursor: pointer; transition: 0.2s; }
+        .input-wrapper .icon-right { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 18px; cursor: pointer; transition: 0.2s; z-index: 10; }
         .input-wrapper .icon-right:hover { color: var(--primary); }
 
         input {
@@ -228,18 +228,21 @@
         }
     }
 
-    function togglePass(inputId, icon) {
+    function togglePass(inputId, iconContainer) {
         const input = document.getElementById(inputId);
+        const iconEl = iconContainer.querySelector('i') || iconContainer;
+        
         if (input.type === "password") {
             input.type = "text";
-            icon.classList.replace('lucide-eye', 'lucide-eye-off');
+            iconEl.setAttribute('data-lucide', 'eye-off');
         } else {
             input.type = "password";
-            icon.classList.replace('lucide-eye-off', 'lucide-eye');
+            iconEl.setAttribute('data-lucide', 'eye');
         }
+        lucide.createIcons();
     }
 
-    // LOGIN
+    // LOGIN LOGIC
     document.getElementById('login-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('login-identifier').value.trim();
@@ -247,6 +250,7 @@
         const btn = document.getElementById('login-submit-btn');
         const errorEl = document.getElementById('error-msg');
 
+        errorEl.style.display = 'none';
         btn.disabled = true;
         btn.querySelector('span').innerText = "Checking...";
 
@@ -258,12 +262,12 @@
             btn.disabled = false;
             btn.querySelector('span').innerText = "Sign In";
         } else {
-            const item = localStorage.getItem('checkout-item');
-            window.location.href = item ? 'checkout.html' : 'products.html';
+            // 🟢 FIXED REDIRECT: Always go to products page after login
+            window.location.href = 'index.html';
         }
     });
 
-    // SIGNUP
+    // SIGNUP LOGIC
     document.getElementById('signup-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const name = document.getElementById('signup-name').value.trim();
@@ -273,6 +277,8 @@
         const confirm = document.getElementById('signup-confirm').value;
         const btn = document.getElementById('signup-submit-btn');
         const errorEl = document.getElementById('error-msg');
+
+        errorEl.style.display = 'none';
 
         if (pass !== confirm) {
             errorEl.innerText = "Passwords do not match!";
@@ -300,7 +306,7 @@
             btn.disabled = false;
             btn.querySelector('span').innerText = "Create Account";
         } else {
-            alert("Verification link sent! Check your email to activate your WhatsApp linked account.");
+            alert("Verification link sent! Check your email (" + email + ") to activate your account.");
             toggleAuth('signin');
         }
     });
