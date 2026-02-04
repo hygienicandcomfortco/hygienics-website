@@ -251,7 +251,9 @@ async function loadCheckoutData() {
             card.className = `address-card ${index === 0 ? 'selected' : ''}`;
             if(index === 0) selectedAddressText = fullAddrStr;
 
-            card.innerHTML = `<span class="badge">${addr.address_type}</span><p><b>${addr.recipient_name}</b>${fullAddrStr}</p>`;
+            const badgeText = (addr.type || addr.address_type || "Address").toString();
+            const recipientName = (addr.full_name || addr.recipient_name || "").toString();
+            card.innerHTML = `<span class="badge">${badgeText}</span><p><b>${recipientName}</b> ${fullAddrStr}</p>`;
             card.onclick = () => {
                 document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
                 card.classList.add('selected');
