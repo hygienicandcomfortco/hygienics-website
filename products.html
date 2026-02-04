@@ -489,6 +489,7 @@
   });
 
   async function handleLogout() {
+    if (!confirm('Are you sure you want to log out?')) return;
     await _supabase.auth.signOut();
     localStorage.clear(); 
     window.location.reload();
@@ -766,3 +767,4 @@
 </script>
 </body>
 </html>
+
