@@ -11,6 +11,7 @@
   <link rel="icon" type="image/png" href="logo.png">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <style>
     :root {
@@ -35,47 +36,123 @@
 
     /* --- Header --- */
     .main-header {
-      background: #ffffff;
-      padding: 15px 5%;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 12px 5%;
       border-bottom: 1px solid #f1f5f9;
       position: sticky;
       top: 0;
       z-index: 1000;
       box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+      backdrop-filter: blur(10px);
     }
 
     .header-container {
       max-width: 1200px;
       margin: 0 auto;
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: center;
+      gap: 15px;
+    }
+
+    .brand-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
     }
 
     .logo-link { text-decoration: none; color: inherit; display: block; }
-    .logo-area { display: flex; align-items: center; gap: 15px; cursor: pointer; }
-    .header-logo { height: 50px; width: auto; display: block; }
+    .logo-area { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+    .header-logo { height: 40px; width: auto; display: block; }
 
+    .brand-text { text-align: left; }
     .brand-text h1 {
-      font-size: 1.25rem;
+      font-size: 1rem;
       margin: 0;
-      color: #1e293b;
+      color: var(--dark);
       font-weight: 800;
       line-height: 1.2;
-      letter-spacing: -0.5px;
     }
 
-    .brand-text p { font-size: 0.8rem; margin: 0; color: var(--grey); font-weight: 500; }
+    .brand-text p { font-size: 0.65rem; margin: 0; color: var(--grey); font-weight: 600; display: none; }
 
-    .nav-links { display: flex; gap: 25px; }
+    .nav-links { 
+      display: flex; 
+      gap: 25px; 
+      align-items: center;
+      width: 100%;
+      justify-content: center;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 10px;
+    }
     .nav-links a {
       text-decoration: none;
       color: #475569;
-      font-weight: 600;
-      font-size: 0.95rem;
+      font-weight: 700;
+      font-size: 0.85rem;
       transition: color 0.2s;
+      white-space: nowrap;
     }
     .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+
+    /* --- Profile Section & Dropdown --- */
+    .profile-section { position: relative; }
+    .profile-btn { 
+      background: var(--soft-blue); 
+      color: var(--primary); 
+      width: 42px; height: 42px; 
+      border-radius: 50%; 
+      display: flex; align-items: center; justify-content: center; 
+      cursor: pointer; border: 2px solid transparent; 
+      transition: 0.3s;
+    }
+    .profile-btn:hover { border-color: var(--primary); }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 55px; right: 0;
+      background: white;
+      width: 280px;
+      border-radius: 20px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+      border: 1px solid #f1f5f9;
+      display: none;
+      flex-direction: column;
+      padding: 15px;
+      z-index: 2001;
+    }
+    .dropdown-menu.active { display: flex !important; }
+
+    .dropdown-header { margin-bottom: 12px; padding: 10px; border-bottom: 1px solid #f1f5f9; }
+    .dropdown-header h4 { font-size: 1.1rem; font-weight: 800; color: var(--dark); margin: 0; }
+    .dropdown-header p { font-size: 0.85rem; color: var(--grey); margin: 5px 0 0 0; }
+
+    .dropdown-item {
+      padding: 12px;
+      text-decoration: none;
+      color: var(--dark);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      transition: 0.2s;
+      cursor: pointer;
+    }
+    .dropdown-item:hover { background: var(--soft-blue); color: var(--primary); }
+    .dropdown-item i { width: 22px; height: 22px; color: var(--grey); transition: 0.2s; }
+    .dropdown-item:hover i { color: var(--primary); }
+    .item-info { display: flex; flex-direction: column; }
+    .item-info b { font-size: 0.95rem; font-weight: 700; display: block; color: var(--dark); }
+    .item-info span { font-size: 0.8rem; color: var(--grey); }
+    .logout-btn-item { color: #ef4444 !important; }
+    .logout-btn-item i { color: #ef4444 !important; }
+    #auth-items,
+    #guest-items {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
 
     /* --- Contact Content --- */
     .contact-container {
@@ -159,6 +236,25 @@
     }
 
     /* --- MOBILE FRIENDLY FIXES --- */
+    @media (min-width: 768px) {
+      .header-container { flex-direction: row; justify-content: space-between; padding: 5px 0; }
+      .brand-wrapper { display: contents; }
+      .logo-link { order: 1; }
+      .brand-text h1 { font-size: 1.1rem; }
+      .brand-text p { display: block; }
+      .nav-links { 
+        width: auto; 
+        border-top: none; 
+        padding-top: 0; 
+        gap: 25px; 
+        margin-left: auto;
+        order: 2;
+      }
+      .profile-section { order: 3; margin-left: 12px; }
+      .header-logo { height: 50px; }
+      .nav-links a { font-size: 0.95rem; }
+    }
+
     @media (max-width: 968px) {
       .contact-container { grid-template-columns: 1fr; margin: 20px auto; }
       .map-box { height: 350px; order: 2; }
@@ -181,15 +277,50 @@
 
 <header class="main-header">
   <div class="header-container">
-    <a href="index.html" class="logo-link">
-      <div class="logo-area">
-        <img src="logo.png" alt="Hygienic & Comfort Co. Logo" class="header-logo">
-        <div class="brand-text">
-          <h1>Hygienic & Comfort Co.</h1>
-          <p>Care, Comfort & Hygiene for Every Age</p>
+    <div class="brand-wrapper">
+      <a href="index.html" class="logo-link">
+        <div class="logo-area">
+          <img src="logo.png" alt="Hygienic & Comfort Co. Logo" class="header-logo">
+          <div class="brand-text">
+            <h1>Hygienic & Comfort Co.</h1>
+            <p>Care, Comfort & Hygiene for Every Age</p>
+          </div>
+        </div>
+      </a>
+
+      <div class="profile-section">
+        <div class="profile-btn" id="profile-btn">
+          <i data-lucide="user"></i>
+        </div>
+        
+        <div class="dropdown-menu" id="profile-dropdown">
+          <div class="dropdown-header">
+              <h4 id="user-display-name">Guest User</h4>
+              <p id="user-display-sub">Manage your account</p>
+          </div>
+          <div id="guest-items">
+            <a href="login.html" class="dropdown-item">
+              <i data-lucide="log-in"></i>
+              <div class="item-info"><b>Sign In</b><span>Access orders & profile</span></div>
+            </a>
+          </div>
+          <div id="auth-items" style="display:none">
+            <a href="profile.html" class="dropdown-item">
+              <i data-lucide="user"></i>
+              <div class="item-info"><b>My Profile</b><span>Settings</span></div>
+            </a>
+            <a href="orders.html" class="dropdown-item">
+              <i data-lucide="package"></i>
+              <div class="item-info"><b>My Orders</b><span>Purchase history</span></div>
+            </a>
+            <div class="dropdown-item logout-btn-item" onclick="handleLogout()" style="cursor:pointer">
+              <i data-lucide="log-out"></i>
+              <div class="item-info"><b>Logout</b><span>End session safely</span></div>
+            </div>
+          </div>
         </div>
       </div>
-    </a>
+    </div>
     <nav class="nav-links">
       <a href="index.html">Home</a>
       <a href="products.html">Products</a>
@@ -266,6 +397,50 @@
 
 <script>
   lucide.createIcons();
+
+  const _supabase = supabase.createClient(
+    'https://uhkheprfbxxwuojswyht.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es'
+  );
+
+  async function checkUserSession() {
+    const { data: { user } } = await _supabase.auth.getUser();
+    const guestItems = document.getElementById('guest-items');
+    const authItems = document.getElementById('auth-items');
+    const userDisplay = document.getElementById('user-display-name');
+    const userSub = document.getElementById('user-display-sub');
+    
+    if (user) {
+      guestItems.style.display = 'none';
+      authItems.style.display = 'flex';
+      userDisplay.innerText = "Welcome Back!";
+      userSub.innerText = user.email || user.phone || "User Account";
+      document.querySelector('.profile-btn i').setAttribute('data-lucide', 'user-check');
+    } else {
+      guestItems.style.display = 'flex';
+      authItems.style.display = 'none';
+      userDisplay.innerText = "Guest User";
+      userSub.innerText = "Manage your account";
+      document.querySelector('.profile-btn i').setAttribute('data-lucide', 'user');
+    }
+    lucide.createIcons();
+  }
+
+  document.getElementById('profile-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('profile-dropdown').classList.toggle('active');
+  });
+
+  async function handleLogout() {
+    try {
+      await _supabase.auth.signOut();
+      localStorage.clear(); 
+      window.location.href = 'index.html'; 
+    } catch (err) {
+      console.error("Logout Error:", err);
+      window.location.reload();
+    }
+  }
   
   // Helper to convert Google Drive Links to Direct Image Sources
   function convertDriveLink(url) {
@@ -287,7 +462,17 @@
     if (badge) badge.innerText = totalQty;
   }
   
-  window.onload = updateCartBadge;
+  window.onload = () => {
+    updateCartBadge();
+    checkUserSession();
+  };
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.profile-section')) { 
+      const dropdown = document.getElementById('profile-dropdown');
+      if(dropdown) dropdown.classList.remove('active');
+    }
+  });
 </script>
 
 </body>
