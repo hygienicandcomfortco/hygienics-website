@@ -405,6 +405,7 @@
   });
 
   async function handleLogout() {
+    if (!confirm('Are you sure you want to log out?')) return;
     try {
       await _supabase.auth.signOut();
       localStorage.clear(); 
@@ -439,3 +440,4 @@
 
 </body>
 </html>
+
