@@ -65,6 +65,8 @@
 
     .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
     .header-logo { height: 40px; width: auto; }
+    .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+    .header-logo { height: 40px; width: auto; }
 
     .brand-text h1 { font-size: 1rem; font-weight: 800; line-height: 1.2; }
     .brand-text p { font-size: 0.65rem; color: var(--grey); font-weight: 600; display: none; }
@@ -89,9 +91,10 @@
         padding: 5px 0; 
       }
       .brand-wrapper { 
-        width: auto; 
-        justify-content: flex-start;
-        gap: 20px; 
+        display: contents;
+      }
+      .logo-area {
+        order: 1;
       }
       .brand-text h1 { font-size: 1.1rem; }
       .brand-text p { display: block; }
@@ -106,12 +109,12 @@
       }
       .profile-section {
         order: 3; 
-        margin-left: 15px;
+        margin-left: 12px;
       }
       .header-logo { height: 50px; }
     }
 
-    /* --- Profile Section & Professional Dropdown --- */
+    /* --- Profile Section & Dropdown (Matches Image Layout) --- */
     .profile-section { position: relative; }
     .profile-btn { 
       background: var(--soft-blue); 
@@ -139,10 +142,11 @@
     }
     .dropdown-menu.active { display: flex !important; }
 
-    .dropdown-header { margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid #f1f5f9; }
-    .dropdown-header h4 { font-size: 0.9rem; font-weight: 800; color: var(--dark); }
-    .dropdown-header p { font-size: 0.75rem; color: var(--grey); }
+    .dropdown-header { margin-bottom: 12px; padding: 10px; border-bottom: 1px solid #f1f5f9; }
+    .dropdown-header h4 { font-size: 1.1rem; font-weight: 800; color: var(--dark); margin: 0; }
+    .dropdown-header p { font-size: 0.85rem; color: var(--grey); margin: 5px 0 0 0; }
 
+    /* Vertical Items Layout */
     .dropdown-item {
       padding: 12px;
       text-decoration: none;
@@ -154,14 +158,28 @@
       transition: 0.2s;
       cursor: pointer;
     }
+    /* --- Auth items vertical layout --- */
+    #auth-items {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    #guest-items {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
     .dropdown-item:hover { background: var(--soft-blue); color: var(--primary); }
-    .dropdown-item i { width: 18px; color: var(--primary); }
+    .dropdown-item i { width: 22px; height: 22px; color: var(--grey); transition: 0.2s; }
+    .dropdown-item:hover i { color: var(--primary); }
     
     .item-info { display: flex; flex-direction: column; }
-    .item-info b { font-size: 0.85rem; font-weight: 700; }
-    .item-info span { font-size: 0.7rem; color: var(--grey); }
+    .item-info b { font-size: 0.95rem; font-weight: 700; display: block; color: var(--dark); }
+    .item-info span { font-size: 0.8rem; color: var(--grey); }
 
     .logout-btn-item { color: #ef4444 !important; }
+    .logout-btn-item i { color: #ef4444 !important; }
 
     /* --- Announcement Bar --- */
     .announcement-bar {
@@ -350,12 +368,12 @@
             <a href="login.html" class="dropdown-item">
               <i data-lucide="log-in"></i>
               <div class="item-info"><b>Sign In</b><span>Access orders & profile</span></div>
-            
+            </a>
           </div>
           <div id="auth-items" style="display:none">
             <a href="profile.html" class="dropdown-item">
-              <i data-lucide="user-check"></i>
-              <div class="item-info"><b>My Profile</b><span>Personal details</span></div>
+              <i data-lucide="user"></i>
+              <div class="item-info"><b>My Profile</b><span>Settings</span></div>
             </a>
             <a href="orders.html" class="dropdown-item">
               <i data-lucide="package"></i>
@@ -512,7 +530,7 @@
   async function handleLogout() {
     try {
         await _supabase.auth.signOut();
-        localStorage.clear(); // Clears all local auth tokens
+        localStorage.clear(); 
         window.location.href = 'index.html'; 
     } catch (err) {
         console.error("Logout Error:", err);
@@ -619,7 +637,10 @@
   });
 
   document.addEventListener('click', (e) => {
-    if (!e.target.closest('.search-wrapper')) { suggestionBox.style.display = 'none'; }
+    if (!e.target.closest('.search-wrapper')) { 
+      const box = document.getElementById('suggestion-box');
+      if(box) box.style.display = 'none'; 
+    }
     if (!e.target.closest('.profile-section')) { 
       const dropdown = document.getElementById('profile-dropdown');
       if(dropdown) dropdown.classList.remove('active');
