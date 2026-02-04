@@ -2,31 +2,55 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://hygienicandcomfortco.shop/</loc>
-    <lastmod>2026-01-15</lastmod>
+    <lastmod>2026-02-04</lastmod>
     <priority>1.0</priority>
   </url>
 
   <url>
     <loc>https://hygienicandcomfortco.shop/products.html</loc>
-    <lastmod>2026-01-15</lastmod>
+    <lastmod>2026-02-04</lastmod>
     <priority>0.9</priority>
   </url>
 
   <url>
     <loc>https://hygienicandcomfortco.shop/about.html</loc>
-    <lastmod>2026-01-15</lastmod>
+    <lastmod>2026-02-04</lastmod>
     <priority>0.7</priority>
   </url>
 
   <url>
     <loc>https://hygienicandcomfortco.shop/contact.html</loc>
-    <lastmod>2026-01-15</lastmod>
+    <lastmod>2026-02-04</lastmod>
     <priority>0.7</priority>
   </url>
 
   <url>
     <loc>https://hygienicandcomfortco.shop/cart.html</loc>
-    <lastmod>2026-01-15</lastmod>
+    <lastmod>2026-02-04</lastmod>
     <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://hygienicandcomfortco.shop/checkout.html</loc>
+    <lastmod>2026-02-04</lastmod>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://hygienicandcomfortco.shop/login.html</loc>
+    <lastmod>2026-02-04</lastmod>
+    <priority>0.4</priority>
+  </url>
+
+  <url>
+    <loc>https://hygienicandcomfortco.shop/profile.html</loc>
+    <lastmod>2026-02-04</lastmod>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://hygienicandcomfortco.shop/orders.html</loc>
+    <lastmod>2026-02-04</lastmod>
+    <priority>0.6</priority>
   </url>
 </urlset>
