@@ -111,6 +111,17 @@ header h1 { font-size: 0.9rem; font-weight: 800; white-space: nowrap; overflow: 
   .cart-img { width: 150px; height: 150px; }
 }
 @media(max-width: 859px) { .summary-card { order: 1; } .cart-main { order: 2; } }
+@media(max-width: 600px) {
+  .action-row { display: block; }
+  .qty-ctrl { display: inline-flex; }
+  .action-row .link-action {
+    display: inline-block;
+    margin-top: 8px;
+    margin-right: 14px;
+    white-space: nowrap;
+  }
+  .action-row .link-action:last-child { margin-right: 0; }
+}
 </style>
 </head>
 
@@ -213,7 +224,8 @@ async function checkUserSession() {
     lucide.createIcons();
 }
 
-async function handleLogout() { 
+async function handleLogout() {
+    if (!confirm('Are you sure you want to log out?')) return; 
   await supa.auth.signOut(); 
   localStorage.removeItem('checkout-item');
   location.reload(); 
@@ -310,6 +322,7 @@ function renderUI() {
           <div class="qty-ctrl"><button onclick="changeQty(${i},-1)">-</button><span>${qty}</span><button onclick="changeQty(${i},1)">+</button></div>
           <span class="link-action" onclick="deleteItem(${i})">Delete</span>
           <span class="link-action" onclick="saveItem(${i})">Save</span>
+          <span class="link-action" onclick="shareItem(${i})">Share</span>
         </div>
       </div>
     </div>`;
@@ -356,6 +369,31 @@ function renderSaved() {
     }).join('');
 }
 
+async function shareItem(i) {
+  const item = cart[i];
+  if (!item) return;
+  const url = `products.html?id=${item.id}`;
+  const text = `Check this out: ${item.name} - ₹${Number(item.price).toLocaleString('en-IN')}`;
+  try {
+    if (navigator.share) {
+      await navigator.share({ title: item.name, text, url });
+    } else if (navigator.clipboard) {
+      await navigator.clipboard.writeText(`${text} ${url}`);
+      alert("Link copied!");
+    } else {
+      const temp = document.createElement('input');
+      temp.value = `${text} ${url}`;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand('copy');
+      document.body.removeChild(temp);
+      alert("Link copied!");
+    }
+  } catch (e) {
+    console.error("Share failed:", e);
+  }
+}
+
 document.getElementById('profile-btn').addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('profile-dropdown').classList.toggle('active'); });
 
 window.onload = () => { renderUI(); checkUserSession(); };
@@ -363,3 +401,4 @@ window.onclick = (e) => { if (!e.target.closest('.profile-section')) document.ge
 </script>
 </body>
 </html>
+
