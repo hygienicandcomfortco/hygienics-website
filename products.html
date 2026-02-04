@@ -61,7 +61,7 @@
     .header-logo { height: 40px; width: auto; display: block; flex-shrink: 0; }
     
     .brand-text { text-align: left; }
-    .brand-text h1 { font-size: 1rem; font-weight: 800; color: var(--dark); margin: 0; line-height: 1.1; }
+    .brand-text h1 { font-size: 1rem; font-weight: 800; color: var(--dark); margin: 0; line-height: 1.2; }
     .brand-text p { font-size: 0.65rem; color: var(--grey); font-weight: 600; margin: 0; display: none; }
 
     .nav-links { 
@@ -126,12 +126,23 @@
     .item-info b { font-size: 0.95rem; font-weight: 700; display: block; }
     .item-info span { font-size: 0.8rem; color: var(--grey); }
     .logout-btn-item { color: #ef4444 !important; }
+    #auth-items {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    #guest-items {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
 
     /* --- Desktop Layout Adjustments --- */
     @media (min-width: 768px) {
       .header-container { flex-direction: row; justify-content: space-between; padding: 5px 0; }
-      .brand-wrapper { width: auto; gap: 20px; }
-      .brand-text h1 { font-size: 1.2rem; }
+      .brand-wrapper { display: contents; }
+      .logo-area { order: 1; }
+      .brand-text h1 { font-size: 1.1rem; }
       .brand-text p { display: block; }
       .nav-links { 
         width: auto; 
@@ -141,8 +152,8 @@
         margin-left: auto;
         order: 2;
       }
-      .profile-section { order: 3; margin-left: 15px; }
-      .header-logo { height: 55px; }
+      .profile-section { order: 3; margin-left: 12px; }
+      .header-logo { height: 50px; }
       .nav-links a { font-size: 0.95rem; }
     }
 
@@ -345,6 +356,10 @@
               <i data-lucide="user-check"></i>
               <div class="item-info"><b>My Profile</b><span>Settings</span></div>
             </a>
+            <a href="orders.html" class="dropdown-item">
+              <i data-lucide="package"></i>
+              <div class="item-info"><b>My Orders</b><span>Purchase history</span></div>
+            </a>
             <div class="dropdown-item logout-btn-item" onclick="handleLogout()" style="cursor:pointer">
               <i data-lucide="log-out"></i>
               <div class="item-info"><b>Logout</b><span>End session</span></div>
@@ -455,16 +470,14 @@
     
     if (user) {
       guestItems.style.display = 'none';
-      authItems.style.display = 'block';
+      authItems.style.display = 'flex';
       userDisplay.innerText = "Welcome Back!";
       userSub.innerText = user.email || user.phone || "User Account";
-      document.querySelector('.profile-btn i').setAttribute('data-lucide', 'user-check');
     } else {
-      guestItems.style.display = 'block';
+      guestItems.style.display = 'flex';
       authItems.style.display = 'none';
-      userDisplay.innerText = "Welcome Guest";
+      userDisplay.innerText = "Guest User";
       userSub.innerText = "Manage your account";
-      document.querySelector('.profile-btn i').setAttribute('data-lucide', 'user');
     }
     lucide.createIcons();
   }
@@ -506,10 +519,22 @@
 
       const urlParams = new URLSearchParams(window.location.search);
       const productId = urlParams.get('id');
+      const brandParam = urlParams.get('brand');
       if (productId) openProductPage(productId);
 
-      renderGrid(allProducts);
       generateBrandChips();
+      if (brandParam) {
+        activeBrand = brandParam;
+        generateBrandChips();
+        const brandLower = brandParam.toLowerCase();
+        const filtered = allProducts.filter(p =>
+          (p.category || '').toLowerCase() === brandLower ||
+          (p.name || '').toLowerCase().includes(brandLower)
+        );
+        renderGrid(filtered);
+      } else {
+        renderGrid(allProducts);
+      }
     }
     lucide.createIcons();
   }
