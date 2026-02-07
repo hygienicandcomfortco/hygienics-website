@@ -221,9 +221,10 @@ if (!checkoutData) {
 }
 
 // 2. Display Order Summary
+const itemsLabel = checkoutData.itemsText || checkoutData.name;
 document.getElementById('order-summary').innerHTML = `
     <p style="font-size:0.75rem; color:#64748b;">ORDERING:</p>
-    <p style="font-weight:800;">${checkoutData.name}</p>
+    <p style="font-weight:800;">${itemsLabel}</p>
     <p style="font-weight:800; color:#2563eb; font-size:1.2rem; margin-top:5px;">Total: ₹${Number(checkoutData.price).toLocaleString('en-IN')}</p>
 `;
 
@@ -326,7 +327,7 @@ document.getElementById('checkout-form').addEventListener('submit', async (e) =>
             address: finalAddress,
             phone_number: user.phone || user.email,
             alt_phone: document.getElementById('cust-alt-phone').value || null,
-            items: checkoutData.name,
+            items: checkoutData.itemsText || checkoutData.name,
             total_price: checkoutData.price,
             status: 'New'
         }]);
@@ -348,7 +349,7 @@ document.getElementById('checkout-form').addEventListener('submit', async (e) =>
         localStorage.removeItem('hc-cart');
         localStorage.removeItem('checkout-item');
 
-        const msg = `*NEW ORDER*\nItem: ${checkoutData.name}\nAddress: ${finalAddress}\nTotal: ₹${checkoutData.price}`;
+        const msg = `*NEW ORDER*\nItem: ${checkoutData.itemsText || checkoutData.name}\nAddress: ${finalAddress}\nTotal: ₹${checkoutData.price}`;
         window.open(`https://wa.me/919307760665?text=${encodeURIComponent(msg)}`, '_blank');
         
         location.href = "index.html";
@@ -365,3 +366,4 @@ lucide.createIcons();
 </script>
 </body>
 </html>
+
