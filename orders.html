@@ -28,12 +28,36 @@
 
     /* --- Header --- */
     .nav-header {
-      background: var(--white); padding: 12px 5%; border-bottom: 1px solid #e2e8f0;
-      display: flex; justify-content: space-between; align-items: center;
-      position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.95);
+      padding: 12px 5%;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
     }
     .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
     .logo-img { height: 40px; }
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    .nav-links .back-link {
+      margin-right: auto;
+      color: var(--primary);
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--grey);
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    .nav-links a:hover { color: var(--primary); }
 
     /* --- Layout --- */
     .container {
@@ -49,6 +73,13 @@
     .order-header {
       background: #fafcfe; padding: 20px; border-bottom: 1px solid #f1f5f9;
       display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;
+    }
+    .meta-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
     }
     .meta-item label { display: block; font-size: 0.7rem; font-weight: 800; color: var(--grey); text-transform: uppercase; }
     .meta-item p { font-size: 0.9rem; font-weight: 700; color: var(--dark); }
@@ -88,14 +119,23 @@
 
     /* --- Invoice Print Styles --- */
     @media print {
-        body * { visibility: hidden; }
-        #invoice-print-area, #invoice-print-area * { visibility: visible; }
-        #invoice-print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 40px; background: white; }
-        .no-print { display: none !important; }
+        body { margin: 0; }
+        .nav-header, .container { display: none !important; }
+        #invoice-print-area {
+            display: block !important;
+            position: static;
+            width: 100%;
+            padding: 24px;
+            background: white;
+        }
     }
 
     @media (max-width: 600px) {
-        .order-header { grid-template-columns: 1fr 1fr; }
+        .order-header { grid-template-columns: 1fr; }
+        .order-header .meta-item { text-align: left; }
+        .order-header .meta-item:last-child { justify-self: start; }
+        .nav-header { flex-direction: column; align-items: center; gap: 10px; }
+        .nav-links { width: 100%; justify-content: center; flex-wrap: wrap; gap: 12px; }
     }
   </style>
 </head>
@@ -106,9 +146,10 @@
     <img src="logo.png" alt="Logo" class="logo-img">
     <h2 style="font-size: 1rem; font-weight: 800;">Hygienic & Comfort Co.</h2>
   </a>
-  <nav style="display: flex; gap: 20px; align-items: center;">
-    <a href="profile.html" style="text-decoration:none; color:var(--grey); font-weight:700; font-size: 0.9rem;">My Profile</a>
-    <a href="products.html" style="text-decoration:none; color:var(--primary); font-weight:700; font-size: 0.9rem;">Shop</a>
+  <nav class="nav-links">
+    <a href="#" id="back-link" class="back-link">Back</a>
+    <a href="products.html">Shop</a>
+    <a href="profile.html">My Profile</a>
   </nav>
 </header>
 
@@ -142,13 +183,27 @@
         return;
     }
 
-    const { data: profile } = await _supabase.from('profiles').select('phone').eq('id', user.id).maybeSingle();
-    const identifiers = [user.email, user.phone, profile?.phone].filter(Boolean);
+    const { data: profile } = await _supabase.from('customer_signup').select('phone_number,email').eq('id', user.id).maybeSingle();
+    const identifiers = [user.email, user.phone, profile?.email, profile?.phone_number].filter(Boolean);
 
+    if (identifiers.length === 0) {
+        document.getElementById('orders-list').innerHTML = `
+            <div class="empty-orders">
+                <i data-lucide="shopping-bag"></i>
+                <h2>No orders found</h2>
+                <p>We couldn't find any orders linked to your account.</p>
+                <a href="products.html" class="shop-btn">Start Shopping</a>
+            </div>
+        `;
+        lucide.createIcons();
+        return;
+    }
+
+    const safeIds = identifiers.map(v => `"${String(v).replace(/"/g, '\\"')}"`).join(',');
     const { data: orders, error } = await _supabase
       .from('orders')
       .select('*')
-      .in('phone_number', identifiers) 
+      .or(`phone_number.in.(${safeIds}),email.in.(${safeIds}),alt_phone.in.(${safeIds})`)
       .order('created_at', { ascending: false });
 
     const container = document.getElementById('orders-list');
@@ -213,9 +268,42 @@
     lucide.createIcons();
   }
 
+  function parseOrderItems(itemsText = "") {
+    const parts = itemsText.split(',').map(p => p.trim()).filter(Boolean);
+    if (parts.length === 0) return [];
+    return parts.map(p => {
+      const match = p.match(/(.+?)\s+x(\d+)$/i);
+      if (match) {
+        return { name: match[1].trim(), qty: parseInt(match[2], 10) || 1 };
+      }
+      return { name: p, qty: 1 };
+    });
+  }
+
+  function formatMoney(val) {
+    if (val === null || val === undefined || Number.isNaN(val)) return "-";
+    return `₹${Number(val).toLocaleString('en-IN')}`;
+  }
+
   function downloadInvoice(order) {
     const date = new Date(order.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
     const printArea = document.getElementById('invoice-print-area');
+    const items = parseOrderItems(order.items || "");
+    const totalQty = items.reduce((s, i) => s + (i.qty || 1), 0);
+    const singleItem = items.length === 1;
+    const unitPriceSingle = singleItem && totalQty > 0 ? (Number(order.total_price) / totalQty) : null;
+    const rowsHtml = items.map(it => {
+      const unit = singleItem ? unitPriceSingle : null;
+      const lineTotal = singleItem ? Number(order.total_price) : null;
+      return `
+        <tr>
+          <td style="padding: 12px; border-bottom: 1px solid #eee;">${it.name}</td>
+          <td style="padding: 12px; text-align: center; border-bottom: 1px solid #eee;">${it.qty}</td>
+          <td style="padding: 12px; text-align: right; border-bottom: 1px solid #eee;">${formatMoney(unit)}</td>
+          <td style="padding: 12px; text-align: right; border-bottom: 1px solid #eee;">${formatMoney(lineTotal)}</td>
+        </tr>
+      `;
+    }).join('');
     
     printArea.innerHTML = `
         <div style="border: 1px solid #eee; padding: 30px; color: #333;">
@@ -236,21 +324,29 @@
                 <h3 style="margin-bottom: 10px; border-bottom: 1px solid #eee;">Bill To:</h3>
                 <p><b>${order.customer_name}</b></p>
                 <p style="width: 250px;">${order.address}</p>
-                <p>Phone: ${order.phone_number}</p>
+                <p>Phone: ${order.phone_number || "-"}</p>
+                ${order.alt_phone ? `<p>Alternate: ${order.alt_phone}</p>` : ""}
+                ${order.email ? `<p>Email: ${order.email}</p>` : ""}
             </div>
 
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
                 <thead>
                     <tr style="background: #f8fafc; border-bottom: 1px solid #eee;">
                         <th style="text-align: left; padding: 12px;">Item Description</th>
-                        <th style="text-align: right; padding: 12px;">Total</th>
+                        <th style="text-align: center; padding: 12px;">Qty</th>
+                        <th style="text-align: right; padding: 12px;">Unit Price</th>
+                        <th style="text-align: right; padding: 12px;">Line Total</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td style="padding: 12px; border-bottom: 1px solid #eee;">${order.items}</td>
-                        <td style="padding: 12px; text-align: right; border-bottom: 1px solid #eee;">₹${order.total_price}</td>
-                    </tr>
+                    ${rowsHtml || `
+                      <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee;">${order.items || "-"}</td>
+                        <td style="padding: 12px; text-align: center; border-bottom: 1px solid #eee;">-</td>
+                        <td style="padding: 12px; text-align: right; border-bottom: 1px solid #eee;">-</td>
+                        <td style="padding: 12px; text-align: right; border-bottom: 1px solid #eee;">${formatMoney(order.total_price)}</td>
+                      </tr>
+                    `}
                 </tbody>
             </table>
 
@@ -272,6 +368,14 @@
   }
 
   window.onload = fetchOrders;
+  document.getElementById('back-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    if (document.referrer && document.referrer.includes(window.location.host)) {
+      window.history.back();
+    } else {
+      window.location.href = "profile.html";
+    }
+  });
 </script>
 </body>
 </html>
