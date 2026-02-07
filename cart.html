@@ -202,6 +202,17 @@ let currentDeliveryFee = 0;
 let pincodeVerified = false;
 let currentUser = null;
 
+function buildCartSummary(cartItems) {
+    const items = cartItems.map(p => `${p.name} x${p.qty || 1}`);
+    const totalQty = cartItems.reduce((s, i) => s + (i.qty || 1), 0);
+    let preview = "";
+    if (items.length === 1) preview = items[0];
+    else if (items.length === 2) preview = items.join(', ');
+    else preview = `${items.slice(0, 2).join(', ')} +${items.length - 2} more`;
+    const displayName = `Cart (${totalQty} item${totalQty > 1 ? 's' : ''}): ${preview}`;
+    return { displayName, itemsText: items.join(', ') };
+}
+
 async function checkUserSession() {
     const { data: { user } } = await supa.auth.getUser();
     currentUser = user;
@@ -235,10 +246,13 @@ function checkAuthAndProceed() {
     if (!currentUser) { 
         // 🟢 Store current cart total and intent before redirecting to login.html
         const subtotal = cart.reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
+        const summary = buildCartSummary(cart);
         localStorage.setItem('checkout-item', JSON.stringify({
             id: "CART_ORDER",
-            name: "Order from Cart",
+            name: summary.displayName,
+            itemsText: summary.itemsText,
             price: subtotal + currentDeliveryFee,
+            cartItems: cart,
             isFromCart: true
         }));
         window.location.href = "login.html"; 
@@ -251,9 +265,11 @@ function checkAuthAndProceed() {
 async function handleProceedToBuy() {
     if (cart.length === 0) { alert("Your cart is empty!"); return; }
     const subtotal = cart.reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
+    const summary = buildCartSummary(cart);
     localStorage.setItem('checkout-item', JSON.stringify({
         id: "CART_ORDER",
-        name: "Order from Cart",
+        name: summary.displayName,
+        itemsText: summary.itemsText,
         price: subtotal + currentDeliveryFee,
         cartItems: cart,
         isFromCart: true
