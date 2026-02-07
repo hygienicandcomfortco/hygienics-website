@@ -78,6 +78,22 @@ header h1 { font-size: 0.9rem; font-weight: 800; white-space: nowrap; overflow: 
 .goal-text { font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; color: #444; }
 .progress-bg { background: #e0e0e0; height: 8px; border-radius: 10px; overflow: hidden; }
 .progress-fill { background: #007600; height: 100%; width: 0%; transition: 0.5s ease; }
+.address-section { background: #f7fafa; border: 1px solid #d5d9d9; border-radius: 8px; padding: 12px; margin: 15px 0; }
+.address-title { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: #565959; margin-bottom: 8px; letter-spacing: 0.4px; }
+.address-dropdown { position: relative; }
+.address-select { width: 100%; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; font-weight: 700; font-size: 0.85rem; color: #111; }
+.address-select .addr-caret { transition: transform 0.2s ease; }
+.address-dropdown.open .address-select .addr-caret { transform: rotate(180deg); }
+.address-list { display: flex; flex-direction: column; gap: 8px; }
+.address-dropdown .address-list { display: none; margin-top: 8px; }
+.address-dropdown.open .address-list { display: flex; }
+.address-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; display: flex; gap: 8px; cursor: pointer; transition: 0.2s; }
+.address-card.selected { border-color: var(--primary); background: #eff6ff; }
+.address-radio { margin-top: 2px; }
+.address-details { font-size: 0.8rem; color: #111; line-height: 1.3; }
+.address-badge { font-size: 0.6rem; font-weight: 800; background: #e2e8f0; padding: 3px 6px; border-radius: 5px; text-transform: uppercase; margin-bottom: 4px; display: inline-block; }
+.address-card.selected .address-badge { background: var(--primary); color: #fff; }
+.pin-note { font-size: 0.72rem; font-weight: 700; color: #2563eb; margin-top: 6px; display: none; }
 .pincode-section { background: #f7fafa; border: 1px solid #d5d9d9; border-radius: 8px; padding: 12px; margin: 15px 0; }
 .pincode-flex { display: flex; gap: 8px; }
 .pincode-flex input { flex: 1; padding: 10px; border: 1px solid #adb1b1; border-radius: 6px; outline: none; font-size: 0.9rem; font-weight: 600;}
@@ -168,7 +184,18 @@ header h1 { font-size: 0.9rem; font-weight: 800; white-space: nowrap; overflow: 
     <div class="sum-row"><span>Items Subtotal</span><b id="sub-total">₹0</b></div>
     <div class="sum-row"><span>Delivery Fee</span><b id="delivery-fee">₹0</b></div>
     <div class="sum-row sum-total"><span>Total</span><b id="grand-total">₹0</b></div>
-    
+
+    <div class="address-section" id="address-section" style="display:none;">
+        <div class="address-title">Saved Address</div>
+        <div class="address-dropdown" id="address-dropdown">
+            <button type="button" class="address-select" id="address-select">
+                <span id="selected-address-text">Select address</span>
+                <i data-lucide="chevron-down" class="addr-caret" style="width: 16px;"></i>
+            </button>
+            <div class="address-list" id="address-list"></div>
+        </div>
+    </div>
+
     <div class="pincode-section">
         <label class="pincode-label">Shipping Pincode</label>
         <div class="pincode-flex">
@@ -176,6 +203,7 @@ header h1 { font-size: 0.9rem; font-weight: 800; white-space: nowrap; overflow: 
             <button type="button" id="apply-pin-btn" onclick="calculateDelivery()">Apply</button>
         </div>
         <div id="pincode-error-msg" class="pincode-error">Please write a valid 6-digit Indian Pincode</div>
+        <div id="pin-note" class="pin-note">Pincode confirmed from selected address.</div>
         <div id="delivery-info-box" class="delivery-estimate-box">
             <i data-lucide="truck" style="width: 16px;"></i><span id="est-days-text">Calculated!</span>
         </div>
@@ -201,6 +229,10 @@ let saved = JSON.parse(localStorage.getItem('hc-saved')||'[]');
 let currentDeliveryFee = 0;
 let pincodeVerified = false;
 let currentUser = null;
+let selectedAddressPin = "";
+let selectedAddressId = null;
+let lastVerifiedPincode = "";
+let addressesCache = [];
 
 function buildCartSummary(cartItems) {
     const items = cartItems.map(p => `${p.name} x${p.qty || 1}`);
@@ -233,6 +265,7 @@ async function checkUserSession() {
         userSub.innerText = "Manage your account";
     }
     lucide.createIcons();
+    loadSavedAddresses();
 }
 
 async function handleLogout() {
@@ -282,14 +315,35 @@ document.getElementById('cart-pincode').addEventListener('input', function(e) { 
 
 async function calculateDelivery() {
     const pinStr = document.getElementById('cart-pincode').value;
+    await applyPincode(pinStr, { showAlerts: true, fromAddress: false });
+}
+
+function updateProceedState() {
+    const btn = document.getElementById('proceed-btn');
+    btn.disabled = !cart.length || !pincodeVerified;
+}
+
+async function applyPincode(pinStr, opts = {}) {
+    const { showAlerts = true, fromAddress = false } = opts;
     const btn = document.getElementById('apply-pin-btn');
-    if (pinStr.length !== 6 || pinStr.startsWith('0')) return alert("Enter valid 6-digit Pincode");
+    const pinError = document.getElementById('pincode-error-msg');
+    const note = document.getElementById('pin-note');
+    pinError.style.display = 'none';
+
+    if (pinStr.length !== 6 || pinStr.startsWith('0')) {
+        pincodeVerified = false;
+        updateProceedState();
+        if (showAlerts) alert("Enter valid 6-digit Pincode");
+        return;
+    }
+
     btn.disabled = true; btn.innerText = "...";
     try {
         const res = await fetch(`https://api.postalpincode.in/pincode/${pinStr}`);
         const data = await res.json();
         if (data[0].Status !== "Success") {
-            alert("Pincode not found"); pincodeVerified = false;
+            pincodeVerified = false;
+            if (showAlerts) alert("Pincode not found");
         } else {
             const state = data[0].PostOffice[0].State.toUpperCase();
             const pinNum = parseInt(pinStr);
@@ -307,14 +361,115 @@ async function calculateDelivery() {
             let subtotal = cart.reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
             if ((zone === 1 && subtotal >= 499) || subtotal >= 999) fee = 0;
 
-            currentDeliveryFee = fee; pincodeVerified = true;
-            document.getElementById('proceed-btn').disabled = false;
+            currentDeliveryFee = fee; 
+            pincodeVerified = true;
+            lastVerifiedPincode = pinStr;
             document.getElementById('delivery-fee').innerText = `₹${fee}`;
             document.getElementById('est-days-text').innerText = days;
             document.getElementById('delivery-info-box').style.display = 'flex';
+            note.style.display = fromAddress ? 'block' : 'none';
             renderUI();
         }
-    } catch (e) { alert("Pincode check failed."); } finally { btn.disabled = false; btn.innerText = "Apply"; }
+    } catch (e) { 
+        if (showAlerts) alert("Pincode check failed."); 
+        pincodeVerified = false;
+    } finally { 
+        btn.disabled = false; 
+        btn.innerText = "Apply"; 
+        updateProceedState();
+    }
+}
+
+async function loadSavedAddresses() {
+    const section = document.getElementById('address-section');
+    const dropdown = document.getElementById('address-dropdown');
+    const list = document.getElementById('address-list');
+    const selectedText = document.getElementById('selected-address-text');
+    section.style.display = 'none';
+    list.innerHTML = "";
+
+    if (!currentUser) return;
+    const { data: addresses } = await supa.from('customer_addresses').select('*').eq('user_id', currentUser.id);
+    if (!addresses || addresses.length === 0) return;
+    addressesCache = addresses;
+
+    section.style.display = 'block';
+    selectedText.innerText = "Select address";
+
+    addresses.forEach((addr, index) => {
+        const fullAddr = `${addr.full_address}, ${addr.city}, ${addr.state} - ${addr.pincode}`;
+        const isDefault = Boolean(addr.is_default || addr.default || addr.is_primary);
+        const badgeText = isDefault ? "Default" : (addr.address_type || addr.type || "Address");
+
+        const card = document.createElement('div');
+        card.className = `address-card ${index === 0 ? 'selected' : ''}`;
+        card.innerHTML = `
+            <input class="address-radio" type="radio" name="addr-choice" ${index === 0 ? 'checked' : ''}>
+            <div class="address-details">
+                <span class="address-badge">${badgeText}</span>
+                <div>${addr.full_name || ""} ${fullAddr}</div>
+            </div>
+        `;
+        card.onclick = () => selectAddress(addr, card);
+        list.appendChild(card);
+
+        if (index === 0) {
+            selectAddress(addr, card);
+        }
+    });
+
+    const manualCard = document.createElement('div');
+    manualCard.className = "address-card";
+    manualCard.innerHTML = `
+        <input class="address-radio" type="radio" name="addr-choice">
+        <div class="address-details" style="color: var(--primary); font-weight: 800;">Use a different pincode</div>
+    `;
+    manualCard.onclick = () => clearSelectedAddress(manualCard);
+    list.appendChild(manualCard);
+
+    if (dropdown) dropdown.classList.remove('open');
+    lucide.createIcons();
+}
+
+function selectAddress(addr, card, skipRecalc = false) {
+    document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    const radio = card.querySelector('input[type="radio"]');
+    if (radio) radio.checked = true;
+
+    selectedAddressPin = (addr.pincode || "").toString().trim();
+    selectedAddressId = addr.id || null;
+    const pinInput = document.getElementById('cart-pincode');
+    pinInput.value = selectedAddressPin;
+    const selectedText = document.getElementById('selected-address-text');
+    const label = `${addr.full_name || ""} ${addr.full_address}, ${addr.city}, ${addr.state} - ${addr.pincode}`;
+    if (selectedText) selectedText.innerText = label.trim();
+
+    if (selectedAddressPin.length === 6 && !skipRecalc) {
+        applyPincode(selectedAddressPin, { showAlerts: false, fromAddress: true });
+    } else {
+        document.getElementById('pin-note').style.display = selectedAddressPin.length === 6 ? 'block' : 'none';
+    }
+
+    const dropdown = document.getElementById('address-dropdown');
+    if (dropdown) dropdown.classList.remove('open');
+}
+
+function clearSelectedAddress(card) {
+    document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    const radio = card.querySelector('input[type="radio"]');
+    if (radio) radio.checked = true;
+    selectedAddressPin = "";
+    selectedAddressId = null;
+    lastVerifiedPincode = "";
+    pincodeVerified = false;
+    document.getElementById('pin-note').style.display = 'none';
+    updateProceedState();
+    const selectedText = document.getElementById('selected-address-text');
+    if (selectedText) selectedText.innerText = "Use a different pincode";
+    const dropdown = document.getElementById('address-dropdown');
+    if (dropdown) dropdown.classList.remove('open');
 }
 
 function renderUI() {
@@ -347,6 +502,7 @@ function renderUI() {
   document.getElementById('grand-total').innerText = `₹${(subtotal + currentDeliveryFee).toLocaleString()}`;
   renderSaved();
   lucide.createIcons();
+  updateProceedState();
 }
 
 async function changeQty(idx, delta) {
@@ -356,7 +512,7 @@ async function changeQty(idx, delta) {
   if (newQty > (data.stock || 0)) return alert(`Limited stock available.`);
   cart[idx].qty = newQty;
   localStorage.setItem('hc-cart', JSON.stringify(cart));
-  if(pincodeVerified) calculateDelivery();
+  if (pincodeVerified && lastVerifiedPincode) applyPincode(lastVerifiedPincode, { showAlerts: false, fromAddress: !!selectedAddressPin });
   renderUI();
 }
 
@@ -412,8 +568,18 @@ async function shareItem(i) {
 
 document.getElementById('profile-btn').addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('profile-dropdown').classList.toggle('active'); });
 
+document.getElementById('address-select')?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  const dropdown = document.getElementById('address-dropdown');
+  if (dropdown) dropdown.classList.toggle('open');
+});
+
 window.onload = () => { renderUI(); checkUserSession(); };
 window.onclick = (e) => { if (!e.target.closest('.profile-section')) document.getElementById('profile-dropdown').classList.remove('active'); };
+document.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('address-dropdown');
+  if (dropdown && !e.target.closest('#address-dropdown')) dropdown.classList.remove('open');
+});
 </script>
 </body>
 </html>
