@@ -63,6 +63,26 @@
       gap: 12px;
       margin-bottom: 20px;
     }
+    .address-dropdown { position: relative; margin-bottom: 20px; }
+    .address-select {
+      width: 100%;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--dark);
+    }
+    .address-select .addr-caret { transition: transform 0.2s ease; }
+    .address-dropdown.open .address-select .addr-caret { transform: rotate(180deg); }
+    .address-dropdown .address-list { display: none; margin-top: 10px; }
+    .address-dropdown.open .address-list { display: flex; }
     .address-card {
       border: 2px solid #e2e8f0;
       padding: 15px;
@@ -130,19 +150,29 @@
   <div class="order-summary" id="order-summary"></div>
 
   <form id="checkout-form">
-    <div class="form-group">
-      <label>Full Name</label>
-      <input type="text" id="cust-name" required placeholder="Enter recipient name">
-    </div>
-
     <label>Select Delivery Address</label>
-    <div class="address-list" id="address-list">
-      <p style="font-size: 0.8rem; color: var(--grey);">Loading addresses...</p>
+    <div class="address-dropdown" id="address-dropdown">
+      <button type="button" class="address-select" id="address-select">
+        <span id="selected-address-text">Select address</span>
+        <i data-lucide="chevron-down" class="addr-caret" style="width: 16px;"></i>
+      </button>
+      <div class="address-list" id="address-list">
+        <p style="font-size: 0.8rem; color: var(--grey);">Loading addresses...</p>
+      </div>
     </div>
 
     <div id="new-address-form" class="hidden" style="border: 1px dashed #cbd5e1; padding: 20px; border-radius: 15px; margin-bottom: 20px; background: #fafafa;">
       <p style="font-weight: 800; font-size: 0.85rem; margin-bottom: 15px; color: var(--dark);">ENTER NEW DELIVERY ADDRESS</p>
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="new-full-name" placeholder="Enter recipient name">
+      </div>
       
+      <div class="form-group">
+        <label>Mobile Number</label>
+        <input type="tel" id="new-mobile" maxlength="10" placeholder="10-digit mobile number">
+      </div>
+
       <div class="form-row">
         <div class="form-group">
           <label>Pincode</label>
@@ -156,12 +186,12 @@
 
       <div class="form-group">
         <label>Flat, House no., Building</label>
-        <input type="text" id="new-flat" placeholder="e.g. Flat No 102">
+        <input type="text" id="new-flat" placeholder=>
       </div>
 
       <div class="form-group">
         <label>Area, Street, Sector</label>
-        <input type="text" id="new-area" placeholder="e.g. MG Road">
+        <input type="text" id="new-area" placeholder=>
       </div>
 
       <div class="form-row">
@@ -212,6 +242,8 @@ const supa = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let selectedAddressText = "";
 let isManualMode = false;
+let profileName = "";
+let profilePhone = "";
 
 // 1. Load the Product from LocalStorage
 const checkoutData = JSON.parse(localStorage.getItem('checkout-item'));
@@ -236,13 +268,16 @@ async function loadCheckoutData() {
     // Load Profile Name/Phone
     const { data: profile } = await supa.from('customer_signup').select('*').eq('id', user.id).maybeSingle();
     if (profile) {
-        document.getElementById('cust-name').value = profile.full_name || "";
+        profileName = profile.full_name || "";
+        profilePhone = profile.phone_number || "";
         document.getElementById('cust-alt-phone').value = profile.phone_number || "";
     }
 
     // Load Addresses Cards
     const { data: addresses } = await supa.from('customer_addresses').select('*').eq('user_id', user.id);
     const listDiv = document.getElementById('address-list');
+    const selectedText = document.getElementById('selected-address-text');
+    const dropdown = document.getElementById('address-dropdown');
     listDiv.innerHTML = "";
 
     if (addresses && addresses.length > 0) {
@@ -259,10 +294,15 @@ async function loadCheckoutData() {
                 document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
                 card.classList.add('selected');
                 selectedAddressText = fullAddrStr;
+                if (selectedText) selectedText.innerText = `${recipientName} ${fullAddrStr}`.trim();
                 isManualMode = false;
                 document.getElementById('new-address-form').classList.add('hidden');
+                if (dropdown) dropdown.classList.remove('open');
             };
             listDiv.appendChild(card);
+            if (index === 0 && selectedText) {
+                selectedText.innerText = `${recipientName} ${fullAddrStr}`.trim();
+            }
         });
     }
 
@@ -274,7 +314,9 @@ async function loadCheckoutData() {
         document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
         newBtn.classList.add('selected');
         isManualMode = true;
+        if (selectedText) selectedText.innerText = "Use a new delivery address";
         document.getElementById('new-address-form').classList.remove('hidden');
+        if (dropdown) dropdown.classList.remove('open');
     };
     listDiv.appendChild(newBtn);
 }
@@ -295,6 +337,7 @@ document.getElementById('checkout-form').addEventListener('submit', async (e) =>
 
         // PHASE 1: Handle Manual Address Save
         if (isManualMode) {
+            const manualName = document.getElementById('new-full-name').value.trim();
             const pin = document.getElementById('new-pincode').value.trim();
             const city = document.getElementById('new-city').value.trim();
             const flat = document.getElementById('new-flat').value.trim();
@@ -302,13 +345,14 @@ document.getElementById('checkout-form').addEventListener('submit', async (e) =>
             const state = document.getElementById('new-state').value.trim();
             const type = document.getElementById('new-addr-type').value;
 
+            const manualMobile = document.getElementById('new-mobile').value.trim();
             finalAddress = `${flat}, ${area}, ${city}, ${state} - ${pin}`;
 
             // Save to customer_addresses table
             if (document.getElementById('save-to-profile').checked) {
                 const { error: addrError } = await supa.from('customer_addresses').insert([{
                     user_id: user.id,
-                    full_name: document.getElementById('cust-name').value,
+                    full_name: manualName || profileName || "Customer",
                     full_address: `${flat}, ${area}`,
                     city: city,
                     state: state,
@@ -323,9 +367,9 @@ document.getElementById('checkout-form').addEventListener('submit', async (e) =>
 
         // PHASE 2: Create Order
         const { error: orderError } = await supa.from('orders').insert([{
-            customer_name: document.getElementById('cust-name').value,
+            customer_name: (isManualMode ? document.getElementById('new-full-name').value.trim() : "") || profileName || "Customer",
             address: finalAddress,
-            phone_number: user.phone || user.email,
+            phone_number: (isManualMode && document.getElementById('new-mobile').value.trim()) || profilePhone || user.phone || user.email,
             alt_phone: document.getElementById('cust-alt-phone').value || null,
             items: checkoutData.itemsText || checkoutData.name,
             total_price: checkoutData.price,
@@ -363,6 +407,17 @@ document.getElementById('checkout-form').addEventListener('submit', async (e) =>
 
 loadCheckoutData();
 lucide.createIcons();
+
+document.getElementById('address-select')?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  const dropdown = document.getElementById('address-dropdown');
+  if (dropdown) dropdown.classList.toggle('open');
+});
+
+document.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('address-dropdown');
+  if (dropdown && !e.target.closest('#address-dropdown')) dropdown.classList.remove('open');
+});
 </script>
 </body>
 </html>
