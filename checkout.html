@@ -369,7 +369,8 @@ document.getElementById('checkout-form').addEventListener('submit', async (e) =>
         const { error: orderError } = await supa.from('orders').insert([{
             customer_name: (isManualMode ? document.getElementById('new-full-name').value.trim() : "") || profileName || "Customer",
             address: finalAddress,
-            phone_number: (isManualMode && document.getElementById('new-mobile').value.trim()) || profilePhone || user.phone || user.email,
+            phone_number: (isManualMode && document.getElementById('new-mobile').value.trim()) || profilePhone || user.phone || null,
+            email: user.email || null,
             alt_phone: document.getElementById('cust-alt-phone').value || null,
             items: checkoutData.itemsText || checkoutData.name,
             total_price: checkoutData.price,
