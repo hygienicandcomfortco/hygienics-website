@@ -83,6 +83,18 @@
         .login-btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
         .login-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
 
+        .forgot-btn {
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            padding: 6px 0 0 0;
+            margin-top: 6px;
+        }
+        .forgot-btn:hover { text-decoration: underline; }
+
         .switch-text { margin-top: 25px; font-size: 0.9rem; color: var(--text-muted); font-weight: 600; }
         .switch-text span { color: var(--primary); cursor: pointer; font-weight: 800; }
 
@@ -135,6 +147,7 @@
                     <input type="password" id="login-password" placeholder="••••••••" required>
                     <i data-lucide="eye" class="icon-right" onclick="togglePass('login-password', this)"></i>
                 </div>
+                <button type="button" class="forgot-btn" id="forgot-btn">Forgot Password?</button>
             </div>
 
             <button type="submit" class="login-btn" id="login-submit-btn">
@@ -188,6 +201,7 @@
                 <div class="input-wrapper">
                     <i data-lucide="shield-check" class="icon-left"></i>
                     <input type="password" id="signup-confirm" placeholder="Repeat password" required>
+                    <i data-lucide="eye" class="icon-right" onclick="togglePass('signup-confirm', this)"></i>
                 </div>
             </div>
 
@@ -264,6 +278,29 @@
         } else {
             // 🟢 FIXED REDIRECT: Always go to products page after login
             window.location.href = 'index.html';
+        }
+    });
+
+    // FORGOT PASSWORD LOGIC
+    document.getElementById('forgot-btn').addEventListener('click', async () => {
+        const email = document.getElementById('login-identifier').value.trim();
+        const errorEl = document.getElementById('error-msg');
+
+        errorEl.style.display = 'none';
+
+        if (!email) {
+            errorEl.innerText = "Please enter your email above to reset your password.";
+            errorEl.style.display = 'block';
+            return;
+        }
+
+        const { error } = await _supabase.auth.resetPasswordForEmail(email);
+        if (error) {
+            errorEl.innerText = error.message;
+            errorEl.style.display = 'block';
+        } else {
+            errorEl.innerText = "Password reset email sent. Please check your inbox.";
+            errorEl.style.display = 'block';
         }
     });
 
