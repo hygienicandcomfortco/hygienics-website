@@ -34,6 +34,7 @@
     }
     .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
     .logo-img { height: 40px; }
+    .logo-area h2 { white-space: nowrap; }
 
     /* --- Profile UI --- */
     .profile-section { position: relative; }
@@ -60,7 +61,7 @@
     .mobile-menu-btn:hover { border-color: var(--primary); }
 
     .sidebar-brand { text-align: center; padding-bottom: 10px; border-bottom: 1px solid #f1f5f9; }
-    .sidebar-brand .brand-text { font-weight: 750; color: var(--dark); }
+    .sidebar-brand .brand-text { font-weight: 800; color: var(--dark); }
     .sidebar-brand .brand-logo { height: 44px; margin-top: 8px; display: none; }
 
     .dropdown-menu {
@@ -173,6 +174,9 @@
         .sidebar { display: none; }
         .form-grid { grid-template-columns: 1fr; }
         .mobile-menu-btn { display: inline-flex; }
+    }
+    @media (max-width: 600px) {
+        .logo-area h2 { font-size: 0.95rem; }
     }
   </style>
 </head>
@@ -371,5 +375,4 @@
 </script>
 </body>
 </html>
-
 
