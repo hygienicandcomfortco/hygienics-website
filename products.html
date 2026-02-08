@@ -491,15 +491,23 @@ window.location.reload();
 }
 
 /* --- CATALOG LOGIC --- */
-function fixDriveLink(url) {
-if (url && url.includes("drive.google.com")) {
-try {
-let fileId = "";
-if (url.includes("/d/")) fileId = url.split("/d/")[1].split("/")[0];
-else if (url.includes("id=")) fileId = url.split("id=")[1].split("&")[0];
-return fileId ? `https://drive.google.com/uc?export=view&id=${fileId}` : url;
-} catch (e) { return url; }
+function normalizeImageUrl(rawUrl) {
+const url = (rawUrl || "").trim();
+if (!url) return "";
+
+// Google Drive share links -> direct image links
+// Examples:
+// https://drive.google.com/file/d/FILE_ID/view?usp=sharing
+// https://drive.google.com/open?id=FILE_ID
+// https://drive.google.com/uc?id=FILE_ID
+const idMatch =
+url.match(/\/file\/d\/([^/]+)/) ||
+url.match(/[?&]id=([^&]+)/);
+if (idMatch && idMatch[1]) {
+// Use thumbnail endpoint to avoid hotlink blocks on some Drive files
+return `https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=w800`;
 }
+
 return url;
 }
 
@@ -510,7 +518,7 @@ const { data, error } = await _supabase.from("products").select("*").order('name
 if (!error) {
 allProducts = data.map(p => ({
 ...p,
-images: (p.images || []).map(img => fixDriveLink(img))
+images: (p.images || []).map(img => normalizeImageUrl(img))
 }));
 
 const urlParams = new URLSearchParams(window.location.search);
