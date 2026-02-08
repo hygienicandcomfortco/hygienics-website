@@ -207,62 +207,6 @@
       text-align: left;
       border-radius: 12px;
     }
-    .category-drawer {
-      position: fixed;
-      top: 0;
-      left: -280px;
-      height: 100%;
-      width: 260px;
-      background: var(--white);
-      border-right: 1px solid #f1f5f9;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      z-index: 3000;
-      padding: 20px;
-      transition: 0.3s;
-    }
-    .category-drawer.open { left: 0; }
-    .category-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.35);
-      opacity: 0;
-      visibility: hidden;
-      transition: 0.3s;
-      z-index: 2500;
-    }
-    .category-overlay.show { opacity: 1; visibility: visible; }
-    .drawer-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-    .drawer-head h3 { font-size: 0.9rem; font-weight: 800; }
-    .drawer-close {
-      background: transparent;
-      border: none;
-      color: var(--primary);
-      font-weight: 800;
-      cursor: pointer;
-    }
-    .category-fab {
-      position: fixed;
-      left: 18px;
-      bottom: 90px;
-      background: var(--white);
-      border: 1.5px solid #e2e8f0;
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-weight: 800;
-      font-size: 0.85rem;
-      color: var(--dark);
-      cursor: pointer;
-      display: none;
-      align-items: center;
-      gap: 8px;
-      z-index: 2400;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-    }
     .sr-only {
       position: absolute;
       width: 1px;
@@ -409,7 +353,6 @@
         .product-list { grid-template-columns: repeat(4, 1fr); } 
     }
     @media (max-width: 900px) {
-      .category-fab { display: inline-flex; }
     }
   </style>
 </head>
@@ -480,14 +423,6 @@
 </div>
 
 <main id="catalog-section">
-  <div class="category-overlay" id="category-overlay" onclick="toggleCategoryDrawer(false)"></div>
-  <div class="category-drawer" id="category-drawer">
-    <div class="drawer-head">
-      <h3>Categories</h3>
-      <button class="drawer-close" onclick="toggleCategoryDrawer(false)">Close</button>
-    </div>
-    <div class="category-bar-vertical" id="category-drawer-list"></div>
-  </div>
   <div class="catalog-layout">
     <aside class="category-sidebar">
       <h3><i data-lucide="layout-grid" style="width:16px;"></i><span class="sr-only">Categories</span></h3>
@@ -549,10 +484,6 @@
   <i data-lucide="shopping-basket"></i>
   <span class="cart-badge" id="cart-badge-count">0</span>
 </a>
-<button class="category-fab" onclick="toggleCategoryDrawer(true)">
-  <i data-lucide="menu"></i>
-  <span>Categories</span>
-</button>
 
 <script>
   const SUPABASE_URL = "https://uhkheprfbxxwuojswyht.supabase.co";
@@ -684,11 +615,9 @@
       return allBtn + catBtns;
     };
 
-    const drawer = document.getElementById('category-drawer-list');
     const sidebar = document.getElementById('category-sidebar-list');
     const bar = document.getElementById('category-bar-list');
 
-    if (drawer) drawer.innerHTML = buildButtons(true);
     if (sidebar) sidebar.innerHTML = buildButtons(false);
     if (bar) bar.innerHTML = buildButtons(false);
   }
@@ -883,17 +812,6 @@
   }
   function closeImageViewer() { document.getElementById('image-viewer').classList.remove('show'); }
   function toggleZoom() { document.getElementById('viewer-img').classList.toggle('zoomed'); }
-  function toggleCategoryDrawer(show) {
-    const drawer = document.getElementById('category-drawer');
-    const overlay = document.getElementById('category-overlay');
-    if (show) {
-      drawer.classList.add('open');
-      overlay.classList.add('show');
-    } else {
-      drawer.classList.remove('open');
-      overlay.classList.remove('show');
-    }
-  }
 
   window.onclick = (e) => {
     if (!e.target.closest('.profile-section')) {
