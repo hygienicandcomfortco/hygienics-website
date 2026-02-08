@@ -187,6 +187,94 @@
       border-color: var(--primary);
     }
 
+    /* --- Category Sidebar (Desktop) --- */
+    .catalog-layout {
+      max-width: 1200px;
+      margin: 20px auto 0;
+      padding: 0 4%;
+      display: block;
+    }
+    .category-sidebar { display: none; }
+    .category-bar-vertical {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+    }
+    .category-bar-vertical .cat-btn {
+      width: 100%;
+      text-align: left;
+      border-radius: 12px;
+    }
+    .category-drawer {
+      position: fixed;
+      top: 0;
+      left: -280px;
+      height: 100%;
+      width: 260px;
+      background: var(--white);
+      border-right: 1px solid #f1f5f9;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      z-index: 3000;
+      padding: 20px;
+      transition: 0.3s;
+    }
+    .category-drawer.open { left: 0; }
+    .category-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.3s;
+      z-index: 2500;
+    }
+    .category-overlay.show { opacity: 1; visibility: visible; }
+    .drawer-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .drawer-head h3 { font-size: 0.9rem; font-weight: 800; }
+    .drawer-close {
+      background: transparent;
+      border: none;
+      color: var(--primary);
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .category-fab {
+      position: fixed;
+      left: 18px;
+      bottom: 90px;
+      background: var(--white);
+      border: 1.5px solid #e2e8f0;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: var(--dark);
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      z-index: 2400;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     /* --- Catalog Controls --- */
     .controls-container { max-width: 1200px; margin: 15px auto; padding: 0 4%; display: flex; gap: 10px; align-items: center; }
     .search-wrapper { position: relative; flex: 1; }
@@ -320,6 +408,9 @@
     @media (min-width: 1024px) { 
         .product-list { grid-template-columns: repeat(4, 1fr); } 
     }
+    @media (max-width: 900px) {
+      .category-fab { display: inline-flex; }
+    }
   </style>
 </head>
 <body>
@@ -389,24 +480,36 @@
 </div>
 
 <main id="catalog-section">
-  <div class="category-bar">
-    <button class="cat-btn active" onclick="filterByCategory('All', this)">All Products</button>
-    <button class="cat-btn" onclick="filterByCategory('Baby Diaper', this)">Baby Diaper</button>
-    <button class="cat-btn" onclick="filterByCategory('Adult Diaper', this)">Adult Diaper</button>
-    <button class="cat-btn" onclick="filterByCategory('Other', this)">Others</button>
-  </div>
-
-  <div class="controls-container">
-    <div class="search-wrapper">
-      <i data-lucide="search" class="search-icon"></i>
-      <input type="text" id="search-input" class="search-input" placeholder="Search brands or products..." oninput="handleSearch()">
+  <div class="category-overlay" id="category-overlay" onclick="toggleCategoryDrawer(false)"></div>
+  <div class="category-drawer" id="category-drawer">
+    <div class="drawer-head">
+      <h3>Categories</h3>
+      <button class="drawer-close" onclick="toggleCategoryDrawer(false)">Close</button>
     </div>
-    <button class="filter-trigger-btn" onclick="toggleFilter(true)">
-      <i data-lucide="sliders-horizontal"></i>
-      <span>Filters</span>
-    </button>
+    <div class="category-bar-vertical" id="category-drawer-list"></div>
   </div>
-  <div id="product-list" class="product-list"></div>
+  <div class="catalog-layout">
+    <aside class="category-sidebar">
+      <h3><i data-lucide="layout-grid" style="width:16px;"></i><span class="sr-only">Categories</span></h3>
+      <div class="category-bar-vertical" id="category-sidebar-list"></div>
+    </aside>
+
+    <div class="catalog-content">
+      <div class="category-bar" id="category-bar-list"></div>
+
+      <div class="controls-container">
+        <div class="search-wrapper">
+          <i data-lucide="search" class="search-icon"></i>
+          <input type="text" id="search-input" class="search-input" placeholder="Search brands or products..." oninput="handleSearch()">
+        </div>
+        <button class="filter-trigger-btn" onclick="toggleFilter(true)">
+          <i data-lucide="sliders-horizontal"></i>
+          <span>Filters</span>
+        </button>
+      </div>
+      <div id="product-list" class="product-list"></div>
+    </div>
+  </div>
 </main>
 
 <div class="filter-overlay" id="filter-overlay" onclick="toggleFilter(false)"></div>
@@ -446,6 +549,10 @@
   <i data-lucide="shopping-basket"></i>
   <span class="cart-badge" id="cart-badge-count">0</span>
 </a>
+<button class="category-fab" onclick="toggleCategoryDrawer(true)">
+  <i data-lucide="menu"></i>
+  <span>Categories</span>
+</button>
 
 <script>
   const SUPABASE_URL = "https://uhkheprfbxxwuojswyht.supabase.co";
@@ -524,6 +631,7 @@
       if (productId) openProductPage(productId);
 
       generateBrandChips();
+      generateMainCategoryButtons();
       if (brandParam) {
         activeBrand = brandParam;
         generateBrandChips();
@@ -548,7 +656,7 @@
     
     let list = allProducts;
     if (cat !== 'All') {
-      list = allProducts.filter(p => p.category === cat);
+      list = allProducts.filter(p => p.main_category === cat);
     }
     renderGrid(list);
   }
@@ -563,6 +671,26 @@
       overlay.classList.remove('show'); drawer.classList.remove('open');
       setTimeout(() => overlay.style.display = 'none', 300);
     }
+  }
+
+  function generateMainCategoryButtons() {
+    const mainCats = [...new Set(allProducts.map(p => p.main_category).filter(Boolean))];
+
+    const buildButtons = (withClose) => {
+      const allBtn = `<button class="cat-btn active" onclick="filterByCategory('All', this)${withClose ? "; toggleCategoryDrawer(false)" : ""}">All Products</button>`;
+      const catBtns = mainCats.map(cat => (
+        `<button class="cat-btn" onclick="filterByCategory('${cat}', this)${withClose ? "; toggleCategoryDrawer(false)" : ""}">${cat}</button>`
+      )).join('');
+      return allBtn + catBtns;
+    };
+
+    const drawer = document.getElementById('category-drawer-list');
+    const sidebar = document.getElementById('category-sidebar-list');
+    const bar = document.getElementById('category-bar-list');
+
+    if (drawer) drawer.innerHTML = buildButtons(true);
+    if (sidebar) sidebar.innerHTML = buildButtons(false);
+    if (bar) bar.innerHTML = buildButtons(false);
   }
 
   function generateBrandChips() {
@@ -588,7 +716,7 @@
 
   function applyFilters() {
     let filtered = allProducts;
-    if (activeCategory !== 'All') filtered = filtered.filter(p => p.category === activeCategory);
+    if (activeCategory !== 'All') filtered = filtered.filter(p => p.main_category === activeCategory);
     if (activeBrand !== 'All') filtered = filtered.filter(p => p.category === activeBrand);
     if (activeSize !== 'All') filtered = filtered.filter(p => p.name.toLowerCase().includes(activeSize.toLowerCase()));
     renderGrid(filtered);
@@ -755,6 +883,17 @@
   }
   function closeImageViewer() { document.getElementById('image-viewer').classList.remove('show'); }
   function toggleZoom() { document.getElementById('viewer-img').classList.toggle('zoomed'); }
+  function toggleCategoryDrawer(show) {
+    const drawer = document.getElementById('category-drawer');
+    const overlay = document.getElementById('category-overlay');
+    if (show) {
+      drawer.classList.add('open');
+      overlay.classList.add('show');
+    } else {
+      drawer.classList.remove('open');
+      overlay.classList.remove('show');
+    }
+  }
 
   window.onclick = (e) => {
     if (!e.target.closest('.profile-section')) {
@@ -767,4 +906,3 @@
 </script>
 </body>
 </html>
-
