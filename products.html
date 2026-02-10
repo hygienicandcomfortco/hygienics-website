@@ -324,9 +324,21 @@ pointer-events: auto;
 #toast.show { opacity: 1; visibility: visible; }
 .hidden { display: none !important; }
 
+
+@media (max-width: 640px) {
+.product-list { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 8px 4%; margin-bottom: 90px; }
+.product-card { border-radius: 16px; min-height: 360px; }
+.img-box { height: 160px; padding: 10px; }
+.details { padding: 10px 12px; }
+.p-name { font-size: 0.8rem; height: 2.4em; }
+.p-main-price { font-size: 1.05rem; }
+.price-row { padding: 0 12px 12px; }
+.add-to-cart-full-btn { padding: 10px; font-size: 0.8rem; border-radius: 10px; }
+}
+
 @media (min-width: 769px) {
 .product-list { grid-template-columns: repeat(3, 1fr); }
-.product-card { height: 480px; }
+.product-card { height: auto; min-height: 420px; }
 .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
 }
 @media (min-width: 1024px) { 
