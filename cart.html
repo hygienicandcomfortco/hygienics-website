@@ -18,18 +18,73 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif; -webkit-tap-highlight-color: transparent;}
 body{background:var(--bg);color:var(--dark); overflow-x: hidden;}
 
-/* --- Integrated Professional Header --- */
-header { background: var(--white); padding: 10px 15px; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 1000; }
-.head-container { max-width: 1150px; margin: auto; display: flex; align-items: center; justify-content: space-between; }
-.logo-link { display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; flex: 1; min-width: 0; }
-.header-left, .header-right { width: 120px; display: flex; align-items: center; }
-.header-right { justify-content: flex-end; }
-.header-center { flex: 1; display: flex; justify-content: center; }
-.logo-link { display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; min-width: 0; }
-header img { height: 35px; flex-shrink: 0; }
-header h1 { font-size: 0.9rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* --- Fixed Professional Header --- */
+.main-header { 
+  background: var(--white); 
+  padding: 12px 5%; 
+  border-bottom: 1px solid #f1f5f9; 
+  position: sticky; 
+  top: 0; 
+  z-index: 1000; 
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+  backdrop-filter: blur(10px);
+}
 
-/* --- Profile & Auth UI Styles --- */
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column; 
+  align-items: center;
+  gap: 15px;
+}
+
+.brand-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+.header-logo { height: 40px; width: auto; display: block; flex-shrink: 0; }
+
+.brand-text { text-align: left; }
+.brand-text h1 { font-size: 1rem; font-weight: 800; color: var(--dark); margin: 0; line-height: 1.2; }
+.brand-text p { font-size: 0.65rem; color: var(--grey); font-weight: 600; margin: 0; display: none; }
+
+.nav-links { 
+  display: flex; 
+  gap: 15px; 
+  align-items: center; 
+  width: 100%;
+  justify-content: center;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 10px;
+  flex-wrap: wrap;
+}
+.nav-links a { text-decoration: none; color: #475569; font-weight: 700; font-size: 0.85rem; transition: 0.2s; position: relative; white-space: nowrap; }
+.nav-links a:hover, .nav-links a.active { color: var(--primary); }
+.nav-links a.active::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 100%; height: 2px; background: var(--primary); border-radius: 2px; }
+
+/* --- Desktop Layout Adjustments --- */
+@media (min-width: 768px) {
+  .header-container { flex-direction: row; justify-content: space-between; padding: 5px 0; }
+  .brand-wrapper { display: contents; }
+  .logo-area { order: 1; }
+  .brand-text p { display: block; }
+  .nav-links { 
+    width: auto; 
+    border-top: none; 
+    padding-top: 0; 
+    gap: 25px; 
+    margin-left: auto;
+    order: 2;
+  }
+  .profile-section { order: 3; margin-left: 12px; }
+  .header-logo { height: 50px; }
+  .nav-links a { font-size: 0.95rem; }
+}\n/* --- Profile & Auth UI Styles --- */
 .profile-section { position: relative; margin-left: 10px; z-index: 1002; }
 .profile-btn { 
 background: var(--soft-blue); 
@@ -147,51 +202,51 @@ white-space: nowrap;
 </head>
 
 <body>
-<header id="main-header">
-<div class="head-container">
-    <a href="index.html" class="logo-link">
-      <img src="logo.png" alt="Logo">
-      <h1>Hygienic & Comfort Co.</h1>
-    </a>
-    <div style="display: flex; align-items: center;">
-        <a href="products.html" class="back-link">Back to Shop</a>
-    <div class="header-left">
-      <a href="products.html" class="back-link">← Cart</a>
-    </div>
-    <div class="header-center">
-      <a href="index.html" class="logo-link">
-        <img src="logo.png" alt="Logo">
-        <h1>Hygienic & Comfort Co.</h1>
+<header class="main-header" id="main-header-nav">
+  <div class="header-container">
+    <div class="brand-wrapper">
+      <a href="index.html" class="logo-area">
+        <img src="logo.png" alt="Logo" class="header-logo">
+        <div class="brand-text">
+          <h1>Hygienic & Comfort Co.</h1>
+          <p>Care, Comfort & Hygiene for Every Age</p>
+        </div>
       </a>
+
+      <div class="profile-section">
+        <div class="profile-btn" id="profile-btn"><i data-lucide="user"></i></div>
+        <div class="dropdown-menu" id="profile-dropdown">
+          <div class="dropdown-header">
+            <h4 id="user-display-name">Welcome Guest</h4>
+            <p id="user-display-sub">Manage your account</p>
+          </div>
+          <div id="guest-items">
+            <a href="login.html" class="dropdown-item">
+              <i data-lucide="log-in"></i> 
+              <div class="item-info"><b>Sign In</b><span>Access orders</span></div>
+            </a>
+          </div>
+          <div id="auth-items" style="display:none">
+            <a href="profile.html" class="dropdown-item">
+              <i data-lucide="user"></i> 
+              <div class="item-info"><b>My Profile</b><span>Account settings</span></div>
+            </a>
+            <div class="dropdown-item" onclick="handleLogout()">
+              <i data-lucide="log-out"></i> 
+              <div class="item-info"><b>Logout</b><span>End session</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="header-right">
-<div class="profile-section">
-<div class="profile-btn" id="profile-btn"><i data-lucide="user"></i></div>
-<div class="dropdown-menu" id="profile-dropdown">
-<div class="dropdown-header">
-<h4 id="user-display-name">Welcome Guest</h4>
-<p id="user-display-sub">Manage your account</p>
-</div>
-<div id="guest-items">
-<a href="login.html" class="dropdown-item">
-<i data-lucide="log-in"></i> 
-<div class="item-info"><b>Sign In</b><span>Access orders</span></div>
-</a>
-</div>
-<div id="auth-items" style="display:none">
-                    <a href="profile.html" class="dropdown-item">
-                      <i data-lucide="user"></i> 
-                      <div class="item-info"><b>My Profile</b><span>Account settings</span></div>
-                    </a>
-<div class="dropdown-item" onclick="handleLogout()">
-<i data-lucide="log-out"></i> 
-<div class="item-info"><b>Logout</b><span>End session</span></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
+
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
 </header>
 
 <div class="page" id="cart-main-page">
