@@ -1,264 +1,242 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Checkout | Hygienic & Comfort Co.</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout | Hygienic & Comfort Co.</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 
-  <style>
-    :root {
-      --primary: #2563eb;
-      --dark: #1e293b;
-      --grey: #64748b;
-      --bg: #f8fafc;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: var(--bg);
-      color: var(--dark);
-      padding: 20px;
-    }
-    .checkout-container {
-      max-width: 600px;
-      margin: auto;
-      background: white;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 10px 15px rgba(0,0,0,0.05);
-    }
-    h2 { margin-bottom: 20px; font-weight: 800; }
-    .order-summary {
-      background: #f1f5f9;
-      padding: 15px;
-      border-radius: 12px;
-      margin-bottom: 25px;
-    }
-    .form-group { margin-bottom: 15px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-    label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      color: var(--grey);
-      margin-bottom: 8px;
-    }
-    input, textarea, select {
-      width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      border: 1.5px solid #e2e8f0;
-      font-family: inherit;
-      outline: none;
-    }
-
-    .address-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-    .address-dropdown { position: relative; margin-bottom: 20px; }
-    .address-select {
-      width: 100%;
-      background: #fff;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 12px 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 0.85rem;
-      color: var(--dark);
-    }
-    .address-select .addr-caret { transition: transform 0.2s ease; }
-    .address-dropdown.open .address-select .addr-caret { transform: rotate(180deg); }
-    .address-dropdown .address-list { display: none; margin-top: 10px; }
-    .address-dropdown.open .address-list { display: flex; }
-    .address-card {
-      border: 2px solid #e2e8f0;
-      padding: 15px;
-      border-radius: 12px;
-      cursor: pointer;
-      position: relative;
-      transition: 0.2s;
-    }
-    .address-card.selected {
-      border-color: var(--primary);
-      background: #eff6ff;
-    }
-    .address-card .badge {
-      font-size: 0.6rem;
-      font-weight: 800;
-      background: #e2e8f0;
-      padding: 3px 8px;      border-radius: 5px;
-      text-transform: uppercase;
-      margin-bottom: 5px;
-      display: inline-block;
-    }
-    .address-card.selected .badge { background: var(--primary); color: white; }
-    .address-card p { font-size: 0.85rem; line-height: 1.4; color: var(--dark); }
-    .address-card .recipient { font-weight: 800; margin-bottom: 2px; display: block;}
-
-    .payment-method {
-      border: 2px solid #16a34a;
-      padding: 15px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #f0fdf4;
-      margin-top: 20px;
-    }
-    .confirm-btn {
-      width: 100%;
-      background: var(--primary);
-      color: white;
-      padding: 18px;
-      border: none;
-      border-radius: 15px;
-      font-weight: 800;
-      font-size: 1rem;
-      cursor: pointer;
-      margin-top: 30px;
-    }
-    .back-link {
-      display: block;
-      text-align: center;
-      margin-top: 15px;
-      color: var(--grey);
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-    .hidden { display: none; }
-  /* --- Site Footer --- */
-.site-footer { background: #0f172a; color: #e2e8f0; margin-top: 60px; }
-.footer-container { max-width: 1200px; margin: 0 auto; padding: 40px 5%; display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
-.footer-brand { display: grid; grid-template-columns: 90px 1fr; gap: 16px; align-items: center; }
-.footer-logo { width: 90px; height: auto; }
-.footer-contact { display: flex; flex-direction: column; gap: 10px; font-size: 0.95rem; }
-.footer-contact div { display: flex; align-items: center; gap: 10px; }
-.footer-contact a { color: #e2e8f0; text-decoration: none; }
-.footer-links h4 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; color: #e2e8f0; }
-.footer-links a { display: block; color: #cbd5f5; text-decoration: none; margin: 8px 0; font-weight: 600; font-size: 0.95rem; }
-.footer-links a:hover { color: #ffffff; }
-.footer-bottom { border-top: 1px solid rgba(255, 255, 255, 0.1); text-align: center; padding: 18px 5%; font-size: 0.85rem; color: #cbd5f5; }
-
-@media (max-width: 900px) {
-  .footer-container { grid-template-columns: repeat(2, 1fr); }
+<style>
+:root {
+--primary: #2563eb;
+--dark: #1e293b;
+--grey: #64748b;
+--bg: #f8fafc;
 }
-@media (max-width: 600px) {
-  .footer-container { grid-template-columns: 1fr; }
-  .footer-brand { grid-template-columns: 72px 1fr; }
-  .footer-logo { width: 72px; }
-  .footer-contact { font-size: 0.9rem; }
-  .footer-links a { font-size: 0.9rem; }
-}</style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+font-family: 'Plus Jakarta Sans', sans-serif;
+background: var(--bg);
+color: var(--dark);
+padding: 20px;
+}
+.checkout-container {
+max-width: 600px;
+margin: auto;
+background: white;
+padding: 30px;
+border-radius: 20px;
+box-shadow: 0 10px 15px rgba(0,0,0,0.05);
+}
+h2 { margin-bottom: 20px; font-weight: 800; }
+.order-summary {
+background: #f1f5f9;
+padding: 15px;
+border-radius: 12px;
+margin-bottom: 25px;
+}
+.form-group { margin-bottom: 15px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+label {
+display: block;
+font-size: 0.8rem;
+font-weight: 800;
+text-transform: uppercase;
+color: var(--grey);
+margin-bottom: 8px;
+}
+input, textarea, select {
+width: 100%;
+padding: 14px;
+border-radius: 12px;
+border: 1.5px solid #e2e8f0;
+font-family: inherit;
+outline: none;
+}
+
+.address-list {
+display: flex;
+flex-direction: column;
+gap: 12px;
+margin-bottom: 20px;
+}
+.address-dropdown { position: relative; margin-bottom: 20px; }
+.address-select {
+width: 100%;
+background: #fff;
+border: 1px solid #e2e8f0;
+border-radius: 12px;
+padding: 12px 14px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 10px;
+cursor: pointer;
+font-weight: 700;
+font-size: 0.85rem;
+color: var(--dark);
+}
+.address-select .addr-caret { transition: transform 0.2s ease; }
+.address-dropdown.open .address-select .addr-caret { transform: rotate(180deg); }
+.address-dropdown .address-list { display: none; margin-top: 10px; }
+.address-dropdown.open .address-list { display: flex; }
+.address-card {
+border: 2px solid #e2e8f0;
+padding: 15px;
+border-radius: 12px;
+cursor: pointer;
+position: relative;
+transition: 0.2s;
+}
+.address-card.selected {
+border-color: var(--primary);
+background: #eff6ff;
+}
+.address-card .badge {
+font-size: 0.6rem;
+font-weight: 800;
+background: #e2e8f0;
+padding: 3px 8px;      border-radius: 5px;
+text-transform: uppercase;
+margin-bottom: 5px;
+display: inline-block;
+}
+.address-card.selected .badge { background: var(--primary); color: white; }
+.address-card p { font-size: 0.85rem; line-height: 1.4; color: var(--dark); }
+.address-card .recipient { font-weight: 800; margin-bottom: 2px; display: block;}
+
+.payment-method {
+border: 2px solid #16a34a;
+padding: 15px;
+border-radius: 12px;
+display: flex;
+align-items: center;
+gap: 10px;
+background: #f0fdf4;
+margin-top: 20px;
+}
+.confirm-btn {
+width: 100%;
+background: var(--primary);
+color: white;
+padding: 18px;
+border: none;
+border-radius: 15px;
+font-weight: 800;
+font-size: 1rem;
+cursor: pointer;
+margin-top: 30px;
+}
+.back-link {
+display: block;
+text-align: center;
+margin-top: 15px;
+color: var(--grey);
+text-decoration: none;
+font-weight: 600;
+font-size: 0.9rem;
+}
+.hidden { display: none; }
+</style>
 </head>
 <body>
 
 <div class="checkout-container">
-  <h2>Complete Your Order</h2>
+<h2>Complete Your Order</h2>
 
-  <div class="order-summary" id="order-summary"></div>
+<div class="order-summary" id="order-summary"></div>
 
-  <form id="checkout-form">
-    <label>Select Delivery Address</label>
-    <div class="address-dropdown" id="address-dropdown">
-      <button type="button" class="address-select" id="address-select">
-        <span id="selected-address-text">Select address</span>
-        <i data-lucide="chevron-down" class="addr-caret" style="width: 16px;"></i>
-      </button>
-      <div class="address-list" id="address-list">
-        <p style="font-size: 0.8rem; color: var(--grey);">Loading addresses...</p>
-      </div>
-    </div>
+<form id="checkout-form">
+<label>Select Delivery Address</label>
+<div class="address-dropdown" id="address-dropdown">
+<button type="button" class="address-select" id="address-select">
+<span id="selected-address-text">Select address</span>
+<i data-lucide="chevron-down" class="addr-caret" style="width: 16px;"></i>
+</button>
+<div class="address-list" id="address-list">
+<p style="font-size: 0.8rem; color: var(--grey);">Loading addresses...</p>
+</div>
+</div>
 
-    <div id="new-address-form" class="hidden" style="border: 1px dashed #cbd5e1; padding: 20px; border-radius: 15px; margin-bottom: 20px; background: #fafafa;">
-      <p style="font-weight: 800; font-size: 0.85rem; margin-bottom: 15px; color: var(--dark);">ENTER NEW DELIVERY ADDRESS</p>
-      <div class="form-group">
-        <label>Full Name</label>
-        <input type="text" id="new-full-name" placeholder="Enter recipient name">
-      </div>
-      
-      <div class="form-group">
-        <label>Mobile Number</label>
-        <input type="tel" id="new-mobile" maxlength="10" placeholder="10-digit mobile number">
-      </div>
+<div id="new-address-form" class="hidden" style="border: 1px dashed #cbd5e1; padding: 20px; border-radius: 15px; margin-bottom: 20px; background: #fafafa;">
+<p style="font-weight: 800; font-size: 0.85rem; margin-bottom: 15px; color: var(--dark);">ENTER NEW DELIVERY ADDRESS</p>
+<div class="form-group">
+<label>Full Name</label>
+<input type="text" id="new-full-name" placeholder="Enter recipient name">
+</div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>Pincode</label>
-          <input type="text" id="new-pincode" maxlength="6" placeholder="6 digits">
-        </div>
-        <div class="form-group">
-          <label>Town/City</label>
-          <input type="text" id="new-city" placeholder="City name">
-        </div>
-      </div>
+<div class="form-group">
+<label>Mobile Number</label>
+<input type="tel" id="new-mobile" maxlength="10" placeholder="10-digit mobile number">
+</div>
 
-      <div class="form-group">
-        <label>Flat, House no., Building</label>
-        <input type="text" id="new-flat" placeholder=>
-      </div>
+<div class="form-row">
+<div class="form-group">
+<label>Pincode</label>
+<input type="text" id="new-pincode" maxlength="6" placeholder="6 digits">
+</div>
+<div class="form-group">
+<label>Town/City</label>
+<input type="text" id="new-city" placeholder="City name">
+</div>
+</div>
 
-      <div class="form-group">
-        <label>Area, Street, Sector</label>
-        <input type="text" id="new-area" placeholder=>
-      </div>
+<div class="form-group">
+<label>Flat, House no., Building</label>
+<input type="text" id="new-flat" placeholder=>
+</div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>State</label>
-          <input type="text" id="new-state" placeholder="State">
-        </div>
-        <div class="form-group">
-          <label>Address Type</label>
-          <select id="new-addr-type">
-            <option value="Home">Home</option>
-            <option value="Office">Office</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-      </div>
+<div class="form-group">
+<label>Area, Street, Sector</label>
+<input type="text" id="new-area" placeholder=>
+</div>
 
-      <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
-        <input type="checkbox" id="save-to-profile" style="width: auto;" checked>
-        <label for="save-to-profile" style="text-transform: none; margin-bottom: 0; font-weight: 600;">Save this address to my profile</label>
-      </div>
-    </div>
+<div class="form-row">
+<div class="form-group">
+<label>State</label>
+<input type="text" id="new-state" placeholder="State">
+</div>
+<div class="form-group">
+<label>Address Type</label>
+<select id="new-addr-type">
+<option value="Home">Home</option>
+<option value="Office">Office</option>
+<option value="Other">Other</option>
+</select>
+</div>
+</div>
 
-    <div class="form-group">
-      <label>Alternate Mobile (Optional)</label>
-      <input type="tel" id="cust-alt-phone" maxlength="10" placeholder="Secondary contact number">
-    </div>
+<div style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
+<input type="checkbox" id="save-to-profile" style="width: auto;" checked>
+<label for="save-to-profile" style="text-transform: none; margin-bottom: 0; font-weight: 600;">Save this address to my profile</label>
+</div>
+</div>
 
-    <label>Payment Method</label>
-    <div class="payment-method">
-      <i data-lucide="banknote" style="color: #16a34a"></i>
-      <div>
-        <p style="font-weight:800; font-size:0.9rem;">Cash on Delivery (COD)</p>
-        <p style="font-size:0.75rem; color:var(--grey);">Pay when you receive the product</p>
-      </div>
-    </div>
+<div class="form-group">
+<label>Alternate Mobile (Optional)</label>
+<input type="tel" id="cust-alt-phone" maxlength="10" placeholder="Secondary contact number">
+</div>
 
-    <button type="submit" class="confirm-btn" id="confirm-btn">Confirm Order</button>
-  </form>
+<label>Payment Method</label>
+<div class="payment-method">
+<i data-lucide="banknote" style="color: #16a34a"></i>
+<div>
+<p style="font-weight:800; font-size:0.9rem;">Cash on Delivery (COD)</p>
+<p style="font-size:0.75rem; color:var(--grey);">Pay when you receive the product</p>
+</div>
+</div>
 
-  <a href="products.html" class="back-link">Cancel and Go Back</a>
+<button type="submit" class="confirm-btn" id="confirm-btn">Confirm Order</button>
+</form>
+
+<a href="products.html" class="back-link">Cancel and Go Back</a>
 </div>
 
 <script>
-  const SUPABASE_URL = "https://uhkheprfbxxwuojswyht.supabase.co";
+const SUPABASE_URL = "https://uhkheprfbxxwuojswyht.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es";
 const supa = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -270,219 +248,179 @@ let profilePhone = "";
 // 1. Load the Product from LocalStorage
 const checkoutData = JSON.parse(localStorage.getItem('checkout-item'));
 if (!checkoutData) {
-    alert("Checkout session expired.");
-    location.href = "products.html";
+alert("Checkout session expired.");
+location.href = "products.html";
 }
 
 // 2. Display Order Summary
 const itemsLabel = checkoutData.itemsText || checkoutData.name;
 document.getElementById('order-summary').innerHTML = `
-    <p style="font-size:0.75rem; color:#64748b;">ORDERING:</p>
-    <p style="font-weight:800;">${itemsLabel}</p>
-    <p style="font-weight:800; color:#2563eb; font-size:1.2rem; margin-top:5px;">Total: â‚¹${Number(checkoutData.price).toLocaleString('en-IN')}</p>
+   <p style="font-size:0.75rem; color:#64748b;">ORDERING:</p>
+   <p style="font-weight:800;">${itemsLabel}</p>
+   <p style="font-weight:800; color:#2563eb; font-size:1.2rem; margin-top:5px;">Total: ₹${Number(checkoutData.price).toLocaleString('en-IN')}</p>
 `;
 
 // 3. Load Saved Data on Page Load
 async function loadCheckoutData() {
-    const { data: { user } } = await supa.auth.getUser();
-    if (!user) { location.href = "products.html"; return; }
+const { data: { user } } = await supa.auth.getUser();
+if (!user) { location.href = "products.html"; return; }
 
-    // Load Profile Name/Phone
-    const { data: profile } = await supa.from('customer_signup').select('*').eq('id', user.id).maybeSingle();
-    if (profile) {
-        profileName = profile.full_name || "";
-        profilePhone = profile.phone_number || "";
-        document.getElementById('cust-alt-phone').value = profile.phone_number || "";
-    }
+// Load Profile Name/Phone
+const { data: profile } = await supa.from('customer_signup').select('*').eq('id', user.id).maybeSingle();
+if (profile) {
+profileName = profile.full_name || "";
+profilePhone = profile.phone_number || "";
+document.getElementById('cust-alt-phone').value = profile.phone_number || "";
+}
 
-    // Load Addresses Cards
-    const { data: addresses } = await supa.from('customer_addresses').select('*').eq('user_id', user.id);
-    const listDiv = document.getElementById('address-list');
-    const selectedText = document.getElementById('selected-address-text');
-    const dropdown = document.getElementById('address-dropdown');
-    listDiv.innerHTML = "";
+// Load Addresses Cards
+const { data: addresses } = await supa.from('customer_addresses').select('*').eq('user_id', user.id);
+const listDiv = document.getElementById('address-list');
+const selectedText = document.getElementById('selected-address-text');
+const dropdown = document.getElementById('address-dropdown');
+listDiv.innerHTML = "";
 
-    if (addresses && addresses.length > 0) {
-        addresses.forEach((addr, index) => {
-            const fullAddrStr = `${addr.full_address}, ${addr.city}, ${addr.state} - ${addr.pincode}`;
-            const card = document.createElement('div');
-            card.className = `address-card ${index === 0 ? 'selected' : ''}`;
-            if(index === 0) selectedAddressText = fullAddrStr;
+if (addresses && addresses.length > 0) {
+addresses.forEach((addr, index) => {
+const fullAddrStr = `${addr.full_address}, ${addr.city}, ${addr.state} - ${addr.pincode}`;
+const card = document.createElement('div');
+card.className = `address-card ${index === 0 ? 'selected' : ''}`;
+if(index === 0) selectedAddressText = fullAddrStr;
 
-            const badgeText = (addr.type || addr.address_type || "Address").toString();
-            const recipientName = (addr.full_name || addr.recipient_name || "").toString();
-            card.innerHTML = `<span class="badge">${badgeText}</span><p><b>${recipientName}</b> ${fullAddrStr}</p>`;
-            card.onclick = () => {
-                document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
-                card.classList.add('selected');
-                selectedAddressText = fullAddrStr;
-                if (selectedText) selectedText.innerText = `${recipientName} ${fullAddrStr}`.trim();
-                isManualMode = false;
-                document.getElementById('new-address-form').classList.add('hidden');
-                if (dropdown) dropdown.classList.remove('open');
-            };
-            listDiv.appendChild(card);
-            if (index === 0 && selectedText) {
-                selectedText.innerText = `${recipientName} ${fullAddrStr}`.trim();
-            }
-        });
-    }
+const badgeText = (addr.type || addr.address_type || "Address").toString();
+const recipientName = (addr.full_name || addr.recipient_name || "").toString();
+card.innerHTML = `<span class="badge">${badgeText}</span><p><b>${recipientName}</b> ${fullAddrStr}</p>`;
+card.onclick = () => {
+document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
+card.classList.add('selected');
+selectedAddressText = fullAddrStr;
+if (selectedText) selectedText.innerText = `${recipientName} ${fullAddrStr}`.trim();
+isManualMode = false;
+document.getElementById('new-address-form').classList.add('hidden');
+if (dropdown) dropdown.classList.remove('open');
+};
+listDiv.appendChild(card);
+if (index === 0 && selectedText) {
+selectedText.innerText = `${recipientName} ${fullAddrStr}`.trim();
+}
+});
+}
 
-    // New Address Button
-    const newBtn = document.createElement('div');
-    newBtn.className = "address-card";
-    newBtn.innerHTML = `<p style="color:var(--primary); font-weight:700;">+ Use a new delivery address</p>`;
-    newBtn.onclick = () => {
-        document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
-        newBtn.classList.add('selected');
-        isManualMode = true;
-        if (selectedText) selectedText.innerText = "Use a new delivery address";
-        document.getElementById('new-address-form').classList.remove('hidden');
-        if (dropdown) dropdown.classList.remove('open');
-    };
-    listDiv.appendChild(newBtn);
+// New Address Button
+const newBtn = document.createElement('div');
+newBtn.className = "address-card";
+newBtn.innerHTML = `<p style="color:var(--primary); font-weight:700;">+ Use a new delivery address</p>`;
+newBtn.onclick = () => {
+document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
+newBtn.classList.add('selected');
+isManualMode = true;
+if (selectedText) selectedText.innerText = "Use a new delivery address";
+document.getElementById('new-address-form').classList.remove('hidden');
+if (dropdown) dropdown.classList.remove('open');
+};
+listDiv.appendChild(newBtn);
 }
 
 // 4. Handle Final Form Submission
 document.getElementById('checkout-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = document.getElementById('confirm-btn');
-    const { data: { user } } = await supa.auth.getUser();
+e.preventDefault();
+const btn = document.getElementById('confirm-btn');
+const { data: { user } } = await supa.auth.getUser();
 
-    if (!user) return alert("Please login again.");
+if (!user) return alert("Please login again.");
 
-    let finalAddress = "";
+let finalAddress = "";
 
-    try {
-        btn.disabled = true;
-        btn.innerText = "Processing...";
+try {
+btn.disabled = true;
+btn.innerText = "Processing...";
 
-        // PHASE 1: Handle Manual Address Save
-        if (isManualMode) {
-            const manualName = document.getElementById('new-full-name').value.trim();
-            const pin = document.getElementById('new-pincode').value.trim();
-            const city = document.getElementById('new-city').value.trim();
-            const flat = document.getElementById('new-flat').value.trim();
-            const area = document.getElementById('new-area').value.trim();
-            const state = document.getElementById('new-state').value.trim();
-            const type = document.getElementById('new-addr-type').value;
+// PHASE 1: Handle Manual Address Save
+if (isManualMode) {
+const manualName = document.getElementById('new-full-name').value.trim();
+const pin = document.getElementById('new-pincode').value.trim();
+const city = document.getElementById('new-city').value.trim();
+const flat = document.getElementById('new-flat').value.trim();
+const area = document.getElementById('new-area').value.trim();
+const state = document.getElementById('new-state').value.trim();
+const type = document.getElementById('new-addr-type').value;
 
-            const manualMobile = document.getElementById('new-mobile').value.trim();
-            finalAddress = `${flat}, ${area}, ${city}, ${state} - ${pin}`;
+const manualMobile = document.getElementById('new-mobile').value.trim();
+finalAddress = `${flat}, ${area}, ${city}, ${state} - ${pin}`;
 
-            // Save to customer_addresses table
-            if (document.getElementById('save-to-profile').checked) {
-                const { error: addrError } = await supa.from('customer_addresses').insert([{
-                    user_id: user.id,
-                    full_name: manualName || profileName || "Customer",
-                    full_address: `${flat}, ${area}`,
-                    city: city,
-                    state: state,
-                    pincode: pin,
-                    address_type: type
-                }]);
-                if (addrError) throw new Error("Could not save address to profile: " + addrError.message);
-            }
-        } else {
-            finalAddress = selectedAddressText;
-        }
+// Save to customer_addresses table
+if (document.getElementById('save-to-profile').checked) {
+const { error: addrError } = await supa.from('customer_addresses').insert([{
+user_id: user.id,
+full_name: manualName || profileName || "Customer",
+full_address: `${flat}, ${area}`,
+city: city,
+state: state,
+pincode: pin,
+address_type: type
+}]);
+if (addrError) throw new Error("Could not save address to profile: " + addrError.message);
+}
+} else {
+finalAddress = selectedAddressText;
+}
 
-        // PHASE 2: Create Order
-        const { error: orderError } = await supa.from('orders').insert([{
-            customer_name: (isManualMode ? document.getElementById('new-full-name').value.trim() : "") || profileName || "Customer",
-            address: finalAddress,
+// PHASE 2: Create Order
+const { error: orderError } = await supa.from('orders').insert([{
+customer_name: (isManualMode ? document.getElementById('new-full-name').value.trim() : "") || profileName || "Customer",
+address: finalAddress,
+            phone_number: (isManualMode && document.getElementById('new-mobile').value.trim()) || profilePhone || user.phone || user.email,
             phone_number: (isManualMode && document.getElementById('new-mobile').value.trim()) || profilePhone || user.phone || null,
             email: user.email || null,
-            alt_phone: document.getElementById('cust-alt-phone').value || null,
-            items: checkoutData.itemsText || checkoutData.name,
-            total_price: checkoutData.price,
-            status: 'New'
-        }]);
+alt_phone: document.getElementById('cust-alt-phone').value || null,
+items: checkoutData.itemsText || checkoutData.name,
+total_price: checkoutData.price,
+status: 'New'
+}]);
 
-        if (orderError) throw orderError;
+if (orderError) throw orderError;
 
-        // PHASE 3: Subtract Stock
-        if (checkoutData.cartItems) {
-            for (const item of checkoutData.cartItems) {
-                const { data: p } = await supa.from('products').select('stock').eq('id', item.id).single();
-                await supa.from('products').update({ stock: p.stock - (item.qty || 1) }).eq('id', item.id);
-            }
-        } else if (checkoutData.id !== "CART_ORDER") {
-            const { data: p } = await supa.from('products').select('stock').eq('id', checkoutData.id).single();
-            await supa.from('products').update({ stock: p.stock - 1 }).eq('id', checkoutData.id);
-        }
+// PHASE 3: Subtract Stock
+if (checkoutData.cartItems) {
+for (const item of checkoutData.cartItems) {
+const { data: p } = await supa.from('products').select('stock').eq('id', item.id).single();
+await supa.from('products').update({ stock: p.stock - (item.qty || 1) }).eq('id', item.id);
+}
+} else if (checkoutData.id !== "CART_ORDER") {
+const { data: p } = await supa.from('products').select('stock').eq('id', checkoutData.id).single();
+await supa.from('products').update({ stock: p.stock - 1 }).eq('id', checkoutData.id);
+}
 
-        // PHASE 4: Success Cleanup
-        localStorage.removeItem('hc-cart');
-        localStorage.removeItem('checkout-item');
+// PHASE 4: Success Cleanup
+localStorage.removeItem('hc-cart');
+localStorage.removeItem('checkout-item');
 
-        const msg = `*NEW ORDER*\nItem: ${checkoutData.itemsText || checkoutData.name}\nAddress: ${finalAddress}\nTotal: â‚¹${checkoutData.price}`;
-        window.open(`https://wa.me/919307760665?text=${encodeURIComponent(msg)}`, '_blank');
-        
-        location.href = "index.html";
+const msg = `*NEW ORDER*\nItem: ${checkoutData.itemsText || checkoutData.name}\nAddress: ${finalAddress}\nTotal: ₹${checkoutData.price}`;
+window.open(`https://wa.me/919307760665?text=${encodeURIComponent(msg)}`, '_blank');
 
-    } catch (err) {
-        alert("Error: " + err.message);
-        btn.disabled = false;
-        btn.innerText = "Confirm Order";
-    }
+location.href = "index.html";
+
+} catch (err) {
+alert("Error: " + err.message);
+btn.disabled = false;
+btn.innerText = "Confirm Order";
+}
 });
 
 loadCheckoutData();
 lucide.createIcons();
 
 document.getElementById('address-select')?.addEventListener('click', (e) => {
-  e.stopPropagation();
-  const dropdown = document.getElementById('address-dropdown');
-  if (dropdown) dropdown.classList.toggle('open');
+e.stopPropagation();
+const dropdown = document.getElementById('address-dropdown');
+if (dropdown) dropdown.classList.toggle('open');
 });
 
 document.addEventListener('click', (e) => {
-  const dropdown = document.getElementById('address-dropdown');
-  if (dropdown && !e.target.closest('#address-dropdown')) dropdown.classList.remove('open');
+const dropdown = document.getElementById('address-dropdown');
+if (dropdown && !e.target.closest('#address-dropdown')) dropdown.classList.remove('open');
 });
 </script>
-<footer class="site-footer">
-<div class="footer-container">
-<div class="footer-brand">
-<img src="logo.png" alt="Hygienic & Comfort Co." class="footer-logo">
-<div class="footer-contact">
-<div><i data-lucide="mail"></i><a href="mailto:hygienicsandcomfort@gmail.com">hygienicsandcomfort@gmail.com</a></div>
-<div><i data-lucide="phone"></i><a href="tel:+919307760665">+91 9307760665</a></div>
-<div><i data-lucide="map-pin"></i><span>Ambernath, India</span></div>
-</div>
-</div>
-<div class="footer-links">
-<h4>Quick Links</h4>
-<a href="index.html">Home</a>
-<a href="products.html">Products</a>
-<a href="about.html">About</a>
-<a href="contact.html">Contact</a>
-<a href="cart.html">Cart</a>
-</div>
-<div class="footer-links">
-<h4>Account</h4>
-<a href="orders.html">My Orders</a>
-<a href="profile.html">My Profile</a>
-<a href="address.html">My Addresses</a>
-</div>
-<div class="footer-links">
-<h4>Policies</h4>
-<a href="privacy-policy.html">Privacy Policy</a>
-</div>
-</div>
-<div class="footer-bottom">
-<span>© 2026 Hygienic & Comfort Co. All rights reserved.</span>
-</div>
-</footer>
-<script data-footer-icons-init="1">lucide.createIcons();</script>
 </body>
 </html>
-
-
-
-
-
-
-
-
+~
