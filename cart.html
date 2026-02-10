@@ -21,6 +21,7 @@ body{background:var(--bg);color:var(--dark); overflow-x: hidden;}
 /* --- Integrated Professional Header --- */
 header { background: var(--white); padding: 10px 15px; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 1000; }
 .head-container { max-width: 1150px; margin: auto; display: flex; align-items: center; justify-content: space-between; }
+.logo-link { display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; flex: 1; min-width: 0; }
 .header-left, .header-right { width: 120px; display: flex; align-items: center; }
 .header-right { justify-content: flex-end; }
 .header-center { flex: 1; display: flex; justify-content: center; }
@@ -31,42 +32,42 @@ header h1 { font-size: 0.9rem; font-weight: 800; white-space: nowrap; overflow: 
 /* --- Profile & Auth UI Styles --- */
 .profile-section { position: relative; margin-left: 10px; z-index: 1002; }
 .profile-btn { 
-  background: var(--soft-blue); 
-  color: var(--primary); 
-  width: 38px; height: 38px; 
-  border-radius: 50%; 
-  display: flex; align-items: center; justify-content: center; 
-  cursor: pointer; border: 2px solid transparent; 
-  transition: 0.3s;
+background: var(--soft-blue); 
+color: var(--primary); 
+width: 38px; height: 38px; 
+border-radius: 50%; 
+display: flex; align-items: center; justify-content: center; 
+cursor: pointer; border: 2px solid transparent; 
+transition: 0.3s;
 }
 .dropdown-menu {
-  position: absolute;
-  top: 50px; right: 0;
-  background: white;
-  width: 280px;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-  border: 1px solid #f1f5f9;
-  display: none;
-  flex-direction: column;
-  padding: 10px;
-  z-index: 1001;
+position: absolute;
+top: 50px; right: 0;
+background: white;
+width: 280px;
+border-radius: 16px;
+box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+border: 1px solid #f1f5f9;
+display: none;
+flex-direction: column;
+padding: 10px;
+z-index: 1001;
 }
 .dropdown-menu.active { display: flex; }
 .dropdown-header { padding: 10px; border-bottom: 1px solid #f1f5f9; margin-bottom: 5px; }
 .dropdown-header h4 { font-size: 0.9rem; font-weight: 800; }
 .dropdown-header p { font-size: 0.75rem; color: var(--grey); }
 .dropdown-item {
-  padding: 12px;
-  text-decoration: none;
-  color: var(--dark);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  transition: 0.2s;
-  cursor: pointer;
-  font-size: 0.85rem;
+padding: 12px;
+text-decoration: none;
+color: var(--dark);
+border-radius: 10px;
+display: flex;
+align-items: center;
+gap: 12px;
+transition: 0.2s;
+cursor: pointer;
+font-size: 0.85rem;
 }
 .dropdown-item:hover { background: var(--soft-blue); color: var(--primary); }
 .item-info b { font-size: 0.9rem; display: block; }
@@ -119,58 +120,43 @@ header h1 { font-size: 0.9rem; font-weight: 800; white-space: nowrap; overflow: 
 .qty-ctrl button { padding: 4px 12px; border: none; background: none; cursor: pointer; font-size: 1.1rem; font-weight: bold; color: #555; }
 .qty-ctrl span { padding: 4px 12px; border-inline: 1px solid #D5D9D9; font-weight: 700; font-size: 0.9rem; background: #fff; }
 .link-action { cursor: pointer; font-size: 0.8rem; color: var(--blue); }
+.back-link { color: var(--blue); font-weight: 700; font-size: 0.8rem; text-decoration: none; white-space: nowrap; margin-right: 5px; }
 .back-link { color: var(--blue); font-weight: 700; font-size: 0.85rem; text-decoration: none; white-space: nowrap; }
 
 @media(min-width: 860px) {
-  .page { display: grid; grid-template-columns: 1fr 350px; gap: 20px; margin-top: 20px; }
-  .summary-card { order: 2; position: sticky; top: 90px; height: fit-content; }
-  .cart-main { order: 1; padding: 25px; }
-  header img { height: 40px; }
-  header h1 { font-size: 1.2rem; }
-  .cart-img { width: 150px; height: 150px; }
+.page { display: grid; grid-template-columns: 1fr 350px; gap: 20px; margin-top: 20px; }
+.summary-card { order: 2; position: sticky; top: 90px; height: fit-content; }
+.cart-main { order: 1; padding: 25px; }
+header img { height: 40px; }
+header h1 { font-size: 1.2rem; }
+.cart-img { width: 150px; height: 150px; }
 }
 @media(max-width: 859px) { .summary-card { order: 1; } .cart-main { order: 2; } }
 @media(max-width: 600px) {
-  .action-row { display: block; }
-  .qty-ctrl { display: inline-flex; }
-  .action-row .link-action {
-    display: inline-block;
-    margin-top: 8px;
-    margin-right: 14px;
-    white-space: nowrap;
-  }
-  .action-row .link-action:last-child { margin-right: 0; }
+.action-row { display: block; }
+.qty-ctrl { display: inline-flex; }
+.action-row .link-action {
+display: inline-block;
+margin-top: 8px;
+margin-right: 14px;
+white-space: nowrap;
 }
-/* --- Site Footer --- */
-.site-footer { background: #0f172a; color: #e2e8f0; margin-top: 60px; }
-.footer-container { max-width: 1200px; margin: 0 auto; padding: 40px 5%; display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
-.footer-brand { display: grid; grid-template-columns: 90px 1fr; gap: 16px; align-items: center; }
-.footer-logo { width: 90px; height: auto; }
-.footer-contact { display: flex; flex-direction: column; gap: 10px; font-size: 0.95rem; }
-.footer-contact div { display: flex; align-items: center; gap: 10px; }
-.footer-contact a { color: #e2e8f0; text-decoration: none; }
-.footer-links h4 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; color: #e2e8f0; }
-.footer-links a { display: block; color: #cbd5f5; text-decoration: none; margin: 8px 0; font-weight: 600; font-size: 0.95rem; }
-.footer-links a:hover { color: #ffffff; }
-.footer-bottom { border-top: 1px solid rgba(255, 255, 255, 0.1); text-align: center; padding: 18px 5%; font-size: 0.85rem; color: #cbd5f5; }
-
-@media (max-width: 900px) {
-  .footer-container { grid-template-columns: repeat(2, 1fr); }
+.action-row .link-action:last-child { margin-right: 0; }
 }
-@media (max-width: 600px) {
-  .footer-container { grid-template-columns: 1fr; }
-  .footer-brand { grid-template-columns: 72px 1fr; }
-  .footer-logo { width: 72px; }
-  .footer-contact { font-size: 0.9rem; }
-  .footer-links a { font-size: 0.9rem; }
-}</style>
+</style>
 </head>
 
 <body>
 <header id="main-header">
-  <div class="head-container">
+<div class="head-container">
+    <a href="index.html" class="logo-link">
+      <img src="logo.png" alt="Logo">
+      <h1>Hygienic & Comfort Co.</h1>
+    </a>
+    <div style="display: flex; align-items: center;">
+        <a href="products.html" class="back-link">Back to Shop</a>
     <div class="header-left">
-      <a href="products.html" class="back-link">â† Cart</a>
+      <a href="products.html" class="back-link">← Cart</a>
     </div>
     <div class="header-center">
       <a href="index.html" class="logo-link">
@@ -179,79 +165,79 @@ header h1 { font-size: 0.9rem; font-weight: 800; white-space: nowrap; overflow: 
       </a>
     </div>
     <div class="header-right">
-        <div class="profile-section">
-            <div class="profile-btn" id="profile-btn"><i data-lucide="user"></i></div>
-            <div class="dropdown-menu" id="profile-dropdown">
-                <div class="dropdown-header">
-                    <h4 id="user-display-name">Welcome Guest</h4>
-                    <p id="user-display-sub">Manage your account</p>
-                </div>
-                <div id="guest-items">
-                    <a href="login.html" class="dropdown-item">
-                      <i data-lucide="log-in"></i> 
-                      <div class="item-info"><b>Sign In</b><span>Access orders</span></div>
-                    </a>
-                </div>
-                <div id="auth-items" style="display:none">
+<div class="profile-section">
+<div class="profile-btn" id="profile-btn"><i data-lucide="user"></i></div>
+<div class="dropdown-menu" id="profile-dropdown">
+<div class="dropdown-header">
+<h4 id="user-display-name">Welcome Guest</h4>
+<p id="user-display-sub">Manage your account</p>
+</div>
+<div id="guest-items">
+<a href="login.html" class="dropdown-item">
+<i data-lucide="log-in"></i> 
+<div class="item-info"><b>Sign In</b><span>Access orders</span></div>
+</a>
+</div>
+<div id="auth-items" style="display:none">
                     <a href="profile.html" class="dropdown-item">
                       <i data-lucide="user"></i> 
                       <div class="item-info"><b>My Profile</b><span>Account settings</span></div>
                     </a>
-                    <div class="dropdown-item" onclick="handleLogout()">
-                      <i data-lucide="log-out"></i> 
-                      <div class="item-info"><b>Logout</b><span>End session</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-  </div>
+<div class="dropdown-item" onclick="handleLogout()">
+<i data-lucide="log-out"></i> 
+<div class="item-info"><b>Logout</b><span>End session</span></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </header>
 
 <div class="page" id="cart-main-page">
-  <aside class="summary-card" id="summary-section">
-    <div class="shipping-goal">
-        <div class="goal-text" id="goal-message">Add more for FREE delivery</div>
-        <div class="progress-bg"><div class="progress-fill" id="goal-bar"></div></div>
-    </div>
-    <div class="sum-row"><span>Items Subtotal</span><b id="sub-total">â‚¹0</b></div>
-    <div class="sum-row"><span>Delivery Fee</span><b id="delivery-fee">â‚¹0</b></div>
-    <div class="sum-row sum-total"><span>Total</span><b id="grand-total">â‚¹0</b></div>
+<aside class="summary-card" id="summary-section">
+<div class="shipping-goal">
+<div class="goal-text" id="goal-message">Add more for FREE delivery</div>
+<div class="progress-bg"><div class="progress-fill" id="goal-bar"></div></div>
+</div>
+<div class="sum-row"><span>Items Subtotal</span><b id="sub-total">₹0</b></div>
+<div class="sum-row"><span>Delivery Fee</span><b id="delivery-fee">₹0</b></div>
+<div class="sum-row sum-total"><span>Total</span><b id="grand-total">₹0</b></div>
 
-    <div class="address-section" id="address-section" style="display:none;">
-        <div class="address-title">Saved Address</div>
-        <div class="address-dropdown" id="address-dropdown">
-            <button type="button" class="address-select" id="address-select">
-                <span id="selected-address-text">Select address</span>
-                <i data-lucide="chevron-down" class="addr-caret" style="width: 16px;"></i>
-            </button>
-            <div class="address-list" id="address-list"></div>
-        </div>
-    </div>
+<div class="address-section" id="address-section" style="display:none;">
+<div class="address-title">Saved Address</div>
+<div class="address-dropdown" id="address-dropdown">
+<button type="button" class="address-select" id="address-select">
+<span id="selected-address-text">Select address</span>
+<i data-lucide="chevron-down" class="addr-caret" style="width: 16px;"></i>
+</button>
+<div class="address-list" id="address-list"></div>
+</div>
+</div>
 
-    <div class="pincode-section">
-        <label class="pincode-label">Shipping Pincode</label>
-        <div class="pincode-flex">
-            <input type="text" id="cart-pincode" maxlength="6" placeholder="Enter 6-digit Pincode">
-            <button type="button" id="apply-pin-btn" onclick="calculateDelivery()">Apply</button>
-        </div>
-        <div id="pincode-error-msg" class="pincode-error">Please write a valid 6-digit Indian Pincode</div>
-        <div id="pin-note" class="pin-note">Pincode confirmed from selected address.</div>
-        <div id="delivery-info-box" class="delivery-estimate-box">
-            <i data-lucide="truck" style="width: 16px;"></i><span id="est-days-text">Calculated!</span>
-        </div>
-    </div>
-    <button type="button" class="checkout-btn" id="proceed-btn" disabled onclick="checkAuthAndProceed()">Proceed to Buy</button>
-  </aside>
+<div class="pincode-section">
+<label class="pincode-label">Shipping Pincode</label>
+<div class="pincode-flex">
+<input type="text" id="cart-pincode" maxlength="6" placeholder="Enter 6-digit Pincode">
+<button type="button" id="apply-pin-btn" onclick="calculateDelivery()">Apply</button>
+</div>
+<div id="pincode-error-msg" class="pincode-error">Please write a valid 6-digit Indian Pincode</div>
+<div id="pin-note" class="pin-note">Pincode confirmed from selected address.</div>
+<div id="delivery-info-box" class="delivery-estimate-box">
+<i data-lucide="truck" style="width: 16px;"></i><span id="est-days-text">Calculated!</span>
+</div>
+</div>
+<button type="button" class="checkout-btn" id="proceed-btn" disabled onclick="checkAuthAndProceed()">Proceed to Buy</button>
+</aside>
 
-  <section class="cart-main">
-    <h2 class="cart-title">Shopping Cart</h2>
-    <div id="cart-list"></div>
-    <div id="saved-section" style="display:none; margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px;">
-      <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;">Saved for later</h3>
-      <div id="saved-list"></div>
-    </div>
-  </section>
+<section class="cart-main">
+<h2 class="cart-title">Shopping Cart</h2>
+<div id="cart-list"></div>
+<div id="saved-section" style="display:none; margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px;">
+<h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;">Saved for later</h3>
+<div id="saved-list"></div>
+</div>
+</section>
 </div>
 
 <script>
@@ -268,285 +254,285 @@ let lastVerifiedPincode = "";
 let addressesCache = [];
 
 function buildCartSummary(cartItems) {
-    const items = cartItems.map(p => `${p.name} x${p.qty || 1}`);
-    const totalQty = cartItems.reduce((s, i) => s + (i.qty || 1), 0);
-    let preview = "";
-    if (items.length === 1) preview = items[0];
-    else if (items.length === 2) preview = items.join(', ');
-    else preview = `${items.slice(0, 2).join(', ')} +${items.length - 2} more`;
-    const displayName = `Cart (${totalQty} item${totalQty > 1 ? 's' : ''}): ${preview}`;
-    return { displayName, itemsText: items.join(', ') };
+const items = cartItems.map(p => `${p.name} x${p.qty || 1}`);
+const totalQty = cartItems.reduce((s, i) => s + (i.qty || 1), 0);
+let preview = "";
+if (items.length === 1) preview = items[0];
+else if (items.length === 2) preview = items.join(', ');
+else preview = `${items.slice(0, 2).join(', ')} +${items.length - 2} more`;
+const displayName = `Cart (${totalQty} item${totalQty > 1 ? 's' : ''}): ${preview}`;
+return { displayName, itemsText: items.join(', ') };
 }
 
 async function checkUserSession() {
-    const { data: { user } } = await supa.auth.getUser();
-    currentUser = user;
-    const guestItems = document.getElementById('guest-items');
-    const authItems = document.getElementById('auth-items');
-    const userDisplay = document.getElementById('user-display-name');
-    const userSub = document.getElementById('user-display-sub');
-    
-    if (user) {
-        guestItems.style.display = 'none';
-        authItems.style.display = 'block';
-        userDisplay.innerText = "Welcome Back!";
-        userSub.innerText = user.email || user.phone || "Active Account";
-    } else {
-        guestItems.style.display = 'block';
-        authItems.style.display = 'none';
-        userDisplay.innerText = "Welcome Guest";
-        userSub.innerText = "Manage your account";
-    }
-    lucide.createIcons();
-    loadSavedAddresses();
+const { data: { user } } = await supa.auth.getUser();
+currentUser = user;
+const guestItems = document.getElementById('guest-items');
+const authItems = document.getElementById('auth-items');
+const userDisplay = document.getElementById('user-display-name');
+const userSub = document.getElementById('user-display-sub');
+
+if (user) {
+guestItems.style.display = 'none';
+authItems.style.display = 'block';
+userDisplay.innerText = "Welcome Back!";
+userSub.innerText = user.email || user.phone || "Active Account";
+} else {
+guestItems.style.display = 'block';
+authItems.style.display = 'none';
+userDisplay.innerText = "Welcome Guest";
+userSub.innerText = "Manage your account";
+}
+lucide.createIcons();
+loadSavedAddresses();
 }
 
 async function handleLogout() {
-    if (!confirm('Are you sure you want to log out?')) return; 
-  await supa.auth.signOut(); 
-  localStorage.removeItem('checkout-item');
-  location.reload(); 
+if (!confirm('Are you sure you want to log out?')) return; 
+await supa.auth.signOut(); 
+localStorage.removeItem('checkout-item');
+location.reload(); 
 }
 
 function checkAuthAndProceed() {
-    if (!currentUser) { 
-        // ðŸŸ¢ Store current cart total and intent before redirecting to login.html
-        const subtotal = cart.reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
-        const summary = buildCartSummary(cart);
-        localStorage.setItem('checkout-item', JSON.stringify({
-            id: "CART_ORDER",
-            name: summary.displayName,
-            itemsText: summary.itemsText,
-            price: subtotal + currentDeliveryFee,
-            cartItems: cart,
-            isFromCart: true
-        }));
-        window.location.href = "login.html"; 
-    } 
-    else { 
-        handleProceedToBuy(); 
-    }
+if (!currentUser) { 
+// 🟢 Store current cart total and intent before redirecting to login.html
+const subtotal = cart.reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
+const summary = buildCartSummary(cart);
+localStorage.setItem('checkout-item', JSON.stringify({
+id: "CART_ORDER",
+name: summary.displayName,
+itemsText: summary.itemsText,
+price: subtotal + currentDeliveryFee,
+cartItems: cart,
+isFromCart: true
+}));
+window.location.href = "login.html"; 
+} 
+else { 
+handleProceedToBuy(); 
+}
 }
 
 async function handleProceedToBuy() {
-    if (cart.length === 0) { alert("Your cart is empty!"); return; }
-    const subtotal = cart.reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
-    const summary = buildCartSummary(cart);
-    localStorage.setItem('checkout-item', JSON.stringify({
-        id: "CART_ORDER",
-        name: summary.displayName,
-        itemsText: summary.itemsText,
-        price: subtotal + currentDeliveryFee,
-        cartItems: cart,
-        isFromCart: true
-    }));
-    window.location.href = "checkout.html";
+if (cart.length === 0) { alert("Your cart is empty!"); return; }
+const subtotal = cart.reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
+const summary = buildCartSummary(cart);
+localStorage.setItem('checkout-item', JSON.stringify({
+id: "CART_ORDER",
+name: summary.displayName,
+itemsText: summary.itemsText,
+price: subtotal + currentDeliveryFee,
+cartItems: cart,
+isFromCart: true
+}));
+window.location.href = "checkout.html";
 }
 
 /* --- CART ENGINE --- */
 document.getElementById('cart-pincode').addEventListener('input', function(e) { this.value = this.value.replace(/[^0-9]/g, ''); });
 
 async function calculateDelivery() {
-    const pinStr = document.getElementById('cart-pincode').value;
-    await applyPincode(pinStr, { showAlerts: true, fromAddress: false });
+const pinStr = document.getElementById('cart-pincode').value;
+await applyPincode(pinStr, { showAlerts: true, fromAddress: false });
 }
 
 function updateProceedState() {
-    const btn = document.getElementById('proceed-btn');
-    btn.disabled = !cart.length || !pincodeVerified;
+const btn = document.getElementById('proceed-btn');
+btn.disabled = !cart.length || !pincodeVerified;
 }
 
 async function applyPincode(pinStr, opts = {}) {
-    const { showAlerts = true, fromAddress = false } = opts;
-    const btn = document.getElementById('apply-pin-btn');
-    const pinError = document.getElementById('pincode-error-msg');
-    const note = document.getElementById('pin-note');
-    pinError.style.display = 'none';
+const { showAlerts = true, fromAddress = false } = opts;
+const btn = document.getElementById('apply-pin-btn');
+const pinError = document.getElementById('pincode-error-msg');
+const note = document.getElementById('pin-note');
+pinError.style.display = 'none';
 
-    if (pinStr.length !== 6 || pinStr.startsWith('0')) {
-        pincodeVerified = false;
-        updateProceedState();
-        if (showAlerts) alert("Enter valid 6-digit Pincode");
-        return;
-    }
+if (pinStr.length !== 6 || pinStr.startsWith('0')) {
+pincodeVerified = false;
+updateProceedState();
+if (showAlerts) alert("Enter valid 6-digit Pincode");
+return;
+}
 
-    btn.disabled = true; btn.innerText = "...";
-    try {
-        const res = await fetch(`https://api.postalpincode.in/pincode/${pinStr}`);
-        const data = await res.json();
-        if (data[0].Status !== "Success") {
-            pincodeVerified = false;
-            if (showAlerts) alert("Pincode not found");
-        } else {
-            const state = data[0].PostOffice[0].State.toUpperCase();
-            const pinNum = parseInt(pinStr);
-            let zone = 4; let days = "7-8 Days";
-            if (pinNum >= 421501 && pinNum <= 421505) { zone = 1; days = (new Date().getHours() < 17) ? "Same Day Delivery" : "Next Day Delivery"; } 
-            else if (state === "MAHARASHTRA") { zone = 2; days = "3-4 Days"; } 
-            else if (["WEST BENGAL", "KARNATAKA", "TAMIL NADU", "DELHI", "TELANGANA"].includes(state)) { zone = 3; days = "5-6 Days"; }
-            else if (["KERALA", "JAMMU & KASHMIR", "ASSAM", "MANIPUR", "ARUNACHAL PRADESH", "MEGHALAYA", "MIZORAM", "NAGALAND", "SIKKIM", "TRIPURA"].includes(state)) { zone = 5; days = "9-10 Days"; }
+btn.disabled = true; btn.innerText = "...";
+try {
+const res = await fetch(`https://api.postalpincode.in/pincode/${pinStr}`);
+const data = await res.json();
+if (data[0].Status !== "Success") {
+pincodeVerified = false;
+if (showAlerts) alert("Pincode not found");
+} else {
+const state = data[0].PostOffice[0].State.toUpperCase();
+const pinNum = parseInt(pinStr);
+let zone = 4; let days = "7-8 Days";
+if (pinNum >= 421501 && pinNum <= 421505) { zone = 1; days = (new Date().getHours() < 17) ? "Same Day Delivery" : "Next Day Delivery"; } 
+else if (state === "MAHARASHTRA") { zone = 2; days = "3-4 Days"; } 
+else if (["WEST BENGAL", "KARNATAKA", "TAMIL NADU", "DELHI", "TELANGANA"].includes(state)) { zone = 3; days = "5-6 Days"; }
+else if (["KERALA", "JAMMU & KASHMIR", "ASSAM", "MANIPUR", "ARUNACHAL PRADESH", "MEGHALAYA", "MIZORAM", "NAGALAND", "SIKKIM", "TRIPURA"].includes(state)) { zone = 5; days = "9-10 Days"; }
 
-            const rates = { 1: { base: 33, add: 31 }, 2: { base: 36, add: 33 }, 3: { base: 50, add: 44 }, 4: { base: 58, add: 50 }, 5: { base: 70, add: 59 } };
-            const zRate = rates[zone];
-            const weightGrams = cart.reduce((s,i)=>s+(i.qty||1),0) * 500;
-            let fee = zRate.base;
-            if (weightGrams > 500) fee += (Math.ceil((weightGrams - 500) / 500) * zRate.add);
-            let subtotal = cart.reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
-            if ((zone === 1 && subtotal >= 499) || subtotal >= 999) fee = 0;
+const rates = { 1: { base: 33, add: 31 }, 2: { base: 36, add: 33 }, 3: { base: 50, add: 44 }, 4: { base: 58, add: 50 }, 5: { base: 70, add: 59 } };
+const zRate = rates[zone];
+const weightGrams = cart.reduce((s,i)=>s+(i.qty||1),0) * 500;
+let fee = zRate.base;
+if (weightGrams > 500) fee += (Math.ceil((weightGrams - 500) / 500) * zRate.add);
+let subtotal = cart.reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
+if ((zone === 1 && subtotal >= 499) || subtotal >= 999) fee = 0;
 
-            currentDeliveryFee = fee; 
-            pincodeVerified = true;
-            lastVerifiedPincode = pinStr;
-            document.getElementById('delivery-fee').innerText = `â‚¹${fee}`;
-            document.getElementById('est-days-text').innerText = days;
-            document.getElementById('delivery-info-box').style.display = 'flex';
-            note.style.display = fromAddress ? 'block' : 'none';
-            renderUI();
-        }
-    } catch (e) { 
-        if (showAlerts) alert("Pincode check failed."); 
-        pincodeVerified = false;
-    } finally { 
-        btn.disabled = false; 
-        btn.innerText = "Apply"; 
-        updateProceedState();
-    }
+currentDeliveryFee = fee; 
+pincodeVerified = true;
+lastVerifiedPincode = pinStr;
+document.getElementById('delivery-fee').innerText = `₹${fee}`;
+document.getElementById('est-days-text').innerText = days;
+document.getElementById('delivery-info-box').style.display = 'flex';
+note.style.display = fromAddress ? 'block' : 'none';
+renderUI();
+}
+} catch (e) { 
+if (showAlerts) alert("Pincode check failed."); 
+pincodeVerified = false;
+} finally { 
+btn.disabled = false; 
+btn.innerText = "Apply"; 
+updateProceedState();
+}
 }
 
 async function loadSavedAddresses() {
-    const section = document.getElementById('address-section');
-    const dropdown = document.getElementById('address-dropdown');
-    const list = document.getElementById('address-list');
-    const selectedText = document.getElementById('selected-address-text');
-    section.style.display = 'none';
-    list.innerHTML = "";
+const section = document.getElementById('address-section');
+const dropdown = document.getElementById('address-dropdown');
+const list = document.getElementById('address-list');
+const selectedText = document.getElementById('selected-address-text');
+section.style.display = 'none';
+list.innerHTML = "";
 
-    if (!currentUser) return;
-    const { data: addresses } = await supa.from('customer_addresses').select('*').eq('user_id', currentUser.id);
-    if (!addresses || addresses.length === 0) return;
-    addressesCache = addresses;
+if (!currentUser) return;
+const { data: addresses } = await supa.from('customer_addresses').select('*').eq('user_id', currentUser.id);
+if (!addresses || addresses.length === 0) return;
+addressesCache = addresses;
 
-    section.style.display = 'block';
-    selectedText.innerText = "Select address";
+section.style.display = 'block';
+selectedText.innerText = "Select address";
 
-    addresses.forEach((addr, index) => {
-        const fullAddr = `${addr.full_address}, ${addr.city}, ${addr.state} - ${addr.pincode}`;
-        const isDefault = Boolean(addr.is_default || addr.default || addr.is_primary);
-        const badgeText = isDefault ? "Default" : (addr.address_type || addr.type || "Address");
+addresses.forEach((addr, index) => {
+const fullAddr = `${addr.full_address}, ${addr.city}, ${addr.state} - ${addr.pincode}`;
+const isDefault = Boolean(addr.is_default || addr.default || addr.is_primary);
+const badgeText = isDefault ? "Default" : (addr.address_type || addr.type || "Address");
 
-        const card = document.createElement('div');
-        card.className = `address-card ${index === 0 ? 'selected' : ''}`;
-        card.innerHTML = `
-            <input class="address-radio" type="radio" name="addr-choice" ${index === 0 ? 'checked' : ''}>
-            <div class="address-details">
-                <span class="address-badge">${badgeText}</span>
-                <div>${addr.full_name || ""} ${fullAddr}</div>
-            </div>
-        `;
-        card.onclick = () => selectAddress(addr, card);
-        list.appendChild(card);
+const card = document.createElement('div');
+card.className = `address-card ${index === 0 ? 'selected' : ''}`;
+card.innerHTML = `
+           <input class="address-radio" type="radio" name="addr-choice" ${index === 0 ? 'checked' : ''}>
+           <div class="address-details">
+               <span class="address-badge">${badgeText}</span>
+               <div>${addr.full_name || ""} ${fullAddr}</div>
+           </div>
+       `;
+card.onclick = () => selectAddress(addr, card);
+list.appendChild(card);
 
-        if (index === 0) {
-            selectAddress(addr, card);
-        }
-    });
+if (index === 0) {
+selectAddress(addr, card);
+}
+});
 
-    const manualCard = document.createElement('div');
-    manualCard.className = "address-card";
-    manualCard.innerHTML = `
-        <input class="address-radio" type="radio" name="addr-choice">
-        <div class="address-details" style="color: var(--primary); font-weight: 800;">Use a different pincode</div>
-    `;
-    manualCard.onclick = () => clearSelectedAddress(manualCard);
-    list.appendChild(manualCard);
+const manualCard = document.createElement('div');
+manualCard.className = "address-card";
+manualCard.innerHTML = `
+       <input class="address-radio" type="radio" name="addr-choice">
+       <div class="address-details" style="color: var(--primary); font-weight: 800;">Use a different pincode</div>
+   `;
+manualCard.onclick = () => clearSelectedAddress(manualCard);
+list.appendChild(manualCard);
 
-    if (dropdown) dropdown.classList.remove('open');
-    lucide.createIcons();
+if (dropdown) dropdown.classList.remove('open');
+lucide.createIcons();
 }
 
 function selectAddress(addr, card, skipRecalc = false) {
-    document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
-    card.classList.add('selected');
-    const radio = card.querySelector('input[type="radio"]');
-    if (radio) radio.checked = true;
+document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
+card.classList.add('selected');
+const radio = card.querySelector('input[type="radio"]');
+if (radio) radio.checked = true;
 
-    selectedAddressPin = (addr.pincode || "").toString().trim();
-    selectedAddressId = addr.id || null;
-    const pinInput = document.getElementById('cart-pincode');
-    pinInput.value = selectedAddressPin;
-    const selectedText = document.getElementById('selected-address-text');
-    const label = `${addr.full_name || ""} ${addr.full_address}, ${addr.city}, ${addr.state} - ${addr.pincode}`;
-    if (selectedText) selectedText.innerText = label.trim();
+selectedAddressPin = (addr.pincode || "").toString().trim();
+selectedAddressId = addr.id || null;
+const pinInput = document.getElementById('cart-pincode');
+pinInput.value = selectedAddressPin;
+const selectedText = document.getElementById('selected-address-text');
+const label = `${addr.full_name || ""} ${addr.full_address}, ${addr.city}, ${addr.state} - ${addr.pincode}`;
+if (selectedText) selectedText.innerText = label.trim();
 
-    if (selectedAddressPin.length === 6 && !skipRecalc) {
-        applyPincode(selectedAddressPin, { showAlerts: false, fromAddress: true });
-    } else {
-        document.getElementById('pin-note').style.display = selectedAddressPin.length === 6 ? 'block' : 'none';
-    }
+if (selectedAddressPin.length === 6 && !skipRecalc) {
+applyPincode(selectedAddressPin, { showAlerts: false, fromAddress: true });
+} else {
+document.getElementById('pin-note').style.display = selectedAddressPin.length === 6 ? 'block' : 'none';
+}
 
-    const dropdown = document.getElementById('address-dropdown');
-    if (dropdown) dropdown.classList.remove('open');
+const dropdown = document.getElementById('address-dropdown');
+if (dropdown) dropdown.classList.remove('open');
 }
 
 function clearSelectedAddress(card) {
-    document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
-    card.classList.add('selected');
-    const radio = card.querySelector('input[type="radio"]');
-    if (radio) radio.checked = true;
-    selectedAddressPin = "";
-    selectedAddressId = null;
-    lastVerifiedPincode = "";
-    pincodeVerified = false;
-    document.getElementById('pin-note').style.display = 'none';
-    updateProceedState();
-    const selectedText = document.getElementById('selected-address-text');
-    if (selectedText) selectedText.innerText = "Use a different pincode";
-    const dropdown = document.getElementById('address-dropdown');
-    if (dropdown) dropdown.classList.remove('open');
+document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
+card.classList.add('selected');
+const radio = card.querySelector('input[type="radio"]');
+if (radio) radio.checked = true;
+selectedAddressPin = "";
+selectedAddressId = null;
+lastVerifiedPincode = "";
+pincodeVerified = false;
+document.getElementById('pin-note').style.display = 'none';
+updateProceedState();
+const selectedText = document.getElementById('selected-address-text');
+if (selectedText) selectedText.innerText = "Use a different pincode";
+const dropdown = document.getElementById('address-dropdown');
+if (dropdown) dropdown.classList.remove('open');
 }
 
 function renderUI() {
-  const cartList = document.getElementById('cart-list');
-  if(!cart.length && !saved.length) { cartList.innerHTML = `<p style="text-align:center;padding:40px;">Your cart is empty.</p>`; document.getElementById('summary-section').style.display = 'none'; return; }
-  document.getElementById('summary-section').style.display = cart.length ? 'block' : 'none';
-  let subtotal = 0;
-  cartList.innerHTML = cart.map((p, i) => {
-    const qty = p.qty || 1; subtotal += p.price * qty;
-    const prodLink = `products.html?id=${p.id}`;
-    return `<div class="cart-item">
-      <a href="${prodLink}" class="cart-img-link">
-        <img class="cart-img" src="${p.images?.[0]||'logo.png'}" alt="${p.name}">
-      </a>
-      <div class="item-content">
-        <div class="name-price-flex">
-          <a href="${prodLink}" class="item-name">${p.name}</a>
-          <span class="item-price">â‚¹${(p.price * qty).toLocaleString()}</span>
-        </div>
-        <div class="action-row">
-          <div class="qty-ctrl"><button onclick="changeQty(${i},-1)">-</button><span>${qty}</span><button onclick="changeQty(${i},1)">+</button></div>
-          <span class="link-action" onclick="deleteItem(${i})">Delete</span>
-          <span class="link-action" onclick="saveItem(${i})">Save</span>
-          <span class="link-action" onclick="shareItem(${i})">Share</span>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-  document.getElementById('sub-total').innerText = `â‚¹${subtotal.toLocaleString()}`;
-  document.getElementById('grand-total').innerText = `â‚¹${(subtotal + currentDeliveryFee).toLocaleString()}`;
-  renderSaved();
-  lucide.createIcons();
-  updateProceedState();
+const cartList = document.getElementById('cart-list');
+if(!cart.length && !saved.length) { cartList.innerHTML = `<p style="text-align:center;padding:40px;">Your cart is empty.</p>`; document.getElementById('summary-section').style.display = 'none'; return; }
+document.getElementById('summary-section').style.display = cart.length ? 'block' : 'none';
+let subtotal = 0;
+cartList.innerHTML = cart.map((p, i) => {
+const qty = p.qty || 1; subtotal += p.price * qty;
+const prodLink = `products.html?id=${p.id}`;
+return `<div class="cart-item">
+     <a href="${prodLink}" class="cart-img-link">
+       <img class="cart-img" src="${p.images?.[0]||'logo.png'}" alt="${p.name}">
+     </a>
+     <div class="item-content">
+       <div class="name-price-flex">
+         <a href="${prodLink}" class="item-name">${p.name}</a>
+         <span class="item-price">₹${(p.price * qty).toLocaleString()}</span>
+       </div>
+       <div class="action-row">
+         <div class="qty-ctrl"><button onclick="changeQty(${i},-1)">-</button><span>${qty}</span><button onclick="changeQty(${i},1)">+</button></div>
+         <span class="link-action" onclick="deleteItem(${i})">Delete</span>
+         <span class="link-action" onclick="saveItem(${i})">Save</span>
+         <span class="link-action" onclick="shareItem(${i})">Share</span>
+       </div>
+     </div>
+   </div>`;
+}).join('');
+document.getElementById('sub-total').innerText = `₹${subtotal.toLocaleString()}`;
+document.getElementById('grand-total').innerText = `₹${(subtotal + currentDeliveryFee).toLocaleString()}`;
+renderSaved();
+lucide.createIcons();
+updateProceedState();
 }
 
 async function changeQty(idx, delta) {
-  const newQty = (cart[idx].qty || 1) + delta;
-  if(newQty < 1) return;
-  const { data } = await supa.from('products').select('stock').eq('id', cart[idx].id).single();
-  if (newQty > (data.stock || 0)) return alert(`Limited stock available.`);
-  cart[idx].qty = newQty;
-  localStorage.setItem('hc-cart', JSON.stringify(cart));
-  if (pincodeVerified && lastVerifiedPincode) applyPincode(lastVerifiedPincode, { showAlerts: false, fromAddress: !!selectedAddressPin });
-  renderUI();
+const newQty = (cart[idx].qty || 1) + delta;
+if(newQty < 1) return;
+const { data } = await supa.from('products').select('stock').eq('id', cart[idx].id).single();
+if (newQty > (data.stock || 0)) return alert(`Limited stock available.`);
+cart[idx].qty = newQty;
+localStorage.setItem('hc-cart', JSON.stringify(cart));
+if (pincodeVerified && lastVerifiedPincode) applyPincode(lastVerifiedPincode, { showAlerts: false, fromAddress: !!selectedAddressPin });
+renderUI();
 }
 
 function updateStorage() { localStorage.setItem('hc-cart', JSON.stringify(cart)); localStorage.setItem('hc-saved', JSON.stringify(saved)); renderUI(); }
@@ -556,104 +542,63 @@ function moveToCart(i) { cart.push(saved.splice(i, 1)[0]); updateStorage(); }
 function deleteSaved(i) { saved.splice(i, 1); updateStorage(); }
 
 function renderSaved() {
-    const list = document.getElementById('saved-list');
-    if(!saved.length) { document.getElementById('saved-section').style.display = 'none'; return; }
-    document.getElementById('saved-section').style.display = 'block';
-    list.innerHTML = saved.map((p, i) => {
-        const prodLink = `products.html?id=${p.id}`;
-        return `<div class="cart-item" style="opacity:0.8;">
-            <a href="${prodLink}" class="cart-img-link"><img class="cart-img" src="${p.images?.[0]||'logo.png'}" style="width:60px;height:60px;"></a>
-            <div class="item-content">
-                <a href="${prodLink}" class="item-name" style="font-size:0.85rem;">${p.name}</a>
-                <div class="action-row">
-                    <span class="link-action" onclick="moveToCart(${i})">Move to Cart</span>
-                    <span class="link-action" onclick="deleteSaved(${i})">Remove</span>
-                </div>
-            </div>
-        </div>`
-    }).join('');
+const list = document.getElementById('saved-list');
+if(!saved.length) { document.getElementById('saved-section').style.display = 'none'; return; }
+document.getElementById('saved-section').style.display = 'block';
+list.innerHTML = saved.map((p, i) => {
+const prodLink = `products.html?id=${p.id}`;
+return `<div class="cart-item" style="opacity:0.8;">
+           <a href="${prodLink}" class="cart-img-link"><img class="cart-img" src="${p.images?.[0]||'logo.png'}" style="width:60px;height:60px;"></a>
+           <div class="item-content">
+               <a href="${prodLink}" class="item-name" style="font-size:0.85rem;">${p.name}</a>
+               <div class="action-row">
+                   <span class="link-action" onclick="moveToCart(${i})">Move to Cart</span>
+                   <span class="link-action" onclick="deleteSaved(${i})">Remove</span>
+               </div>
+           </div>
+       </div>`
+}).join('');
 }
 
 async function shareItem(i) {
-  const item = cart[i];
-  if (!item) return;
-  const url = `products.html?id=${item.id}`;
-  const text = `Check this out: ${item.name} - â‚¹${Number(item.price).toLocaleString('en-IN')}`;
-  try {
-    if (navigator.share) {
-      await navigator.share({ title: item.name, text, url });
-    } else if (navigator.clipboard) {
-      await navigator.clipboard.writeText(`${text} ${url}`);
-      alert("Link copied!");
-    } else {
-      const temp = document.createElement('input');
-      temp.value = `${text} ${url}`;
-      document.body.appendChild(temp);
-      temp.select();
-      document.execCommand('copy');
-      document.body.removeChild(temp);
-      alert("Link copied!");
-    }
-  } catch (e) {
-    console.error("Share failed:", e);
-  }
+const item = cart[i];
+if (!item) return;
+const url = `products.html?id=${item.id}`;
+const text = `Check this out: ${item.name} - ₹${Number(item.price).toLocaleString('en-IN')}`;
+try {
+if (navigator.share) {
+await navigator.share({ title: item.name, text, url });
+} else if (navigator.clipboard) {
+await navigator.clipboard.writeText(`${text} ${url}`);
+alert("Link copied!");
+} else {
+const temp = document.createElement('input');
+temp.value = `${text} ${url}`;
+document.body.appendChild(temp);
+temp.select();
+document.execCommand('copy');
+document.body.removeChild(temp);
+alert("Link copied!");
+}
+} catch (e) {
+console.error("Share failed:", e);
+}
 }
 
 document.getElementById('profile-btn').addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('profile-dropdown').classList.toggle('active'); });
 
 document.getElementById('address-select')?.addEventListener('click', (e) => {
-  e.stopPropagation();
-  const dropdown = document.getElementById('address-dropdown');
-  if (dropdown) dropdown.classList.toggle('open');
+e.stopPropagation();
+const dropdown = document.getElementById('address-dropdown');
+if (dropdown) dropdown.classList.toggle('open');
 });
 
 window.onload = () => { renderUI(); checkUserSession(); };
 window.onclick = (e) => { if (!e.target.closest('.profile-section')) document.getElementById('profile-dropdown').classList.remove('active'); };
 document.addEventListener('click', (e) => {
-  const dropdown = document.getElementById('address-dropdown');
-  if (dropdown && !e.target.closest('#address-dropdown')) dropdown.classList.remove('open');
+const dropdown = document.getElementById('address-dropdown');
+if (dropdown && !e.target.closest('#address-dropdown')) dropdown.classList.remove('open');
 });
 </script>
-<footer class="site-footer">
-<div class="footer-container">
-<div class="footer-brand">
-<img src="logo.png" alt="Hygienic & Comfort Co." class="footer-logo">
-<div class="footer-contact">
-<div><i data-lucide="mail"></i><a href="mailto:hygienicsandcomfort@gmail.com">hygienicsandcomfort@gmail.com</a></div>
-<div><i data-lucide="phone"></i><a href="tel:+919307760665">+91 9307760665</a></div>
-<div><i data-lucide="map-pin"></i><span>Ambernath, India</span></div>
-</div>
-</div>
-<div class="footer-links">
-<h4>Quick Links</h4>
-<a href="index.html">Home</a>
-<a href="products.html">Products</a>
-<a href="about.html">About</a>
-<a href="contact.html">Contact</a>
-<a href="cart.html">Cart</a>
-</div>
-<div class="footer-links">
-<h4>Account</h4>
-<a href="orders.html">My Orders</a>
-<a href="profile.html">My Profile</a>
-<a href="address.html">My Addresses</a>
-</div>
-<div class="footer-links">
-<h4>Policies</h4>
-<a href="privacy-policy.html">Privacy Policy</a>
-</div>
-</div>
-<div class="footer-bottom">
-<span>© 2026 Hygienic & Comfort Co. All rights reserved.</span>
-</div>
-</footer>
-<script data-footer-icons-init="1">lucide.createIcons();</script>
 </body>
 </html>
-
-
-
-
-
-
-
