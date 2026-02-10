@@ -272,7 +272,29 @@
       .nav-links { gap: 15px; }
       .about-card { padding: 30px; }
     }
-  </style>
+  /* --- Site Footer --- */
+.site-footer { background: #0f172a; color: #e2e8f0; margin-top: 60px; }
+.footer-container { max-width: 1200px; margin: 0 auto; padding: 40px 5%; display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+.footer-brand { display: grid; grid-template-columns: 90px 1fr; gap: 16px; align-items: center; }
+.footer-logo { width: 90px; height: auto; }
+.footer-contact { display: flex; flex-direction: column; gap: 10px; font-size: 0.95rem; }
+.footer-contact div { display: flex; align-items: center; gap: 10px; }
+.footer-contact a { color: #e2e8f0; text-decoration: none; }
+.footer-links h4 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; color: #e2e8f0; }
+.footer-links a { display: block; color: #cbd5f5; text-decoration: none; margin: 8px 0; font-weight: 600; font-size: 0.95rem; }
+.footer-links a:hover { color: #ffffff; }
+.footer-bottom { border-top: 1px solid rgba(255, 255, 255, 0.1); text-align: center; padding: 18px 5%; font-size: 0.85rem; color: #cbd5f5; }
+
+@media (max-width: 900px) {
+  .footer-container { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .footer-container { grid-template-columns: 1fr; }
+  .footer-brand { grid-template-columns: 72px 1fr; }
+  .footer-logo { width: 72px; }
+  .footer-contact { font-size: 0.9rem; }
+  .footer-links a { font-size: 0.9rem; }
+}</style>
 </head>
 <body>
 
@@ -346,15 +368,15 @@
 
     <div class="content-grid">
       <div class="feature-box">
-        <h4><span>✨</span> Our Quality</h4>
+        <h4><span>âœ¨</span> Our Quality</h4>
         <p>We only stock trusted brands like Healvite, Huggies, and Pampers, ensuring that every product delivered is dermatologically safe.</p>
       </div>
       <div class="feature-box">
-        <h4><span>🤝</span> Our Commitment</h4>
+        <h4><span>ðŸ¤</span> Our Commitment</h4>
         <p>Affordability meets excellence. We work hard to ensure our customers in Ambernath East and beyond get the best value for their trust.</p>
       </div>
       <div class="feature-box">
-        <h4><span>🚀</span> Our Vision</h4>
+        <h4><span>ðŸš€</span> Our Vision</h4>
         <p>To become the leading wholesale and retail provider of hygiene essentials, making comfort accessible to every household.</p>
       </div>
     </div>
@@ -438,6 +460,47 @@
   });
 </script>
 
+<footer class="site-footer">
+<div class="footer-container">
+<div class="footer-brand">
+<img src="logo.png" alt="Hygienic & Comfort Co." class="footer-logo">
+<div class="footer-contact">
+<div><i data-lucide="mail"></i><a href="mailto:hygienicsandcomfort@gmail.com">hygienicsandcomfort@gmail.com</a></div>
+<div><i data-lucide="phone"></i><a href="tel:+919307760665">+91 9307760665</a></div>
+<div><i data-lucide="map-pin"></i><span>Ambernath, India</span></div>
+</div>
+</div>
+<div class="footer-links">
+<h4>Quick Links</h4>
+<a href="index.html">Home</a>
+<a href="products.html">Products</a>
+<a href="about.html">About</a>
+<a href="contact.html">Contact</a>
+<a href="cart.html">Cart</a>
+</div>
+<div class="footer-links">
+<h4>Account</h4>
+<a href="orders.html">My Orders</a>
+<a href="profile.html">My Profile</a>
+<a href="address.html">My Addresses</a>
+</div>
+<div class="footer-links">
+<h4>Policies</h4>
+<a href="privacy-policy.html">Privacy Policy</a>
+</div>
+</div>
+<div class="footer-bottom">
+<span>© 2026 Hygienic & Comfort Co. All rights reserved.</span>
+</div>
+</footer>
+<script data-footer-icons-init="1">lucide.createIcons();</script>
 </body>
 </html>
+
+
+
+
+
+
+
 
