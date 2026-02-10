@@ -197,6 +197,18 @@ border-color: var(--primary);
 /* --- Product Grid --- */
 .product-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 10px 4%; max-width: 1200px; margin: 0 auto 100px; }
 
+/* --- Pagination --- */
+.pagination-bar { max-width: 1200px; margin: 5px auto 80px; padding: 0 4%; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: center; }
+.page-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.page-numbers { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.page-btn, .page-num { background: white; border: 1.5px solid #e2e8f0; color: var(--dark); padding: 10px 14px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 0.85rem; transition: 0.2s; }
+.page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.page-num.active { background: var(--primary); color: white; border-color: var(--primary); }
+.page-ellipsis { padding: 0 6px; color: var(--grey); font-weight: 700; }
+.page-jump { display: flex; align-items: center; gap: 8px; }
+.page-jump label { font-size: 0.8rem; color: var(--grey); font-weight: 700; }
+.page-jump input { width: 70px; padding: 9px 10px; border-radius: 10px; border: 1.5px solid #e2e8f0; outline: none; font-weight: 700; }
+
 .product-card { 
 background: var(--white); 
 border-radius: 20px; 
@@ -402,6 +414,18 @@ pointer-events: auto;
 </button>
 </div>
 <div id="product-list" class="product-list"></div>
+<div class="pagination-bar" id="pagination-bar">
+<div class="page-controls">
+<button class="page-btn" id="prev-page" onclick="changePage(-1)">Prev</button>
+<div class="page-numbers" id="page-numbers"></div>
+<button class="page-btn" id="next-page" onclick="changePage(1)">Next</button>
+</div>
+<div class="page-jump">
+<label for="page-input">Page</label>
+<input type="number" id="page-input" min="1" value="1" onkeydown="handlePageInput(event)">
+<button class="page-btn" onclick="goToPageFromInput()">Go</button>
+</div>
+</div>
 </main>
 
 <div class="filter-overlay" id="filter-overlay" onclick="toggleFilter(false)"></div>
@@ -453,6 +477,24 @@ let activeBrand = 'All';
 let activeSize = 'All';
 let activeCategory = 'All';
 let currentUser = null;
+let currentPage = 1;
+let pageSize = 10;
+let searchTerm = '';
+let lastTotalPages = 1;
+
+function setPageSize() {
+pageSize = window.innerWidth >= 1024 ? 12 : 10;
+}
+
+function handleResize() {
+const prev = pageSize;
+setPageSize();
+if (prev != pageSize) {
+currentPage = 1;
+updateCatalog();
+}
+}
+
 
 /* --- AUTH LOGIC --- */
 async function checkUserSession() {
@@ -512,6 +554,8 @@ return url;
 }
 
 async function init() {
+setPageSize();
+window.addEventListener('resize', handleResize);
 updateCartBadge();
 await checkUserSession();
 const { data, error } = await _supabase.from("products").select("*").order('name');
@@ -529,17 +573,11 @@ if (productId) openProductPage(productId);
 generateBrandChips();
 generateMainCategoryButtons();
 if (brandParam) {
-activeBrand = brandParam;
-generateBrandChips();
-const brandLower = brandParam.toLowerCase();
-const filtered = allProducts.filter(p =>
-(p.category || '').toLowerCase() === brandLower ||
-(p.name || '').toLowerCase().includes(brandLower)
-);
-renderGrid(filtered);
-} else {
-renderGrid(allProducts);
+searchTerm = brandParam;
+const input = document.getElementById('search-input');
+if (input) input.value = brandParam;
 }
+updateCatalog();
 }
 lucide.createIcons();
 }
@@ -547,15 +585,13 @@ lucide.createIcons();
 // 🟢 NEW CATEGORY FILTER LOGIC
 function filterByCategory(cat, btn) {
 activeCategory = cat;
+currentPage = 1;
 document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
 btn.classList.add('active');
+updateCatalog();
+}
 
-let list = allProducts;
-if (cat !== 'All') {
-list = allProducts.filter(p => p.main_category === cat);
-}
-renderGrid(list);
-}
+
 
 function toggleFilter(show) {
 const overlay = document.getElementById('filter-overlay');
@@ -591,7 +627,7 @@ container.innerHTML += `<div class="chip ${activeBrand === brand ? 'selected' : 
 });
 }
 
-function selectBrand(brand) { activeBrand = brand; generateBrandChips(); }
+function selectBrand(brand) { activeBrand = brand; generateBrandChips(); currentPage = 1; }
 
 function selectSize(size) {
 const chips = document.querySelectorAll('#size-filters .chip');
@@ -601,15 +637,106 @@ c.classList.toggle('selected');
 activeSize = c.classList.contains('selected') ? size : 'All';
 } else { c.classList.remove('selected'); }
 });
+currentPage = 1;
 }
 
 function applyFilters() {
+updateCatalog();
+toggleFilter(false);
+}
+
+
+function getFilteredProducts() {
 let filtered = allProducts;
 if (activeCategory !== 'All') filtered = filtered.filter(p => p.main_category === activeCategory);
 if (activeBrand !== 'All') filtered = filtered.filter(p => p.category === activeBrand);
-if (activeSize !== 'All') filtered = filtered.filter(p => p.name.toLowerCase().includes(activeSize.toLowerCase()));
-renderGrid(filtered);
-toggleFilter(false);
+if (activeSize !== 'All') filtered = filtered.filter(p => (p.name || '').toLowerCase().includes(activeSize.toLowerCase()));
+if (searchTerm) {
+const term = searchTerm.toLowerCase();
+filtered = filtered.filter(p => (p.name || '').toLowerCase().includes(term) || (p.category || '').toLowerCase().includes(term));
+}
+return filtered;
+}
+
+function updateCatalog() {
+const list = getFilteredProducts();
+renderPaged(list);
+}
+
+function renderPaged(list) {
+const totalPages = Math.max(1, Math.ceil(list.length / pageSize));
+if (currentPage > totalPages) currentPage = totalPages;
+if (currentPage < 1) currentPage = 1;
+const start = (currentPage - 1) * pageSize;
+const pageItems = list.slice(start, start + pageSize);
+renderGrid(pageItems);
+renderPagination(list.length, totalPages);
+}
+
+function renderPagination(totalItems, totalPages) {
+lastTotalPages = totalPages;
+const prevBtn = document.getElementById('prev-page');
+const nextBtn = document.getElementById('next-page');
+const numbers = document.getElementById('page-numbers');
+const input = document.getElementById('page-input');
+if (prevBtn) prevBtn.disabled = currentPage <= 1;
+if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
+if (input) {
+input.max = totalPages;
+input.value = currentPage;
+}
+
+const pages = buildPageNumbers(totalPages);
+if (numbers) {
+numbers.innerHTML = pages.map(p => {
+if (p === '...') return `<span class="page-ellipsis">...</span>`;
+return `<button class="page-num ${p === currentPage ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
+}).join('');
+}
+}
+
+function buildPageNumbers(totalPages) {
+const pages = [];
+if (totalPages <= 7) {
+for (let i = 1; i <= totalPages; i++) pages.push(i);
+return pages;
+}
+pages.push(1);
+const start = Math.max(2, currentPage - 2);
+const end = Math.min(totalPages - 1, currentPage + 2);
+if (start > 2) pages.push('...');
+for (let i = start; i <= end; i++) pages.push(i);
+if (end < totalPages - 1) pages.push('...');
+pages.push(totalPages);
+return pages;
+}
+
+function changePage(delta) {
+currentPage += delta;
+updateCatalog();
+window.scrollTo(0, 0);
+}
+
+function goToPage(page) {
+currentPage = page;
+updateCatalog();
+window.scrollTo(0, 0);
+}
+
+function handlePageInput(e) {
+if (e.key === 'Enter') goToPageFromInput();
+}
+
+function goToPageFromInput() {
+const input = document.getElementById('page-input');
+if (!input) return;
+let val = parseInt(input.value, 10);
+if (Number.isNaN(val)) return;
+if (val < 1) val = 1;
+if (val > lastTotalPages) val = lastTotalPages;
+currentPage = val;
+updateCatalog();
+window.scrollTo(0, 0);
 }
 
 function renderGrid(list) {
@@ -762,8 +889,10 @@ setTimeout(() => t.classList.remove('show'), 2000);
 }
 
 function handleSearch() {
-const term = document.getElementById("search-input").value.toLowerCase();
-renderGrid(allProducts.filter(p => p.name.toLowerCase().includes(term) || p.category.toLowerCase().includes(term)));
+const term = document.getElementById("search-input").value;
+searchTerm = term.trim();
+currentPage = 1;
+updateCatalog();
 }
 
 function openImageViewer(url) {
