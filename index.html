@@ -488,8 +488,20 @@
   <span class="badge" id="cart-badge">0</span>
 </a>
 
-<footer style="text-align: center; padding: 40px; color: var(--grey); background: #fff; border-top: 1px solid #f1f5f9;">
-  <p style="font-size: 0.8rem;">© 2026 Hygienic & Comfort Co. All rights reserved.</p>
+<footer style="margin-top:40px; padding:28px 20px; background:#ffffff; border-top:1px solid #e2e8f0; text-align:center;">
+  <div style="max-width:1100px; margin:0 auto;">
+    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:14px 18px; font-size:0.9rem; font-weight:700; margin-bottom:12px;">
+      <a href="index.html" style="color:#2563eb; text-decoration:none;">Home</a>
+      <a href="products.html" style="color:#2563eb; text-decoration:none;">Products</a>
+      <a href="about.html" style="color:#2563eb; text-decoration:none;">About</a>
+      <a href="contact.html" style="color:#2563eb; text-decoration:none;">Contact</a>
+      <a href="orders.html" style="color:#2563eb; text-decoration:none;">Orders</a>
+      <a href="privacy-policy.html" style="color:#2563eb; text-decoration:none;">Privacy Policy</a>
+    </div>
+    <p style="margin:0 0 6px 0; color:#64748b; font-size:0.86rem;">Phone: <a href="tel:+919307760665" style="color:#2563eb; text-decoration:none;">+91 9307760665</a> | WhatsApp: <a href="https://wa.me/919307760665" target="_blank" rel="noopener">Chat Support</a></p>
+    <p style="margin:0 0 8px 0; color:#64748b; font-size:0.86rem;">Email: <a href="mailto:hygienicsandcomfort@gmail.com" style="color:#2563eb; text-decoration:none;">hygienicsandcomfort@gmail.com</a></p>
+    <p style="margin:0; color:#64748b; font-size:0.82rem;">&copy; 2026 Hygienic &amp; Comfort Co. All rights reserved.</p>
+  </div>
 </footer>
 
 <script>
@@ -593,7 +605,7 @@
         if(loader) loader.remove();
         container.innerHTML = data.map(review => {
           let stars = '';
-          for(let i=1; i<=5; i++) { stars += `<span style="color: ${i <= review.rating ? '#fbbf24' : '#e2e8f0'}; font-size: 1rem;">★</span>`; }
+          for(let i=1; i<=5; i++) { stars += `<span style="color: ${i <= review.rating ? '#fbbf24' : '#e2e8f0'}; font-size: 1rem;">?</span>`; }
           return `<div class="testimonial-card"><div><div style="margin-bottom: 10px;">${stars}</div><p style="color: #475569; font-style: italic; margin-bottom: 15px; line-height: 1.5; font-size: 0.9rem;">"${review.message}"</p></div><div style="display: flex; align-items: center; gap: 10px; border-top: 1px solid #f8fafc; padding-top: 12px;"><div style="width: 38px; height: 38px; background: var(--soft-blue); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem;">${review.name.charAt(0).toUpperCase()}</div><div><h4 style="font-size: 0.85rem; font-weight: 700; color: var(--dark); margin: 0;">${review.name}</h4><div style="color: #10b981; font-size: 0.7rem; font-weight: 600;"><i data-lucide="check-circle-2" style="width: 10px; height: 10px; vertical-align: middle;"></i> Verified User</div></div></div></div>`;
         }).join('');
         lucide.createIcons();
@@ -661,4 +673,3 @@
 </script>
 </body>
 </html>
-
