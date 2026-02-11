@@ -38,6 +38,75 @@ padding: 15px;
 border-radius: 12px;
 margin-bottom: 25px;
 }
+.order-items {
+display: flex;
+flex-direction: column;
+gap: 12px;
+margin-top: 8px;
+}
+.order-item {
+background: #fff;
+border: 1px solid #e2e8f0;
+border-radius: 12px;
+padding: 10px;
+display: flex;
+align-items: flex-start;
+gap: 10px;
+}
+.order-item img {
+width: 56px;
+height: 56px;
+object-fit: cover;
+border-radius: 10px;
+border: 1px solid #e2e8f0;
+background: #fff;
+}
+.order-item-body {
+flex: 1;
+}
+.order-items .item-name {
+line-height: 1.35;
+font-weight: 800;
+font-size: 0.9rem;
+}
+.order-item-meta {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-top: 6px;
+gap: 8px;
+}
+.order-items .item-qty {
+font-size: 0.78rem;
+color: #475569;
+}
+.order-items .item-unit {
+font-size: 0.78rem;
+color: #64748b;
+}
+.order-items .item-total {
+font-size: 0.9rem;
+font-weight: 800;
+color: #0f172a;
+white-space: nowrap;
+}
+.order-totals {
+border-top: 1px dashed #cbd5e1;
+margin-top: 12px;
+padding-top: 10px;
+}
+.order-totals p {
+display: flex;
+justify-content: space-between;
+font-size: 0.85rem;
+margin-top: 4px;
+}
+.order-totals .grand-total {
+font-size: 1.15rem;
+font-weight: 800;
+color: #2563eb;
+margin-top: 8px;
+}
 .form-group { margin-bottom: 15px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
 label {
@@ -71,14 +140,16 @@ border: 1px solid #e2e8f0;
 border-radius: 12px;
 padding: 12px 14px;
 display: flex;
-align-items: center;
+align-items: flex-start;
 justify-content: space-between;
 gap: 10px;
 cursor: pointer;
 font-weight: 700;
 font-size: 0.85rem;
 color: var(--dark);
+text-align: left;
 }
+#selected-address-text { flex: 1; line-height: 1.25; }
 .address-select .addr-caret { transition: transform 0.2s ease; }
 .address-dropdown.open .address-select .addr-caret { transform: rotate(180deg); }
 .address-dropdown .address-list { display: none; margin-top: 10px; }
@@ -186,12 +257,12 @@ font-size: 0.9rem;
 
 <div class="form-group">
 <label>Flat, House no., Building</label>
-<input type="text" id="new-flat" placeholder=>
+<input type="text" id="new-flat" placeholder="Flat/House number">
 </div>
 
 <div class="form-group">
 <label>Area, Street, Sector</label>
-<input type="text" id="new-area" placeholder=>
+<input type="text" id="new-area" placeholder="Area / Street / Sector">
 </div>
 
 <div class="form-row">
@@ -245,6 +316,48 @@ let isManualMode = false;
 let profileName = "";
 let profilePhone = "";
 
+function escapeHtml(value = "") {
+return value
+.replace(/&/g, "&amp;")
+.replace(/</g, "&lt;")
+.replace(/>/g, "&gt;")
+.replace(/"/g, "&quot;")
+.replace(/'/g, "&#39;");
+}
+
+function sanitizeValue(value) {
+const text = (value ?? "").toString().trim();
+if (!text || text.toLowerCase() === "null" || text.toLowerCase() === "undefined") return "";
+return text;
+}
+
+function formatAddress(addr = {}) {
+const base = [addr.full_address, addr.city, addr.state].map(sanitizeValue).filter(Boolean).join(", ");
+const pin = sanitizeValue(addr.pincode);
+if (base && pin) return `${base} - ${pin}`;
+if (base) return base;
+if (pin) return pin;
+return "Address not available";
+}
+
+function getSummaryItems(data) {
+if (Array.isArray(data.cartItems) && data.cartItems.length > 0) {
+return data.cartItems.map((item) => ({
+name: sanitizeValue(item.name || item.product_name || "Item"),
+qty: Math.max(1, Number(item.qty) || 1),
+price: Math.max(0, Number(item.price) || 0),
+image: sanitizeValue(item.images?.[0] || item.image || "logo.png")
+}));
+}
+
+return [{
+name: sanitizeValue(data.name || data.itemsText || "Item"),
+qty: 1,
+price: Math.max(0, Number(data.price) || 0),
+image: sanitizeValue(data.image || "logo.png")
+}];
+}
+
 // 1. Load the Product from LocalStorage
 const checkoutData = JSON.parse(localStorage.getItem('checkout-item'));
 if (!checkoutData) {
@@ -253,11 +366,40 @@ location.href = "products.html";
 }
 
 // 2. Display Order Summary
-const itemsLabel = checkoutData.itemsText || checkoutData.name;
+const summaryItems = getSummaryItems(checkoutData);
+const itemsSubtotal = summaryItems.reduce((sum, item) => sum + (Number(item.price) * Number(item.qty || 1)), 0);
+const grandTotal = Math.max(0, Number(checkoutData.price) || 0);
+const deliveryFee = Math.max(0, grandTotal - itemsSubtotal);
+const summaryHtml = summaryItems.length
+? `<div class="order-items">
+${summaryItems.map((item) => {
+const qty = Math.max(1, Number(item.qty) || 1);
+const unit = Math.max(0, Number(item.price) || 0);
+const lineTotal = unit * qty;
+return `<div class="order-item">
+<img src="${escapeHtml(item.image || "logo.png")}" alt="${escapeHtml(item.name)}" onerror="this.src='logo.png'">
+<div class="order-item-body">
+<div class="item-name">${escapeHtml(item.name)}</div>
+<div class="order-item-meta">
+<div>
+<div class="item-qty">Qty: ${qty}</div>
+<div class="item-unit">Unit: ₹${unit.toLocaleString('en-IN')}</div>
+</div>
+<div class="item-total">₹${lineTotal.toLocaleString('en-IN')}</div>
+</div>
+</div>
+</div>`;
+}).join("")}
+</div>`
+: `<p style="font-weight:800;">${escapeHtml(sanitizeValue(checkoutData.itemsText || checkoutData.name || "Item"))}</p>`;
 document.getElementById('order-summary').innerHTML = `
    <p style="font-size:0.75rem; color:#64748b;">ORDERING:</p>
-   <p style="font-weight:800;">${itemsLabel}</p>
-   <p style="font-weight:800; color:#2563eb; font-size:1.2rem; margin-top:5px;">Total: ₹${Number(checkoutData.price).toLocaleString('en-IN')}</p>
+   ${summaryHtml}
+   <div class="order-totals">
+   <p><span>Items Total</span><span>₹${itemsSubtotal.toLocaleString('en-IN')}</span></p>
+   ${deliveryFee > 0 ? `<p><span>Delivery</span><span>₹${deliveryFee.toLocaleString('en-IN')}</span></p>` : ""}
+   <p class="grand-total"><span>Total</span><span>₹${grandTotal.toLocaleString('en-IN')}</span></p>
+   </div>
 `;
 
 // 3. Load Saved Data on Page Load
@@ -282,7 +424,7 @@ listDiv.innerHTML = "";
 
 if (addresses && addresses.length > 0) {
 addresses.forEach((addr, index) => {
-const fullAddrStr = `${addr.full_address}, ${addr.city}, ${addr.state} - ${addr.pincode}`;
+const fullAddrStr = formatAddress(addr);
 const card = document.createElement('div');
 card.className = `address-card ${index === 0 ? 'selected' : ''}`;
 if(index === 0) selectedAddressText = fullAddrStr;
@@ -346,7 +488,10 @@ const state = document.getElementById('new-state').value.trim();
 const type = document.getElementById('new-addr-type').value;
 
 const manualMobile = document.getElementById('new-mobile').value.trim();
-finalAddress = `${flat}, ${area}, ${city}, ${state} - ${pin}`;
+const manualBase = [flat, area, city, state].map(sanitizeValue).filter(Boolean).join(", ");
+if (manualBase && pin) finalAddress = `${manualBase} - ${pin}`;
+else if (manualBase) finalAddress = manualBase;
+else finalAddress = pin;
 
 // Save to customer_addresses table
 if (document.getElementById('save-to-profile').checked) {
@@ -369,9 +514,8 @@ finalAddress = selectedAddressText;
 const { error: orderError } = await supa.from('orders').insert([{
 customer_name: (isManualMode ? document.getElementById('new-full-name').value.trim() : "") || profileName || "Customer",
 address: finalAddress,
-            phone_number: (isManualMode && document.getElementById('new-mobile').value.trim()) || profilePhone || user.phone || user.email,
-            phone_number: (isManualMode && document.getElementById('new-mobile').value.trim()) || profilePhone || user.phone || null,
-            email: user.email || null,
+phone_number: (isManualMode && document.getElementById('new-mobile').value.trim()) || profilePhone || user.phone || null,
+email: user.email || null,
 alt_phone: document.getElementById('cust-alt-phone').value || null,
 items: checkoutData.itemsText || checkoutData.name,
 total_price: checkoutData.price,
@@ -423,4 +567,3 @@ if (dropdown && !e.target.closest('#address-dropdown')) dropdown.classList.remov
 </script>
 </body>
 </html>
-~
