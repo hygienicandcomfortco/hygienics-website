@@ -394,13 +394,17 @@
   // ?? Store current cart total and intent before redirecting to login.html
   const subtotal = cart.reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
   const summary = buildCartSummary(cart);
+  const selectedAddressLabel = document.getElementById('selected-address-text')?.innerText?.trim() || "";
   localStorage.setItem('checkout-item', JSON.stringify({
   id: "CART_ORDER",
   name: summary.displayName,
   itemsText: summary.itemsText,
   price: subtotal + currentDeliveryFee,
   cartItems: cart,
-  isFromCart: true
+  isFromCart: true,
+  selectedAddressId: selectedAddressId || null,
+  selectedAddressText: selectedAddressLabel,
+  selectedAddressPin: selectedAddressPin || ""
   }));
   window.location.href = "login.html"; 
   } 
@@ -413,13 +417,17 @@
   if (cart.length === 0) { alert("Your cart is empty!"); return; }
   const subtotal = cart.reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
   const summary = buildCartSummary(cart);
+  const selectedAddressLabel = document.getElementById('selected-address-text')?.innerText?.trim() || "";
   localStorage.setItem('checkout-item', JSON.stringify({
   id: "CART_ORDER",
   name: summary.displayName,
   itemsText: summary.itemsText,
   price: subtotal + currentDeliveryFee,
   cartItems: cart,
-  isFromCart: true
+  isFromCart: true,
+  selectedAddressId: selectedAddressId || null,
+  selectedAddressText: selectedAddressLabel,
+  selectedAddressPin: selectedAddressPin || ""
   }));
   window.location.href = "checkout.html";
   }
