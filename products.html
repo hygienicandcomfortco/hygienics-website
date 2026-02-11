@@ -233,13 +233,9 @@ position: relative;
 .card-slide { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
 .card-slide.active { opacity: 1; pointer-events: auto; }
 .card-slide img { max-width: 100%; max-height: 100%; object-fit: contain; pointer-events: none; }
-.card-dots { position: static; display: none; gap: 6px; justify-content: center; align-items: center; height: 12px; }
+.card-dots { position: static; display: flex; gap: 6px; justify-content: center; align-items: center; height: 12px; }
 .card-dot { width: 7px; height: 7px; border-radius: 50%; border: none; background: rgba(0,0,0,0.2); cursor: pointer; padding: 0; }
 .card-dot.active { background: var(--primary); }
-
-@media (min-width: 769px) {
-.card-dots { display: flex; }
-}
 
 
 .details { padding: 12px 15px; flex-grow: 1; display: flex; flex-direction: column; border-top: 1px solid #f8fafc; }
@@ -609,7 +605,7 @@ lucide.createIcons();
 setupCardCarousels();
 }
 
-// 🟢 NEW CATEGORY FILTER LOGIC
+// ?? NEW CATEGORY FILTER LOGIC
 function filterByCategory(cat, btn) {
 activeCategory = cat;
 currentPage = 1;
@@ -859,7 +855,6 @@ return `
              </div>
              ${(() => {
                const imgs = (p.images && p.images.length ? p.images : ['logo.png']);
-               if (imgs.length <= 1) return '';
                return `<div class="card-dots">${imgs.map((_, i) => `<button class="card-dot ${i===0?'active':''}" data-dot="${i}"></button>`).join('')}</div>`;
              })()}
            </div>
@@ -868,9 +863,9 @@ return `
              <div class="p-name">${p.name}</div>
              <div style="display: flex; align-items: center;">
                <span class="p-discount-tag">-${disc}%</span>
-               <span class="p-main-price">₹${curPrice.toLocaleString('en-IN')}</span>
+               <span class="p-main-price">&#8377;${curPrice.toLocaleString('en-IN')}</span>
              </div>
-             <div class="p-mrp-line">M.R.P.: <span class="p-mrp-val">₹${mrp.toLocaleString('en-IN')}</span></div>
+             <div class="p-mrp-line">M.R.P.: <span class="p-mrp-val">&#8377;${mrp.toLocaleString('en-IN')}</span></div>
              ${(stockCount > 0 && stockCount <= 3) ? `<div class="stock-warning">Only ${stockCount} left!</div>` : ''}
            </div>
            <div class="price-row">
@@ -916,8 +911,8 @@ detailContainer.innerHTML = `
          <h2 style="font-size:1.8rem; font-weight:800; margin-bottom:10px;">${product.name}</h2>
          <div style="margin: 15px 0;">
            <span style="color:#cc0c39; font-size:1.8rem;">-${disc}%</span>
-           <span style="font-size:1.8rem; font-weight:700; margin-left:10px;">₹${curPrice.toLocaleString('en-IN')}</span>
-           <div style="color:#565959; font-size:0.85rem; margin-top:5px;">M.R.P.: <span style="text-decoration:line-through">₹${mrp.toLocaleString('en-IN')}</span></div>
+           <span style="font-size:1.8rem; font-weight:700; margin-left:10px;">&#8377;${curPrice.toLocaleString('en-IN')}</span>
+           <div style="color:#565959; font-size:0.85rem; margin-top:5px;">M.R.P.: <span style="text-decoration:line-through">&#8377;${mrp.toLocaleString('en-IN')}</span></div>
          </div>
          <div style="display:flex; flex-direction:column; gap:12px; margin-top:25px;">
            <button class="add-to-cart-full-btn" style="padding:18px;" onclick="window.addToCart('${product.id}')" ${stockVal <= 0 ? 'disabled' : ''}>
@@ -963,7 +958,7 @@ updateCartBadge();
 showToast();
 };
 
-/* 🟢 REDIRECT GUEST TO LOGIN ON BUY NOW */
+/* ?? REDIRECT GUEST TO LOGIN ON BUY NOW */
 window.buyNow = function(productId) {
 const product = allProducts.find(p => p.id == productId);
 if (!product || parseInt(product.stock) <= 0) {
@@ -976,7 +971,9 @@ if (!currentUser) {
 localStorage.setItem('checkout-item', JSON.stringify({
 id: product.id,
 name: product.name,
-price: Number(product.price)
+price: Number(product.price),
+qty: 1,
+image: product.images?.[0] || 'logo.png'
 }));
 window.location.href = "login.html";
 return;
@@ -985,7 +982,9 @@ return;
 localStorage.setItem('checkout-item', JSON.stringify({
 id: product.id,
 name: product.name,
-price: Number(product.price)
+price: Number(product.price),
+qty: 1,
+image: product.images?.[0] || 'logo.png'
 }));
 window.location.href = "checkout.html";
 }
@@ -1025,5 +1024,20 @@ if(drop) drop.classList.remove('active');
 
 init();
 </script>
+<footer style="margin-top:40px; padding:28px 20px; background:#ffffff; border-top:1px solid #e2e8f0; text-align:center;">
+  <div style="max-width:1100px; margin:0 auto;">
+    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:14px 18px; font-size:0.9rem; font-weight:700; margin-bottom:12px;">
+      <a href="index.html" style="color:#2563eb; text-decoration:none;">Home</a>
+      <a href="products.html" style="color:#2563eb; text-decoration:none;">Products</a>
+      <a href="about.html" style="color:#2563eb; text-decoration:none;">About</a>
+      <a href="contact.html" style="color:#2563eb; text-decoration:none;">Contact</a>
+      <a href="orders.html" style="color:#2563eb; text-decoration:none;">Orders</a>
+      <a href="privacy-policy.html" style="color:#2563eb; text-decoration:none;">Privacy Policy</a>
+    </div>
+    <p style="margin:0 0 6px 0; color:#64748b; font-size:0.86rem;">Phone: <a href="tel:+919307760665" style="color:#2563eb; text-decoration:none;">+91 9307760665</a> | WhatsApp: <a href="https://wa.me/919307760665" target="_blank" rel="noopener">Chat Support</a></p>
+    <p style="margin:0 0 8px 0; color:#64748b; font-size:0.86rem;">Email: <a href="mailto:hygienicsandcomfort@gmail.com" style="color:#2563eb; text-decoration:none;">hygienicsandcomfort@gmail.com</a></p>
+    <p style="margin:0; color:#64748b; font-size:0.82rem;">&copy; 2026 Hygienic &amp; Comfort Co. All rights reserved.</p>
+  </div>
+</footer>
 </body>
 </html>
