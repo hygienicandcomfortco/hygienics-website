@@ -602,6 +602,16 @@ const state = document.getElementById('new-state').value.trim();
 const type = document.getElementById('new-addr-type').value;
 
 const manualMobile = document.getElementById('new-mobile').value.trim();
+if (!manualName || !manualMobile || !pin || !city || !flat || !area || !state) {
+throw new Error("Please fill all required fields for the new delivery address.");
+}
+if (!/^\d{10}$/.test(manualMobile)) {
+throw new Error("Please enter a valid 10-digit mobile number for delivery.");
+}
+if (!/^\d{6}$/.test(pin)) {
+throw new Error("Please enter a valid 6-digit pincode.");
+}
+
 const manualBase = [flat, area, city, state].map(sanitizeValue).filter(Boolean).join(", ");
 if (manualBase && pin) finalAddress = `${manualBase} - ${pin}`;
 else if (manualBase) finalAddress = manualBase;
@@ -621,7 +631,11 @@ address_type: type
 if (addrError) throw new Error("Could not save address to profile: " + addrError.message);
 }
 } else {
-finalAddress = selectedAddressText;
+finalAddress = sanitizeValue(selectedAddressText);
+}
+
+if (!sanitizeValue(finalAddress)) {
+throw new Error("Please select a delivery address or add a new delivery address before placing the order.");
 }
 
 // PHASE 2: Create Order
