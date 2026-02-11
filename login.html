@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
     
     <style>
         :root {
@@ -112,6 +113,8 @@
 
         .footer-links { margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 0.9rem; font-weight: 700; }
         .footer-links a { color: var(--primary); text-decoration: none; }
+        .captcha-wrap { margin-top: 12px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .captcha-note { color: var(--text-muted); font-size: 0.75rem; margin: 0; }
 
         .hidden { display: none; }
 
@@ -213,7 +216,42 @@
         <div class="switch-text">Already have an account? <span onclick="toggleAuth('signin')">Sign In</span></div>
     </div>
 
+    <div id="reset-container" class="hidden">
+        <h2>Set New Password</h2>
+        <p>Create a new password for your account</p>
+
+        <form id="reset-form">
+            <div class="form-group">
+                <label>New Password</label>
+                <div class="input-wrapper">
+                    <i data-lucide="lock" class="icon-left"></i>
+                    <input type="password" id="reset-password" placeholder="Min 6 characters" required>
+                    <i data-lucide="eye" class="icon-right" onclick="togglePass('reset-password', this)"></i>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Confirm New Password</label>
+                <div class="input-wrapper">
+                    <i data-lucide="shield-check" class="icon-left"></i>
+                    <input type="password" id="reset-confirm" placeholder="Repeat password" required>
+                    <i data-lucide="eye" class="icon-right" onclick="togglePass('reset-confirm', this)"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="login-btn" id="reset-submit-btn">
+                <span>Update Password</span>
+                <i data-lucide="check" style="width: 18px;"></i>
+            </button>
+        </form>
+        <div class="switch-text">Remembered password? <span onclick="toggleAuth('signin')">Back to Sign In</span></div>
+    </div>
+
     <div id="error-msg"></div>
+    <div id="captcha-wrap" class="captcha-wrap hidden">
+        <div id="captcha-box"></div>
+        <p class="captcha-note">Please complete captcha before continuing.</p>
+    </div>
 
     <div class="footer-links">
         <a href="index.html">&larr; Return to Store</a>
@@ -223,23 +261,114 @@
 <script>
     const SUPABASE_URL = "https://uhkheprfbxxwuojswyht.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es";
+    // Set this to your Supabase captcha (Turnstile) site key when captcha is enabled.
+    const CAPTCHA_SITE_KEY = "";
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    let captchaWidgetId = null;
 
     lucide.createIcons();
+
+    function showError(msg) {
+        const errorEl = document.getElementById('error-msg');
+        errorEl.innerText = msg;
+        errorEl.style.display = 'block';
+    }
+
+    function isCaptchaBackendError(message) {
+        return /captcha/i.test(String(message || ""));
+    }
+
+    function getAuthErrorMessage(error) {
+        const raw = error?.message || "Authentication failed.";
+        if (isCaptchaBackendError(raw) && !isCaptchaEnabled()) {
+            return "Captcha is enabled in Supabase. Add your Turnstile site key in login.html (CAPTCHA_SITE_KEY) or turn captcha OFF in Supabase Attack Protection.";
+        }
+        return raw;
+    }
+
+    function isCaptchaEnabled() {
+        return Boolean(CAPTCHA_SITE_KEY && CAPTCHA_SITE_KEY.trim());
+    }
+
+    function renderCaptcha() {
+        const wrap = document.getElementById('captcha-wrap');
+        if (!isCaptchaEnabled()) {
+            wrap.classList.add('hidden');
+            return;
+        }
+
+        wrap.classList.remove('hidden');
+        if (!window.turnstile || captchaWidgetId !== null) return;
+
+        captchaWidgetId = window.turnstile.render('#captcha-box', {
+            sitekey: CAPTCHA_SITE_KEY
+        });
+    }
+
+    function resetCaptcha() {
+        if (!isCaptchaEnabled() || captchaWidgetId === null || !window.turnstile) return;
+        window.turnstile.reset(captchaWidgetId);
+    }
+
+    function getCaptchaToken() {
+        if (!isCaptchaEnabled()) return null;
+        if (!window.turnstile || captchaWidgetId === null) {
+            throw new Error("Captcha is still loading. Please wait a moment and try again.");
+        }
+        const token = window.turnstile.getResponse(captchaWidgetId);
+        if (!token) {
+            throw new Error("Please complete captcha verification.");
+        }
+        return token;
+    }
+
+    function getHashParams() {
+        const hash = window.location.hash.startsWith('#') ? window.location.hash.substring(1) : window.location.hash;
+        return new URLSearchParams(hash);
+    }
+
+    async function handleRecoveryLink() {
+        const hashParams = getHashParams();
+        const searchParams = new URLSearchParams(window.location.search);
+        const type = hashParams.get('type') || searchParams.get('type');
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
+
+        if (type !== 'recovery') return;
+
+        try {
+            if (accessToken && refreshToken) {
+                const { error } = await _supabase.auth.setSession({
+                    access_token: accessToken,
+                    refresh_token: refreshToken
+                });
+                if (error) throw error;
+            }
+            toggleAuth('reset');
+            history.replaceState({}, document.title, window.location.pathname);
+        } catch (err) {
+            showError("Reset link is invalid or expired. Please request a new reset link.");
+            toggleAuth('signin');
+        }
+    }
 
     function toggleAuth(type) {
         const signin = document.getElementById('signin-container');
         const signup = document.getElementById('signup-container');
+        const reset = document.getElementById('reset-container');
         const error = document.getElementById('error-msg');
         error.style.display = 'none';
-        
-        if (type === 'signup') {
-            signin.classList.add('hidden');
-            signup.classList.remove('hidden');
-        } else {
-            signup.classList.add('hidden');
-            signin.classList.remove('hidden');
-        }
+
+        signin.classList.add('hidden');
+        signup.classList.add('hidden');
+        reset.classList.add('hidden');
+
+        if (type === 'signup') signup.classList.remove('hidden');
+        else if (type === 'reset') reset.classList.remove('hidden');
+        else signin.classList.remove('hidden');
+
+        resetCaptcha();
+        lucide.createIcons();
     }
 
     function togglePass(inputId, iconContainer) {
@@ -268,13 +397,26 @@
         btn.disabled = true;
         btn.querySelector('span').innerText = "Checking...";
 
-        const { data, error } = await _supabase.auth.signInWithPassword({ email, password: pass });
+        let captchaToken = null;
+        try {
+            captchaToken = getCaptchaToken();
+        } catch (err) {
+            showError(err.message);
+            btn.disabled = false;
+            btn.querySelector('span').innerText = "Sign In";
+            return;
+        }
+
+        const signInPayload = { email, password: pass };
+        if (captchaToken) signInPayload.options = { captchaToken };
+        const { data, error } = await _supabase.auth.signInWithPassword(signInPayload);
 
         if (error) {
-            errorEl.innerText = error.message;
+            errorEl.innerText = getAuthErrorMessage(error);
             errorEl.style.display = 'block';
             btn.disabled = false;
             btn.querySelector('span').innerText = "Sign In";
+            resetCaptcha();
         } else {
             // ?? FIXED REDIRECT: Always go to products page after login
             window.location.href = 'index.html';
@@ -282,26 +424,8 @@
     });
 
     // FORGOT PASSWORD LOGIC
-    document.getElementById('forgot-btn').addEventListener('click', async () => {
-        const email = document.getElementById('login-identifier').value.trim();
-        const errorEl = document.getElementById('error-msg');
-
-        errorEl.style.display = 'none';
-
-        if (!email) {
-            errorEl.innerText = "Please enter your email above to reset your password.";
-            errorEl.style.display = 'block';
-            return;
-        }
-
-        const { error } = await _supabase.auth.resetPasswordForEmail(email);
-        if (error) {
-            errorEl.innerText = error.message;
-            errorEl.style.display = 'block';
-        } else {
-            errorEl.innerText = "Password reset email sent. Please check your inbox.";
-            errorEl.style.display = 'block';
-        }
+    document.getElementById('forgot-btn').addEventListener('click', () => {
+        window.location.href = 'forgot-password.html';
     });
 
     // SIGNUP LOGIC
@@ -326,10 +450,21 @@
         btn.disabled = true;
         btn.querySelector('span').innerText = "Creating...";
 
+        let captchaToken = null;
+        try {
+            captchaToken = getCaptchaToken();
+        } catch (err) {
+            showError(err.message);
+            btn.disabled = false;
+            btn.querySelector('span').innerText = "Create Account";
+            return;
+        }
+
         const { data, error } = await _supabase.auth.signUp({
             email: email,
             password: pass,
             options: {
+                ...(captchaToken ? { captchaToken } : {}),
                 data: {
                     full_name: name,
                     phone_number: phone
@@ -338,15 +473,55 @@
         });
 
         if (error) {
-            errorEl.innerText = error.message;
+            errorEl.innerText = getAuthErrorMessage(error);
             errorEl.style.display = 'block';
             btn.disabled = false;
             btn.querySelector('span').innerText = "Create Account";
+            resetCaptcha();
         } else {
             alert("Verification link sent! Check your email (" + email + ") to activate your account.");
             toggleAuth('signin');
+            resetCaptcha();
         }
     });
+
+    document.getElementById('reset-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const pass = document.getElementById('reset-password').value;
+        const confirm = document.getElementById('reset-confirm').value;
+        const btn = document.getElementById('reset-submit-btn');
+
+        if (pass.length < 6) {
+            showError("Password must be at least 6 characters.");
+            return;
+        }
+        if (pass !== confirm) {
+            showError("Passwords do not match!");
+            return;
+        }
+
+        btn.disabled = true;
+        btn.querySelector('span').innerText = "Updating...";
+
+        const { error } = await _supabase.auth.updateUser({ password: pass });
+        if (error) {
+            showError(error.message || "Could not update password. Please try again.");
+            btn.disabled = false;
+            btn.querySelector('span').innerText = "Update Password";
+            return;
+        }
+
+        alert("Password updated successfully. Please sign in.");
+        await _supabase.auth.signOut();
+        toggleAuth('signin');
+        btn.disabled = false;
+        btn.querySelector('span').innerText = "Update Password";
+    });
+
+    if (isCaptchaEnabled()) {
+        window.addEventListener('load', renderCaptcha);
+    }
+    window.addEventListener('load', handleRecoveryLink);
 </script>
 <footer style="margin-top:40px; padding:28px 20px; background:#ffffff; border-top:1px solid #e2e8f0; text-align:center;">
   <div style="max-width:1100px; margin:0 auto;">
