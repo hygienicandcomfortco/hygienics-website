@@ -390,7 +390,7 @@
             <div class="order-card">
                 <div class="order-header">
                     <div class="meta-item"><label>Order Date</label><p>${date}</p></div>
-                    <div class="meta-item"><label>Total</label><p>₹${order.total_price}</p></div>
+                    <div class="meta-item"><label>Total</label><p>?${order.total_price}</p></div>
                     <div class="meta-item"><label>Order ID</label><p>#${order.id.substring(0, 8)}</p></div>
                     <div class="meta-item" style="text-align:right">
                         <span class="status-badge ${statusClass}">
@@ -432,7 +432,7 @@
 
   function formatMoney(val) {
     if (val === null || val === undefined || Number.isNaN(val)) return "-";
-    return `₹${Number(val).toLocaleString('en-IN')}`;
+    return `?${Number(val).toLocaleString('en-IN')}`;
   }
 
   function downloadInvoice(order) {
@@ -501,7 +501,7 @@
             </table>
 
             <div style="text-align: right;">
-                <p style="font-size: 1.2rem; font-weight: 800;">Grand Total: ₹${order.total_price}</p>
+                <p style="font-size: 1.2rem; font-weight: 800;">Grand Total: ?${order.total_price}</p>
                 <p style="color: var(--grey); margin-top: 10px;">Payment Method: Cash on Delivery</p>
             </div>
 
@@ -546,5 +546,20 @@
     }
   });
 </script>
+<footer style="margin-top:40px; padding:28px 20px; background:#ffffff; border-top:1px solid #e2e8f0; text-align:center;">
+  <div style="max-width:1100px; margin:0 auto;">
+    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:14px 18px; font-size:0.9rem; font-weight:700; margin-bottom:12px;">
+      <a href="index.html" style="color:#2563eb; text-decoration:none;">Home</a>
+      <a href="products.html" style="color:#2563eb; text-decoration:none;">Products</a>
+      <a href="about.html" style="color:#2563eb; text-decoration:none;">About</a>
+      <a href="contact.html" style="color:#2563eb; text-decoration:none;">Contact</a>
+      <a href="orders.html" style="color:#2563eb; text-decoration:none;">Orders</a>
+      <a href="privacy-policy.html" style="color:#2563eb; text-decoration:none;">Privacy Policy</a>
+    </div>
+    <p style="margin:0 0 6px 0; color:#64748b; font-size:0.86rem;">Phone: <a href="tel:+919307760665" style="color:#2563eb; text-decoration:none;">+91 9307760665</a> | WhatsApp: <a href="https://wa.me/919307760665" target="_blank" rel="noopener">Chat Support</a></p>
+    <p style="margin:0 0 8px 0; color:#64748b; font-size:0.86rem;">Email: <a href="mailto:hygienicsandcomfort@gmail.com" style="color:#2563eb; text-decoration:none;">hygienicsandcomfort@gmail.com</a></p>
+    <p style="margin:0; color:#64748b; font-size:0.82rem;">&copy; 2026 Hygienic &amp; Comfort Co. All rights reserved.</p>
+  </div>
+</footer>
 </body>
 </html>
