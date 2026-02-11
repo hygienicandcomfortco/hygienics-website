@@ -18,7 +18,7 @@
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
-font-family: 'Plus Jakarta Sans', sans-serif;
+font-family: 'Plus Jakarta Sans', 'Noto Sans', 'Segoe UI', 'Segoe UI Symbol', sans-serif;
 background: var(--bg);
 color: var(--dark);
 padding: 20px;
@@ -310,11 +310,13 @@ font-size: 0.9rem;
 const SUPABASE_URL = "https://uhkheprfbxxwuojswyht.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es";
 const supa = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const RUPEE = "&#8377;";
 
 let selectedAddressText = "";
 let isManualMode = false;
 let profileName = "";
 let profilePhone = "";
+let resolvedCustomerId = null;
 
 function escapeHtml(value = "") {
 return value
@@ -329,6 +331,10 @@ function sanitizeValue(value) {
 const text = (value ?? "").toString().trim();
 if (!text || text.toLowerCase() === "null" || text.toLowerCase() === "undefined") return "";
 return text;
+}
+
+function normalizeText(value) {
+return sanitizeValue(value).replace(/\s+/g, " ").toLowerCase();
 }
 
 function formatAddress(addr = {}) {
@@ -358,6 +364,84 @@ image: sanitizeValue(data.image || "logo.png")
 }];
 }
 
+async function resolveCustomerId(user) {
+if (!user?.id) return null;
+
+// 1) Reuse any customer_id from this user's previous orders.
+try {
+const { data: prevOrder } = await supa
+.from('orders')
+.select('customer_id')
+.eq('user_id', user.id)
+.not('customer_id', 'is', null)
+.order('created_at', { ascending: false })
+.limit(1)
+.maybeSingle();
+if (prevOrder?.customer_id) return prevOrder.customer_id;
+} catch (e) {
+console.warn("Could not read previous order customer_id:", e);
+}
+
+// 2) Try direct lookup in customers table by user/email/phone if allowed.
+try {
+let query = supa.from('customers').select('id').eq('user_id', user.id).limit(1);
+let { data: byUser } = await query;
+if (Array.isArray(byUser) && byUser[0]?.id) return byUser[0].id;
+} catch (e) {
+console.warn("customers lookup by user_id failed:", e);
+}
+
+if (user.email) {
+try {
+const { data: byEmail } = await supa.from('customers').select('id').eq('email', user.email).limit(1);
+if (Array.isArray(byEmail) && byEmail[0]?.id) return byEmail[0].id;
+} catch (e) {
+console.warn("customers lookup by email failed:", e);
+}
+}
+
+if (user.phone) {
+try {
+const { data: byPhone } = await supa.from('customers').select('id').eq('phone_number', user.phone).limit(1);
+if (Array.isArray(byPhone) && byPhone[0]?.id) return byPhone[0].id;
+} catch (e) {
+console.warn("customers lookup by phone failed:", e);
+}
+}
+
+return null;
+}
+
+async function ensureCustomerId(user) {
+const existingId = await resolveCustomerId(user);
+if (existingId) return existingId;
+
+// Try to create customer's own profile row (needed by some RLS policies on orders).
+const candidateName = profileName || sanitizeValue(user.user_metadata?.full_name) || "Customer";
+const candidatePhone = profilePhone || sanitizeValue(user.phone) || null;
+
+try {
+const { data: inserted, error } = await supa
+  .from('customers')
+  .insert([{
+    user_id: user.id,
+    customer_name: candidateName,
+    email: user.email || null,
+    phone_number: candidatePhone
+  }])
+  .select('id')
+  .maybeSingle();
+
+if (!error && inserted?.id) return inserted.id;
+if (error) console.warn("customers insert failed:", error);
+} catch (e) {
+console.warn("customers insert exception:", e);
+}
+
+// Final attempt after insert race/failure: lookup again.
+return await resolveCustomerId(user);
+}
+
 // 1. Load the Product from LocalStorage
 const checkoutData = JSON.parse(localStorage.getItem('checkout-item'));
 if (!checkoutData) {
@@ -383,9 +467,9 @@ return `<div class="order-item">
 <div class="order-item-meta">
 <div>
 <div class="item-qty">Qty: ${qty}</div>
-<div class="item-unit">Unit: ?${unit.toLocaleString('en-IN')}</div>
+<div class="item-unit">Unit: Rs. ${unit.toLocaleString('en-IN')}</div>
 </div>
-<div class="item-total">?${lineTotal.toLocaleString('en-IN')}</div>
+<div class="item-total">${RUPEE}${lineTotal.toLocaleString('en-IN')}</div>
 </div>
 </div>
 </div>`;
@@ -396,16 +480,17 @@ document.getElementById('order-summary').innerHTML = `
    <p style="font-size:0.75rem; color:#64748b;">ORDERING:</p>
    ${summaryHtml}
    <div class="order-totals">
-   <p><span>Items Total</span><span>?${itemsSubtotal.toLocaleString('en-IN')}</span></p>
-   ${deliveryFee > 0 ? `<p><span>Delivery</span><span>?${deliveryFee.toLocaleString('en-IN')}</span></p>` : ""}
-   <p class="grand-total"><span>Total</span><span>?${grandTotal.toLocaleString('en-IN')}</span></p>
+   <p><span>Items Total</span><span>${RUPEE}${itemsSubtotal.toLocaleString('en-IN')}</span></p>
+   ${deliveryFee > 0 ? `<p><span>Delivery</span><span>${RUPEE}${deliveryFee.toLocaleString('en-IN')}</span></p>` : ""}
+   <p class="grand-total"><span>Total</span><span>${RUPEE}${grandTotal.toLocaleString('en-IN')}</span></p>
    </div>
 `;
 
 // 3. Load Saved Data on Page Load
 async function loadCheckoutData() {
 const { data: { user } } = await supa.auth.getUser();
-if (!user) { location.href = "products.html"; return; }
+if (!user) { location.href = "login.html"; return; }
+resolvedCustomerId = await ensureCustomerId(user);
 
 // Load Profile Name/Phone
 const { data: profile } = await supa.from('customer_signup').select('*').eq('id', user.id).maybeSingle();
@@ -423,11 +508,30 @@ const dropdown = document.getElementById('address-dropdown');
 listDiv.innerHTML = "";
 
 if (addresses && addresses.length > 0) {
+const preferredAddressId = sanitizeValue(checkoutData?.selectedAddressId);
+const preferredAddressLabel = normalizeText(checkoutData?.selectedAddressText);
+let selectedIndex = -1;
+
+if (preferredAddressId) {
+selectedIndex = addresses.findIndex((addr) => sanitizeValue(addr.id) === preferredAddressId);
+}
+
+if (selectedIndex < 0 && preferredAddressLabel && preferredAddressLabel !== "use a different pincode") {
+selectedIndex = addresses.findIndex((addr) => {
+const recipient = sanitizeValue(addr.full_name || addr.recipient_name || "");
+const label = `${recipient} ${formatAddress(addr)}`.trim();
+return normalizeText(label) === preferredAddressLabel;
+});
+}
+
+if (selectedIndex < 0) selectedIndex = 0;
+
 addresses.forEach((addr, index) => {
 const fullAddrStr = formatAddress(addr);
 const card = document.createElement('div');
-card.className = `address-card ${index === 0 ? 'selected' : ''}`;
-if(index === 0) selectedAddressText = fullAddrStr;
+const isSelected = index === selectedIndex;
+card.className = `address-card ${isSelected ? 'selected' : ''}`;
+if (isSelected) selectedAddressText = fullAddrStr;
 
 const badgeText = (addr.type || addr.address_type || "Address").toString();
 const recipientName = (addr.full_name || addr.recipient_name || "").toString();
@@ -442,7 +546,7 @@ document.getElementById('new-address-form').classList.add('hidden');
 if (dropdown) dropdown.classList.remove('open');
 };
 listDiv.appendChild(card);
-if (index === 0 && selectedText) {
+if (isSelected && selectedText) {
 selectedText.innerText = `${recipientName} ${fullAddrStr}`.trim();
 }
 });
@@ -469,13 +573,23 @@ e.preventDefault();
 const btn = document.getElementById('confirm-btn');
 const { data: { user } } = await supa.auth.getUser();
 
-if (!user) return alert("Please login again.");
+if (!user) {
+alert("Please login again to place the order.");
+window.location.href = "login.html";
+return;
+}
 
 let finalAddress = "";
 
 try {
 btn.disabled = true;
 btn.innerText = "Processing...";
+
+// Ensure we have a valid customers.id for RLS policies that check customer ownership.
+resolvedCustomerId = await ensureCustomerId(user);
+if (!resolvedCustomerId) {
+throw new Error("Customer profile is missing. Please open Profile once and try again.");
+}
 
 // PHASE 1: Handle Manual Address Save
 if (isManualMode) {
@@ -511,7 +625,8 @@ finalAddress = selectedAddressText;
 }
 
 // PHASE 2: Create Order
-const { error: orderError } = await supa.from('orders').insert([{
+const orderPayload = {
+user_id: user.id,
 customer_name: (isManualMode ? document.getElementById('new-full-name').value.trim() : "") || profileName || "Customer",
 address: finalAddress,
 phone_number: (isManualMode && document.getElementById('new-mobile').value.trim()) || profilePhone || user.phone || null,
@@ -519,10 +634,30 @@ email: user.email || null,
 alt_phone: document.getElementById('cust-alt-phone').value || null,
 items: checkoutData.itemsText || checkoutData.name,
 total_price: checkoutData.price,
-status: 'New'
-}]);
+status: 'New',
+payment_status: 'Pending',
+payment_method: 'Cash',
+is_approved: false
+};
+orderPayload.customer_id = resolvedCustomerId;
 
-if (orderError) throw orderError;
+let { error: orderError } = await supa.from('orders').insert([orderPayload]);
+
+// If trigger/policy still attempts customers insert, retry once with resolved customer_id from latest order.
+if (orderError && /customers/i.test(orderError.message || "")) {
+const fallbackCustomerId = await resolveCustomerId(user);
+if (fallbackCustomerId) {
+resolvedCustomerId = fallbackCustomerId;
+orderPayload.customer_id = fallbackCustomerId;
+const retry = await supa.from('orders').insert([orderPayload]);
+orderError = retry.error;
+}
+}
+
+if (orderError) {
+console.error("Order insert failed:", orderError);
+throw orderError;
+}
 
 // PHASE 3: Subtract Stock
 if (checkoutData.cartItems) {
@@ -539,13 +674,14 @@ await supa.from('products').update({ stock: p.stock - 1 }).eq('id', checkoutData
 localStorage.removeItem('hc-cart');
 localStorage.removeItem('checkout-item');
 
-const msg = `*NEW ORDER*\nItem: ${checkoutData.itemsText || checkoutData.name}\nAddress: ${finalAddress}\nTotal: ?${checkoutData.price}`;
+const msg = `*NEW ORDER*\nItem: ${checkoutData.itemsText || checkoutData.name}\nAddress: ${finalAddress}\nTotal: ₹${checkoutData.price}`;
 window.open(`https://wa.me/919307760665?text=${encodeURIComponent(msg)}`, '_blank');
 
 location.href = "index.html";
 
 } catch (err) {
-alert("Error: " + err.message);
+const details = [err?.message, err?.details, err?.hint].filter(Boolean).join(" | ");
+alert("Error: " + details);
 btn.disabled = false;
 btn.innerText = "Confirm Order";
 }
