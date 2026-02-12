@@ -424,9 +424,9 @@
   async function initSidebarUser() {
     const { data: { user } } = await _supabase.auth.getUser();
     if (!user) return;
-    const { data: profile } = await _supabase.from('customer_signup').select('full_name').eq('id', user.id).maybeSingle();
+    const { data: profile } = await _supabase.from('customers').select('customer_name').eq('user_id', user.id).maybeSingle();
     const metaName = user.user_metadata?.full_name || user.user_metadata?.name || "";
-    const safeName = profile?.full_name || metaName || (user.email ? user.email.split('@')[0] : "") || "User";
+    const safeName = profile?.customer_name || metaName || (user.email ? user.email.split('@')[0] : "") || "User";
     const emailEl = document.getElementById('mobile-side-email');
     const nameEl = document.getElementById('mobile-side-name');
     const circleEl = document.getElementById('mobile-user-circle');
@@ -457,7 +457,7 @@
         return;
     }
 
-    const { data: profile } = await _supabase.from('customer_signup').select('phone_number,email,full_name').eq('id', user.id).maybeSingle();
+    const { data: profile } = await _supabase.from('customers').select('phone_number,email,customer_name').eq('user_id', user.id).maybeSingle();
     const identifiers = [user.email, user.phone, profile?.email, profile?.phone_number].filter(Boolean);
     await initSidebarUser();
 
