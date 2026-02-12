@@ -1,419 +1,481 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Saved Addresses | Hygienic & Comfort Co.</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Saved Addresses | Hygienic & Comfort Co.</title>
 
-    <link rel="icon" type="image/png" href="logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="icon" type="image/png" href="logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <style>
-    :root {
-    --primary: #2563eb;
-    --soft-blue: #eef4ff;
-    --dark: #1e293b;
-    --grey: #64748b;
-    --white: #ffffff;
-    --bg: #f8fafc;
-    --radius: 16px;
-    --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    --border: #e2e8f0;
+<style>
+:root {
+--primary: #2563eb;
+--soft-blue: #eef4ff;
+--dark: #1e293b;
+--grey: #64748b;
+--white: #ffffff;
+--bg: #f8fafc;
+--radius: 16px;
+--shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+--border: #e2e8f0;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: var(--dark); line-height: 1.6; }
+
+.main-header {
+background: var(--white); padding: 12px 5%; border-bottom: 1px solid #f1f5f9;
+display: flex; justify-content: space-between; align-items: center;
+position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px);
+}
+.logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+.logo-img { height: 40px; }
+    .logo-area h2 { white-space: nowrap; }
+
+.profile-section { position: relative; }
+.profile-btn { 
+background: var(--soft-blue); color: var(--primary); 
+width: 42px; height: 42px; border-radius: 50%; 
+display: flex; align-items: center; justify-content: center; 
+cursor: pointer; border: 2px solid transparent; transition: 0.3s;
+}
+.profile-btn:hover { border-color: var(--primary); }
+
+.sidebar-brand { text-align: center; padding-bottom: 10px; border-bottom: 1px solid #f1f5f9; }
+    .sidebar-brand .brand-text { font-weight: 800; color: var(--dark); }
+    .sidebar-brand .brand-text { font-weight: 750; color: var(--dark); }
+.sidebar-brand .brand-logo { height: 44px; margin-top: 8px; display: none; }
+
+.mobile-menu-btn {
+display: none;
+background: var(--soft-blue);
+color: var(--primary);
+width: 42px; height: 42px;
+border-radius: 50%;
+border: 2px solid transparent;
+cursor: pointer;
+align-items: center;
+justify-content: center;
+transition: 0.3s;
+}
+.mobile-menu-btn:hover { border-color: var(--primary); }
+
+.dropdown-menu {
+position: absolute; top: 55px; right: 0;
+background: white; width: 280px; border-radius: 20px;
+box-shadow: 0 15px 40px rgba(0,0,0,0.12); border: 1px solid #f1f5f9;
+display: none; flex-direction: column; padding: 15px; z-index: 2001;
+}
+.dropdown-menu.active { display: flex !important; }
+
+.dropdown-header { margin-bottom: 12px; padding: 10px; border-bottom: 1px solid #f1f5f9; }
+.dropdown-header h4 { font-size: 1.1rem; font-weight: 800; color: var(--dark); margin: 0; }
+.dropdown-header p { font-size: 0.85rem; color: var(--grey); margin: 5px 0 0 0; }
+
+.dropdown-item {
+padding: 12px; text-decoration: none; color: var(--dark);
+border-radius: 12px; display: flex; align-items: center; gap: 15px;
+transition: 0.2s; cursor: pointer;
+}
+.dropdown-item:hover { background: var(--soft-blue); color: var(--primary); }
+.dropdown-item i { width: 22px; height: 22px; color: var(--grey); }
+.item-info { display: flex; flex-direction: column; }
+.item-info b { font-size: 0.95rem; font-weight: 700; display: block; color: var(--dark); }
+.item-info span { font-size: 0.8rem; color: var(--grey); }
+
+.account-layout {
+max-width: 1200px; margin: 40px auto; padding: 0 5%;
+display: grid; grid-template-columns: 280px 1fr; gap: 30px;
+}
+
+.sidebar { background: var(--white); padding: 25px; border-radius: var(--radius); box-shadow: var(--shadow); height: fit-content; }
+.user-profile-brief { text-align: center; margin-bottom: 30px; }
+.avatar-box { 
+width: 70px; height: 70px; background: var(--soft-blue); color: var(--primary);
+border-radius: 50%; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center;
+font-size: 1.8rem; font-weight: 800; border: 2px solid white; box-shadow: var(--shadow);
+}
+.menu-item { 
+display: flex; align-items: center; gap: 12px; padding: 12px 15px;
+text-decoration: none; color: var(--grey); font-weight: 600; border-radius: 12px; transition: 0.3s;
+margin-bottom: 5px; cursor: pointer;
+}
+.menu-item:hover, .menu-item.active { background: var(--soft-blue); color: var(--primary); }
+
+.card { background: var(--white); padding: 30px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 25px; border: 1px solid #f1f5f9; }
+.card-head { font-size: 1.1rem; font-weight: 800; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; }
+
+.form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label { font-size: 0.75rem; font-weight: 700; color: #444; }
+.form-group input, .form-group select { 
+padding: 12px; border-radius: 8px; border: 1px solid #888c8c; outline: none; 
+font-family: inherit; font-size: 0.95rem; transition: 0.2s;
+}
+
+.action-btn { 
+padding: 12px 24px; background: #FFD814; color: #111;
+border: 1px solid #FCD200; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s;
+}
+.action-btn:hover { background: #f7ca00; }
+
+.address-card { 
+border: 1px solid var(--border); padding: 20px; border-radius: 12px; 
+display: flex; justify-content: space-between; align-items: flex-start; background: #fdfdfd; margin-bottom: 15px;
+}
+.delete-btn { color: #cc0c39; cursor: pointer; font-size: 0.8rem; font-weight: 700; text-decoration: underline; }
+
+.mobile-sidebar {
+position: fixed;
+top: 0; left: 0;
+width: 80%;
+max-width: 320px;
+height: 100%;
+background: var(--white);
+box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+transform: translateX(-100%);
+transition: transform 0.3s ease;
+z-index: 3000;
+padding: 20px;
+display: flex;
+flex-direction: column;
+gap: 15px;
+}
+.mobile-sidebar.active { transform: translateX(0); }
+.mobile-overlay {
+position: fixed;
+inset: 0;
+background: rgba(0,0,0,0.35);
+opacity: 0;
+pointer-events: none;
+transition: opacity 0.3s ease;
+z-index: 2500;
+}
+.mobile-overlay.active { opacity: 1; pointer-events: auto; }
+.mobile-sidebar .close-btn {
+align-self: flex-end;
+background: transparent;
+border: none;
+cursor: pointer;
+font-weight: 800;
+color: var(--primary);
+}
+
+@media (max-width: 900px) {
+.account-layout { grid-template-columns: 1fr; }
+.sidebar { display: none; }
+.form-grid { grid-template-columns: 1fr; }
+.mobile-menu-btn { display: inline-flex; }
+}
+    @media (max-width: 600px) {
+        .logo-area h2 { font-size: 0.95rem; }
     }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: var(--dark); line-height: 1.6; }
-
-    .main-header {
-    background: var(--white); padding: 12px 5%; border-bottom: 1px solid #f1f5f9;
-    display: flex; justify-content: space-between; align-items: center;
-    position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px);
+    .site-footer {
+      margin-top: 40px;
+      padding: 28px 20px;
+      background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+      border-top: 1px solid #dbe7ff;
+      text-align: center;
     }
-    .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
-    .logo-img { height: 40px; }
-        .logo-area h2 { white-space: nowrap; }
-
-    .profile-section { position: relative; }
-    .profile-btn { 
-    background: var(--soft-blue); color: var(--primary); 
-    width: 42px; height: 42px; border-radius: 50%; 
-    display: flex; align-items: center; justify-content: center; 
-    cursor: pointer; border: 2px solid transparent; transition: 0.3s;
+    .site-footer .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
     }
-    .profile-btn:hover { border-color: var(--primary); }
-
-    .sidebar-brand { text-align: center; padding-bottom: 10px; border-bottom: 1px solid #f1f5f9; }
-        .sidebar-brand .brand-text { font-weight: 800; color: var(--dark); }
-        .sidebar-brand .brand-text { font-weight: 750; color: var(--dark); }
-    .sidebar-brand .brand-logo { height: 44px; margin-top: 8px; display: none; }
-
-    .mobile-menu-btn {
-    display: none;
-    background: var(--soft-blue);
-    color: var(--primary);
-    width: 42px; height: 42px;
-    border-radius: 50%;
-    border: 2px solid transparent;
-    cursor: pointer;
-    align-items: center;
-    justify-content: center;
-    transition: 0.3s;
+    .site-footer .footer-nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px 18px;
+      margin-bottom: 12px;
     }
-    .mobile-menu-btn:hover { border-color: var(--primary); }
-
-    .dropdown-menu {
-    position: absolute; top: 55px; right: 0;
-    background: white; width: 280px; border-radius: 20px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.12); border: 1px solid #f1f5f9;
-    display: none; flex-direction: column; padding: 15px; z-index: 2001;
+    .site-footer .footer-nav a {
+      color: #2563eb;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.1px;
     }
-    .dropdown-menu.active { display: flex !important; }
-
-    .dropdown-header { margin-bottom: 12px; padding: 10px; border-bottom: 1px solid #f1f5f9; }
-    .dropdown-header h4 { font-size: 1.1rem; font-weight: 800; color: var(--dark); margin: 0; }
-    .dropdown-header p { font-size: 0.85rem; color: var(--grey); margin: 5px 0 0 0; }
-
-    .dropdown-item {
-    padding: 12px; text-decoration: none; color: var(--dark);
-    border-radius: 12px; display: flex; align-items: center; gap: 15px;
-    transition: 0.2s; cursor: pointer;
+    .site-footer .footer-nav a:hover {
+      color: #1d4ed8;
+      text-decoration: underline;
+      text-underline-offset: 2px;
     }
-    .dropdown-item:hover { background: var(--soft-blue); color: var(--primary); }
-    .dropdown-item i { width: 22px; height: 22px; color: var(--grey); }
-    .item-info { display: flex; flex-direction: column; }
-    .item-info b { font-size: 0.95rem; font-weight: 700; display: block; color: var(--dark); }
-    .item-info span { font-size: 0.8rem; color: var(--grey); }
-
-    .account-layout {
-    max-width: 1200px; margin: 40px auto; padding: 0 5%;
-    display: grid; grid-template-columns: 280px 1fr; gap: 30px;
+    .site-footer .footer-contact {
+      margin: 0 0 6px 0;
+      color: #64748b;
+      font-size: 0.86rem;
+      line-height: 1.5;
     }
-
-    .sidebar { background: var(--white); padding: 25px; border-radius: var(--radius); box-shadow: var(--shadow); height: fit-content; }
-    .user-profile-brief { text-align: center; margin-bottom: 30px; }
-    .avatar-box { 
-    width: 70px; height: 70px; background: var(--soft-blue); color: var(--primary);
-    border-radius: 50%; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center;
-    font-size: 1.8rem; font-weight: 800; border: 2px solid white; box-shadow: var(--shadow);
+    .site-footer .footer-contact a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
     }
-    .menu-item { 
-    display: flex; align-items: center; gap: 12px; padding: 12px 15px;
-    text-decoration: none; color: var(--grey); font-weight: 600; border-radius: 12px; transition: 0.3s;
-    margin-bottom: 5px; cursor: pointer;
+    .site-footer .footer-contact a:hover {
+      text-decoration: underline;
+      text-underline-offset: 2px;
     }
-    .menu-item:hover, .menu-item.active { background: var(--soft-blue); color: var(--primary); }
-
-    .card { background: var(--white); padding: 30px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 25px; border: 1px solid #f1f5f9; }
-    .card-head { font-size: 1.1rem; font-weight: 800; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; }
-
-    .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    .form-group.full { grid-column: 1 / -1; }
-    .form-group label { font-size: 0.75rem; font-weight: 700; color: #444; }
-    .form-group input, .form-group select { 
-    padding: 12px; border-radius: 8px; border: 1px solid #888c8c; outline: none; 
-    font-family: inherit; font-size: 0.95rem; transition: 0.2s;
+    .site-footer .footer-copy {
+      margin: 4px 0 0 0;
+      color: #64748b;
+      font-size: 0.82rem;
     }
+  </style>
+</head>
+<body>
 
-    .action-btn { 
-    padding: 12px 24px; background: #FFD814; color: #111;
-    border: 1px solid #FCD200; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s;
-    }
-    .action-btn:hover { background: #f7ca00; }
+<header class="main-header">
+<div style="display:flex; gap:10px; align-items:center;">
+<button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu">
+<i data-lucide="menu"></i>
+</button>
+<a href="index.html" class="logo-area">
+<img src="logo.png" alt="Logo" class="logo-img">
+<h2 style="font-size: 1rem; font-weight: 800;">Hygienic & Comfort Co.</h2>
+</a>
+</div>
 
-    .address-card { 
-    border: 1px solid var(--border); padding: 20px; border-radius: 12px; 
-    display: flex; justify-content: space-between; align-items: flex-start; background: #fdfdfd; margin-bottom: 15px;
-    }
-    .delete-btn { color: #cc0c39; cursor: pointer; font-size: 0.8rem; font-weight: 700; text-decoration: underline; }
+<div class="profile-section">
+<a class="profile-btn" href="cart.html" aria-label="Cart">
+<i data-lucide="shopping-cart"></i>
+</a>
 
-    .mobile-sidebar {
-    position: fixed;
-    top: 0; left: 0;
-    width: 80%;
-    max-width: 320px;
-    height: 100%;
-    background: var(--white);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-    z-index: 3000;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    }
-    .mobile-sidebar.active { transform: translateX(0); }
-    .mobile-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.35);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-    z-index: 2500;
-    }
-    .mobile-overlay.active { opacity: 1; pointer-events: auto; }
-    .mobile-sidebar .close-btn {
-    align-self: flex-end;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-weight: 800;
-    color: var(--primary);
-    }
+<div class="dropdown-menu" id="profile-dropdown">
+<div class="dropdown-header">
+<h4 id="drop-name">Welcome!</h4>
+<p id="drop-email">User Account</p>
+</div>
+<div id="auth-items">
+<a href="profile.html" class="dropdown-item">
+<i data-lucide="user"></i>
+<div class="item-info"><b>My Profile</b><span>Settings</span></div>
+</a>
+<a href="orders.html" class="dropdown-item">
+<i data-lucide="package"></i>
+<div class="item-info"><b>My Orders</b><span>Purchase history</span></div>
+</a>
+<div class="dropdown-item" style="color:#ef4444" onclick="handleLogout()">
+<i data-lucide="log-out"></i>
+<div class="item-info"><b>Logout</b><span>End session</span></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</header>
 
-    @media (max-width: 900px) {
-    .account-layout { grid-template-columns: 1fr; }
-    .sidebar { display: none; }
-    .form-grid { grid-template-columns: 1fr; }
-    .mobile-menu-btn { display: inline-flex; }
-    }
-        @media (max-width: 600px) {
-            .logo-area h2 { font-size: 0.95rem; }
-        }
-    </style>
-    </head>
-    <body>
+<div class="mobile-overlay" id="mobile-overlay"></div>
+<aside class="mobile-sidebar" id="mobile-sidebar">
+<button class="close-btn" id="mobile-close-btn">Close</button>
+<div class="user-profile-brief">
+<div class="avatar-box" id="mobile-user-circle">?</div>
+<h3 id="mobile-side-name" style="font-size: 1rem;">Welcome!</h3>
+<p id="mobile-side-email" style="font-size: 0.75rem; color: var(--grey);"></p>
+</div>
+<nav class="side-nav">
+<a href="profile.html" class="menu-item"><i data-lucide="user"></i> Personal Info</a>
+<a href="orders.html" class="menu-item"><i data-lucide="package"></i> My Orders</a>
+<a href="address.html" class="menu-item active"><i data-lucide="map-pin"></i> Saved Addresses</a>
+<div class="menu-item" style="color:#ef4444; margin-top: 20px;" onclick="handleLogout()"><i data-lucide="log-out"></i> Logout</div>
+</nav>
+</aside>
 
-    <header class="main-header">
-    <div style="display:flex; gap:10px; align-items:center;">
-    <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu">
-    <i data-lucide="menu"></i>
-    </button>
-    <a href="index.html" class="logo-area">
-    <img src="logo.png" alt="Logo" class="logo-img">
-    <h2 style="font-size: 1rem; font-weight: 800;">Hygienic & Comfort Co.</h2>
-    </a>
-    </div>
+<div class="account-layout">
+<aside class="sidebar">
+<div class="user-profile-brief">
+<div class="avatar-box" id="user-circle">?</div>
+<h3 id="side-name" style="font-size: 1rem;">Welcome!</h3>
+<p id="side-email" style="font-size: 0.75rem; color: var(--grey);"></p>
+</div>
+<nav class="side-nav">
+<a href="profile.html" class="menu-item"><i data-lucide="user"></i> Personal Info</a>
+<a href="orders.html" class="menu-item"><i data-lucide="package"></i> My Orders</a>
+<a href="address.html" class="menu-item active"><i data-lucide="map-pin"></i> Saved Addresses</a>
+<div class="menu-item" style="color:#ef4444; margin-top: 20px;" onclick="handleLogout()"><i data-lucide="log-out"></i> Logout</div>
+</nav>
+</aside>
 
-    <div class="profile-section">
-    <a class="profile-btn" href="cart.html" aria-label="Cart">
-    <i data-lucide="shopping-cart"></i>
-    </a>
+<main class="main-content">
+<div class="card" id="address-sec">
+<h2 class="card-head"><i data-lucide="map-pin"></i> Delivery Addresses</h2>
+<form id="address-form" style="margin-bottom:30px;">
+<div class="form-grid">
+<div class="form-group full">
+<label for="addr-contact-name">Full name</label>
+<input type="text" id="addr-contact-name" required>
+</div>
+<div class="form-group">
+<label for="addr-pin">Pincode</label>
+<input type="text" id="addr-pin" maxlength="6" required>
+</div>
+<div class="form-group">
+<label for="addr-city">Town/City</label>
+<input type="text" id="addr-city" required>
+</div>
+<div class="form-group full">
+<label for="addr-flat">House / Flat Address</label>
+<input type="text" id="addr-flat" required>
+</div>
+<div class="form-group">
+<label for="addr-state">State</label>
+<select id="addr-state" required>
+<option value="Maharashtra">Maharashtra</option>
+<option value="Delhi">Delhi</option>
+</select>
+</div>
+<div class="form-group">
+<label for="addr-type">Type</label>
+<select id="addr-type">
+<option value="Home">Home</option>
+<option value="Office">Office</option>
+</select>
+</div>
+</div>
+<button type="submit" class="action-btn" id="save-addr-btn" style="margin-top:15px;">Add Address</button>
+</form>
+<div id="address-container"></div>
+</div>
+</main>
+</div>
 
-    <div class="dropdown-menu" id="profile-dropdown">
-    <div class="dropdown-header">
-    <h4 id="drop-name">Welcome!</h4>
-    <p id="drop-email">User Account</p>
-    </div>
-    <div id="auth-items">
-    <a href="profile.html" class="dropdown-item">
-    <i data-lucide="user"></i>
-    <div class="item-info"><b>My Profile</b><span>Settings</span></div>
-    </a>
-    <a href="orders.html" class="dropdown-item">
-    <i data-lucide="package"></i>
-    <div class="item-info"><b>My Orders</b><span>Purchase history</span></div>
-    </a>
-    <div class="dropdown-item" style="color:#ef4444" onclick="handleLogout()">
-    <i data-lucide="log-out"></i>
-    <div class="item-info"><b>Logout</b><span>End session</span></div>
-    </div>
-    </div>
-    </div>
-    </div>
-    </div>
-    </header>
+<script>
+const _supabase = supabase.createClient('https://uhkheprfbxxwuojswyht.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es');
+const normalizeId = (value) => (value ?? "").toString().trim();
 
-    <div class="mobile-overlay" id="mobile-overlay"></div>
-    <aside class="mobile-sidebar" id="mobile-sidebar">
-    <button class="close-btn" id="mobile-close-btn">Close</button>
-    <div class="user-profile-brief">
-    <div class="avatar-box" id="mobile-user-circle">?</div>
-    <h3 id="mobile-side-name" style="font-size: 1rem;">Welcome!</h3>
-    <p id="mobile-side-email" style="font-size: 0.75rem; color: var(--grey);"></p>
-    </div>
-    <nav class="side-nav">
-    <a href="profile.html" class="menu-item"><i data-lucide="user"></i> Personal Info</a>
-    <a href="orders.html" class="menu-item"><i data-lucide="package"></i> My Orders</a>
-    <a href="address.html" class="menu-item active"><i data-lucide="map-pin"></i> Saved Addresses</a>
-    <div class="menu-item" style="color:#ef4444; margin-top: 20px;" onclick="handleLogout()"><i data-lucide="log-out"></i> Logout</div>
+async function initializePage() {
+const { data: { user } } = await _supabase.auth.getUser();
+if (!user) return window.location.href = "login.html";
+
+document.getElementById('side-email').innerText = user.email || "";
+document.getElementById('drop-email').innerText = user.email || "";
+
+const { data: profile } = await _supabase.from('customer_signup').select('*').eq('id', user.id).maybeSingle();
+if (profile) {
+document.getElementById('side-name').innerText = profile.full_name || "User";
+document.getElementById('drop-name').innerText = profile.full_name || "User";
+document.getElementById('user-circle').innerText = (profile.full_name || "U").charAt(0).toUpperCase();
+document.getElementById('mobile-side-name').innerText = profile.full_name || "User";
+document.getElementById('mobile-user-circle').innerText = (profile.full_name || "U").charAt(0).toUpperCase();
+}
+document.getElementById('mobile-side-email').innerText = user.email || "";
+
+loadAddresses(user.id);
+lucide.createIcons();
+}
+
+async function loadAddresses(userId) {
+const { data } = await _supabase.from('customer_addresses').select('*').eq('user_id', userId);
+const container = document.getElementById('address-container');
+const safeData = (data || []).filter(addr => normalizeId(addr.user_id) === normalizeId(userId));
+if (safeData.length > 0) {
+container.innerHTML = safeData.map(addr => `
+           <div class="address-card">
+               <div>
+                   <b>${addr.full_name}</b>
+                   <p>${addr.full_address}, ${addr.city}, ${addr.state} - ${addr.pincode}</p>
+               </div>
+               <div class="delete-btn" onclick="deleteAddress('${addr.id}')">Remove</div>
+           </div>`).join('');
+} else {
+container.innerHTML = `<div style="color: var(--grey); font-size: 0.9rem;">No saved addresses yet.</div>`;
+}
+}
+
+async function deleteAddress(id) {
+const { data: { user } } = await _supabase.auth.getUser();
+if (!user) return alert("Please log in again.");
+const { error } = await _supabase.from('customer_addresses').delete().eq('id', id).eq('user_id', user.id);
+if (error) {
+console.error("Delete address error:", error);
+alert("Delete failed: " + error.message);
+return;
+}
+loadAddresses(user.id);
+}
+
+document.getElementById('address-form').addEventListener('submit', async (e) => {
+e.preventDefault();
+const { data: { user } } = await _supabase.auth.getUser();
+if (!user) return alert("Please log in again.");
+
+const payload = {
+user_id: user.id,
+full_name: document.getElementById('addr-contact-name').value.trim(),
+pincode: document.getElementById('addr-pin').value.trim(),
+city: document.getElementById('addr-city').value.trim(),
+full_address: document.getElementById('addr-flat').value.trim(),
+state: document.getElementById('addr-state').value,
+type: document.getElementById('addr-type').value
+};
+
+const { error } = await _supabase.from('customer_addresses').insert(payload);
+if (error) {
+console.error("Save address error:", error);
+alert("Address not saved: " + error.message);
+return;
+}
+
+e.target.reset();
+loadAddresses(user.id);
+});
+
+document.getElementById('profile-btn')?.addEventListener('click', (e) => {
+e.stopPropagation();
+document.getElementById('profile-dropdown').classList.toggle('active');
+});
+
+const mobileSidebar = document.getElementById('mobile-sidebar');
+const mobileOverlay = document.getElementById('mobile-overlay');
+document.getElementById('mobile-menu-btn')?.addEventListener('click', () => {
+mobileSidebar.classList.add('active');
+mobileOverlay.classList.add('active');
+});
+document.getElementById('mobile-close-btn')?.addEventListener('click', () => {
+mobileSidebar.classList.remove('active');
+mobileOverlay.classList.remove('active');
+});
+mobileOverlay?.addEventListener('click', () => {
+mobileSidebar.classList.remove('active');
+mobileOverlay.classList.remove('active');
+});
+
+async function handleLogout() {
+if (!confirm('Are you sure you want to log out?')) return;
+await _supabase.auth.signOut();
+window.location.href = "index.html";
+}
+
+window.onload = initializePage;
+window.onclick = (e) => { if (!e.target.closest('.profile-section')) document.getElementById('profile-dropdown').classList.remove('active'); };
+</script>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <nav class="footer-nav" aria-label="Footer Navigation">
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="orders.html">Orders</a>
+      <a href="privacy-policy.html">Privacy Policy</a>
     </nav>
-    </aside>
+    <p class="footer-contact">
+      Phone: <a href="tel:+919307760665">+91 9307760665</a> |
+      WhatsApp: <a href="https://wa.me/919307760665" target="_blank" rel="noopener">Chat Support</a>
+    </p>
+    <p class="footer-contact">
+      Email: <a href="mailto:hygienicsandcomfort@gmail.com">hygienicsandcomfort@gmail.com</a>
+    </p>
+    <p class="footer-copy">&copy; 2026 Hygienic &amp; Comfort Co. All rights reserved.</p>
+  </div>
+</footer>
+</body>
+</html>
 
-    <div class="account-layout">
-    <aside class="sidebar">
-    <div class="user-profile-brief">
-    <div class="avatar-box" id="user-circle">?</div>
-    <h3 id="side-name" style="font-size: 1rem;">Welcome!</h3>
-    <p id="side-email" style="font-size: 0.75rem; color: var(--grey);"></p>
-    </div>
-    <nav class="side-nav">
-    <a href="profile.html" class="menu-item"><i data-lucide="user"></i> Personal Info</a>
-    <a href="orders.html" class="menu-item"><i data-lucide="package"></i> My Orders</a>
-    <a href="address.html" class="menu-item active"><i data-lucide="map-pin"></i> Saved Addresses</a>
-    <div class="menu-item" style="color:#ef4444; margin-top: 20px;" onclick="handleLogout()"><i data-lucide="log-out"></i> Logout</div>
-    </nav>
-    </aside>
 
-    <main class="main-content">
-    <div class="card" id="address-sec">
-    <h2 class="card-head"><i data-lucide="map-pin"></i> Delivery Addresses</h2>
-    <form id="address-form" style="margin-bottom:30px;">
-    <div class="form-grid">
-    <div class="form-group full">
-    <label>Full name</label>
-    <input type="text" id="addr-contact-name" required>
-    </div>
-    <div class="form-group">
-    <label>Pincode</label>
-    <input type="text" id="addr-pin" maxlength="6" required>
-    </div>
-    <div class="form-group">
-    <label>Town/City</label>
-    <input type="text" id="addr-city" required>
-    </div>
-    <div class="form-group full">
-    <label>House / Flat Address</label>
-    <input type="text" id="addr-flat" required>
-    </div>
-    <div class="form-group">
-    <label>State</label>
-    <select id="addr-state" required>
-    <option value="Maharashtra">Maharashtra</option>
-    <option value="Delhi">Delhi</option>
-    </select>
-    </div>
-    <div class="form-group">
-    <label>Type</label>
-    <select id="addr-type">
-    <option value="Home">Home</option>
-    <option value="Office">Office</option>
-    </select>
-    </div>
-    </div>
-    <button type="submit" class="action-btn" id="save-addr-btn" style="margin-top:15px;">Add Address</button>
-    </form>
-    <div id="address-container"></div>
-    </div>
-    </main>
-    </div>
 
-    <script>
-    const _supabase = supabase.createClient('https://uhkheprfbxxwuojswyht.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es');
 
-    async function initializePage() {
-    const { data: { user } } = await _supabase.auth.getUser();
-    if (!user) return window.location.href = "login.html";
 
-    document.getElementById('side-email').innerText = user.email || "";
-    document.getElementById('drop-email').innerText = user.email || "";
-
-    const { data: profile } = await _supabase.from('customer_signup').select('*').eq('id', user.id).maybeSingle();
-    if (profile) {
-    document.getElementById('side-name').innerText = profile.full_name || "User";
-    document.getElementById('drop-name').innerText = profile.full_name || "User";
-    document.getElementById('user-circle').innerText = (profile.full_name || "U").charAt(0).toUpperCase();
-    document.getElementById('mobile-side-name').innerText = profile.full_name || "User";
-    document.getElementById('mobile-user-circle').innerText = (profile.full_name || "U").charAt(0).toUpperCase();
-    }
-    document.getElementById('mobile-side-email').innerText = user.email || "";
-
-    loadAddresses(user.id);
-    lucide.createIcons();
-    }
-
-    async function loadAddresses(userId) {
-    const { data } = await _supabase.from('customer_addresses').select('*').eq('user_id', userId);
-    const container = document.getElementById('address-container');
-    if (data && data.length > 0) {
-    container.innerHTML = data.map(addr => `
-            <div class="address-card">
-                <div>
-                    <b>${addr.full_name}</b>
-                    <p>${addr.full_address}, ${addr.city}, ${addr.state} - ${addr.pincode}</p>
-                </div>
-                <div class="delete-btn" onclick="deleteAddress('${addr.id}')">Remove</div>
-            </div>`).join('');
-    } else {
-    container.innerHTML = `<div style="color: var(--grey); font-size: 0.9rem;">No saved addresses yet.</div>`;
-    }
-    }
-
-    async function deleteAddress(id) {
-    const { data: { user } } = await _supabase.auth.getUser();
-    if (!user) return alert("Please log in again.");
-    const { error } = await _supabase.from('customer_addresses').delete().eq('id', id).eq('user_id', user.id);
-    if (error) {
-    console.error("Delete address error:", error);
-    alert("Delete failed: " + error.message);
-    return;
-    }
-    loadAddresses(user.id);
-    }
-
-    document.getElementById('address-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const { data: { user } } = await _supabase.auth.getUser();
-    if (!user) return alert("Please log in again.");
-
-    const payload = {
-    user_id: user.id,
-    full_name: document.getElementById('addr-contact-name').value.trim(),
-    pincode: document.getElementById('addr-pin').value.trim(),
-    city: document.getElementById('addr-city').value.trim(),
-    full_address: document.getElementById('addr-flat').value.trim(),
-    state: document.getElementById('addr-state').value,
-    type: document.getElementById('addr-type').value
-    };
-
-    const { error } = await _supabase.from('customer_addresses').insert(payload);
-    if (error) {
-    console.error("Save address error:", error);
-    alert("Address not saved: " + error.message);
-    return;
-    }
-
-    e.target.reset();
-    loadAddresses(user.id);
-    });
-
-    document.getElementById('profile-btn')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.getElementById('profile-dropdown').classList.toggle('active');
-    });
-
-    const mobileSidebar = document.getElementById('mobile-sidebar');
-    const mobileOverlay = document.getElementById('mobile-overlay');
-    document.getElementById('mobile-menu-btn')?.addEventListener('click', () => {
-    mobileSidebar.classList.add('active');
-    mobileOverlay.classList.add('active');
-    });
-    document.getElementById('mobile-close-btn')?.addEventListener('click', () => {
-    mobileSidebar.classList.remove('active');
-    mobileOverlay.classList.remove('active');
-    });
-    mobileOverlay?.addEventListener('click', () => {
-    mobileSidebar.classList.remove('active');
-    mobileOverlay.classList.remove('active');
-    });
-
-    async function handleLogout() {
-    if (!confirm('Are you sure you want to log out?')) return;
-    await _supabase.auth.signOut();
-    window.location.href = "index.html";
-    }
-
-    window.onload = initializePage;
-    window.onclick = (e) => { if (!e.target.closest('.profile-section')) document.getElementById('profile-dropdown').classList.remove('active'); };
-    </script>
-    <footer style="margin-top:40px; padding:28px 20px; background:#ffffff; border-top:1px solid #e2e8f0; text-align:center;">
-    <div style="max-width:1100px; margin:0 auto;">
-        <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:14px 18px; font-size:0.9rem; font-weight:700; margin-bottom:12px;">
-        <a href="index.html" style="color:#2563eb; text-decoration:none;">Home</a>
-        <a href="products.html" style="color:#2563eb; text-decoration:none;">Products</a>
-        <a href="about.html" style="color:#2563eb; text-decoration:none;">About</a>
-        <a href="contact.html" style="color:#2563eb; text-decoration:none;">Contact</a>
-        <a href="orders.html" style="color:#2563eb; text-decoration:none;">Orders</a>
-        <a href="privacy-policy.html" style="color:#2563eb; text-decoration:none;">Privacy Policy</a>
-        </div>
-        <p style="margin:0 0 6px 0; color:#64748b; font-size:0.86rem;">Phone: <a href="tel:+919307760665" style="color:#2563eb; text-decoration:none;">+91 9307760665</a> | WhatsApp: <a href="https://wa.me/919307760665" target="_blank" rel="noopener">Chat Support</a></p>
-        <p style="margin:0 0 8px 0; color:#64748b; font-size:0.86rem;">Email: <a href="mailto:hygienicsandcomfort@gmail.com" style="color:#2563eb; text-decoration:none;">hygienicsandcomfort@gmail.com</a></p>
-        <p style="margin:0; color:#64748b; font-size:0.82rem;">&copy; 2026 Hygienic &amp; Comfort Co. All rights reserved.</p>
-    </div>
-    </footer>
-    </body>
-    </html>
