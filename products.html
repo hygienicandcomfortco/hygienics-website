@@ -580,11 +580,11 @@ if (user) {
 let latestName = "";
 try {
 const { data: profile } = await _supabase
-  .from('customer_signup')
-  .select('full_name')
-  .eq('id', user.id)
+  .from('customers')
+  .select('customer_name')
+  .eq('user_id', user.id)
   .maybeSingle();
-latestName = (profile?.full_name || "").toString().trim();
+latestName = (profile?.customer_name || "").toString().trim();
 } catch (e) {
 console.warn("Could not fetch latest profile name:", e);
 }
