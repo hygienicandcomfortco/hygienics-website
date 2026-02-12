@@ -326,11 +326,50 @@
     .submit-btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 800; cursor: pointer; color: #fff; }
 
     /* --- Trust Bar --- */
-    .trust-bar { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 40px 5%; background: #fff; border-top: 1px solid #f1f5f9; }
-    .trust-item { font-weight: 700; display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
-    .trust-item svg { color: var(--primary); width: 20px; }
+    .trust-bar {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: start;
+      gap: 8px;
+      padding: 24px 4%;
+      background: #fff;
+      border-top: 1px solid #f1f5f9;
+    }
+    .trust-item {
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      line-height: 1.25;
+      text-align: center;
+      min-width: 0;
+    }
+    .trust-item svg {
+      color: var(--primary);
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+    }
 
-    @media (min-width: 768px) { .trust-bar { flex-direction: row; justify-content: center; gap: 60px; } }
+    @media (min-width: 768px) {
+      .trust-bar {
+        display: flex;
+        justify-content: center;
+        gap: 60px;
+        padding: 40px 5%;
+      }
+      .trust-item {
+        gap: 10px;
+        font-size: 0.9rem;
+        text-align: left;
+      }
+      .trust-item svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
 
     .cart-count-btn {
       position: fixed; bottom: 25px; right: 25px;
@@ -339,6 +378,57 @@
       text-decoration: none; z-index: 2000; box-shadow: 0 8px 20px rgba(37,99,235,0.3);
     }
     .badge { position: absolute; top: -2px; right: -2px; background: #ef4444; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; border: 2px solid #fff; }
+
+    .site-footer {
+      margin-top: 40px;
+      padding: 28px 20px;
+      background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+      border-top: 1px solid #dbe7ff;
+      text-align: center;
+    }
+    .site-footer .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .site-footer .footer-nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px 18px;
+      margin-bottom: 12px;
+    }
+    .site-footer .footer-nav a {
+      color: #2563eb;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.1px;
+    }
+    .site-footer .footer-nav a:hover {
+      color: #1d4ed8;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .site-footer .footer-contact {
+      margin: 0 0 6px 0;
+      color: #64748b;
+      font-size: 0.86rem;
+      line-height: 1.5;
+    }
+    .site-footer .footer-contact a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .site-footer .footer-contact a:hover {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .site-footer .footer-copy {
+      margin: 4px 0 0 0;
+      color: #64748b;
+      font-size: 0.82rem;
+    }
   </style>
 </head>
 <body>
@@ -446,10 +536,10 @@
         <h3 style="margin-bottom:10px;">Share Feedback</h3>
         <p style="color:var(--grey); font-size:0.85rem; margin-bottom:20px;">Your experience helps us improve.</p>
         <form id="feedback-form">
-          <div class="form-group"><label>Full Name</label><input type="text" id="fb-name" required></div>
-          <div class="form-group"><label>Mobile Number</label><input type="text" id="fb-mobile" class="num-only" maxlength="10" placeholder="10-digit number" required></div>
-          <div class="form-group">
-            <label>Your Rating</label>
+          <div class="form-group"><label for="fb-name">Full Name</label><input type="text" id="fb-name" required></div>
+          <div class="form-group"><label for="fb-mobile">Mobile Number</label><input type="text" id="fb-mobile" class="num-only" maxlength="10" placeholder="10-digit number" required></div>
+          <fieldset class="form-group" style="border:0; padding:0; margin:0 0 15px 0;">
+            <legend style="font-size:0.8rem; font-weight:700; margin-bottom:5px;">Your Rating</legend>
             <div class="star-rating" id="star-container">
               <span class="star-item" data-value="1"><i data-lucide="star"></i></span>
               <span class="star-item" data-value="2"><i data-lucide="star"></i></span>
@@ -457,8 +547,8 @@
               <span class="star-item" data-value="4"><i data-lucide="star"></i></span>
               <span class="star-item" data-value="5"><i data-lucide="star"></i></span>
             </div>
-          </div>
-          <div class="form-group"><label>Experience</label><textarea id="fb-exp" rows="3" required></textarea></div>
+          </fieldset>
+          <div class="form-group"><label for="fb-exp">Experience</label><textarea id="fb-exp" rows="3" required></textarea></div>
           <button type="submit" class="submit-btn" style="background:var(--primary);" id="fb-btn">Submit Feedback</button>
         </form>
       </div>
@@ -467,9 +557,9 @@
         <h3 style="margin-bottom:10px;">Product Suggestion</h3>
         <p style="color:var(--grey); font-size:0.85rem; margin-bottom:20px;">What should we bring next?</p>
         <form id="suggestion-form">
-          <div class="form-group"><label>Your Name</label><input type="text" id="sug-name" required></div>
-          <div class="form-group"><label>Mobile Number</label><input type="text" id="sug-mobile" class="num-only" maxlength="10" placeholder="10-digit number" required></div>
-          <div class="form-group"><label>Suggested Product</label><input type="text" id="sug-product" required></div>
+          <div class="form-group"><label for="sug-name">Your Name</label><input type="text" id="sug-name" required></div>
+          <div class="form-group"><label for="sug-mobile">Mobile Number</label><input type="text" id="sug-mobile" class="num-only" maxlength="10" placeholder="10-digit number" required></div>
+          <div class="form-group"><label for="sug-product">Suggested Product</label><input type="text" id="sug-product" required></div>
           <button type="submit" class="submit-btn" style="background:var(--dark);" id="sug-btn">Send Suggestion</button>
         </form>
       </div>
@@ -488,19 +578,24 @@
   <span class="badge" id="cart-badge">0</span>
 </a>
 
-<footer style="margin-top:40px; padding:28px 20px; background:#ffffff; border-top:1px solid #e2e8f0; text-align:center;">
-  <div style="max-width:1100px; margin:0 auto;">
-    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:14px 18px; font-size:0.9rem; font-weight:700; margin-bottom:12px;">
-      <a href="index.html" style="color:#2563eb; text-decoration:none;">Home</a>
-      <a href="products.html" style="color:#2563eb; text-decoration:none;">Products</a>
-      <a href="about.html" style="color:#2563eb; text-decoration:none;">About</a>
-      <a href="contact.html" style="color:#2563eb; text-decoration:none;">Contact</a>
-      <a href="orders.html" style="color:#2563eb; text-decoration:none;">Orders</a>
-      <a href="privacy-policy.html" style="color:#2563eb; text-decoration:none;">Privacy Policy</a>
-    </div>
-    <p style="margin:0 0 6px 0; color:#64748b; font-size:0.86rem;">Phone: <a href="tel:+919307760665" style="color:#2563eb; text-decoration:none;">+91 9307760665</a> | WhatsApp: <a href="https://wa.me/919307760665" target="_blank" rel="noopener">Chat Support</a></p>
-    <p style="margin:0 0 8px 0; color:#64748b; font-size:0.86rem;">Email: <a href="mailto:hygienicsandcomfort@gmail.com" style="color:#2563eb; text-decoration:none;">hygienicsandcomfort@gmail.com</a></p>
-    <p style="margin:0; color:#64748b; font-size:0.82rem;">&copy; 2026 Hygienic &amp; Comfort Co. All rights reserved.</p>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <nav class="footer-nav" aria-label="Footer Navigation">
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="orders.html">Orders</a>
+      <a href="privacy-policy.html">Privacy Policy</a>
+    </nav>
+    <p class="footer-contact">
+      Phone: <a href="tel:+919307760665">+91 9307760665</a> |
+      WhatsApp: <a href="https://wa.me/919307760665" target="_blank" rel="noopener">Chat Support</a>
+    </p>
+    <p class="footer-contact">
+      Email: <a href="mailto:hygienicsandcomfort@gmail.com">hygienicsandcomfort@gmail.com</a>
+    </p>
+    <p class="footer-copy">&copy; 2026 Hygienic &amp; Comfort Co. All rights reserved.</p>
   </div>
 </footer>
 
@@ -516,19 +611,36 @@
     const authItems = document.getElementById('auth-items');
     const userDisplay = document.getElementById('user-display-name');
     const userSub = document.getElementById('user-display-sub');
+    const profileIcon = document.querySelector('.profile-btn i');
     
     if (user) {
+      let latestName = "";
+      try {
+        const { data: profile } = await _supabase
+          .from('customer_signup')
+          .select('full_name')
+          .eq('id', user.id)
+          .maybeSingle();
+        latestName = (profile?.full_name || "").toString().trim();
+      } catch (e) {
+        console.warn("Could not fetch latest profile name:", e);
+      }
+
+      const metaName = (user.user_metadata?.full_name || user.user_metadata?.name || "").toString().trim();
+      const fallbackName = (user.email ? user.email.split('@')[0] : (user.phone || "User"));
+      const displayName = latestName || metaName || fallbackName || "User";
+
       guestItems.style.display = 'none';
       authItems.style.display = 'flex';
-      userDisplay.innerText = "Welcome Back!";
+      userDisplay.innerText = displayName;
       userSub.innerText = user.email || user.phone || "User Account";
-      document.querySelector('.profile-btn i').setAttribute('data-lucide', 'user-check');
+      if (profileIcon) profileIcon.setAttribute('data-lucide', 'user-check');
     } else {
       guestItems.style.display = 'block';
       authItems.style.display = 'none';
       userDisplay.innerText = "Guest User";
       userSub.innerText = "Manage your account";
-      document.querySelector('.profile-btn i').setAttribute('data-lucide', 'user');
+      if (profileIcon) profileIcon.setAttribute('data-lucide', 'user');
     }
     lucide.createIcons();
   }
@@ -543,8 +655,8 @@
     if (!confirm('Are you sure you want to log out?')) return;
     try {
         await _supabase.auth.signOut();
-        localStorage.clear(); 
-        window.location.href = 'index.html'; 
+        localStorage.removeItem('checkout-item');
+window.location.href = 'index.html'; 
     } catch (err) {
         console.error("Logout Error:", err);
         window.location.reload();
@@ -661,7 +773,6 @@
   });
 
   window.onload = () => {
-    lucide.createIcons();
     initStars();
     fetchReviews();
     fetchSearchProducts();
@@ -673,3 +784,9 @@
 </script>
 </body>
 </html>
+
+
+
+
+
+
