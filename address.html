@@ -353,13 +353,13 @@ if (!user) return window.location.href = "login.html";
 document.getElementById('side-email').innerText = user.email || "";
 document.getElementById('drop-email').innerText = user.email || "";
 
-const { data: profile } = await _supabase.from('customer_signup').select('*').eq('id', user.id).maybeSingle();
+const { data: profile } = await _supabase.from('customers').select('*').eq('user_id', user.id).maybeSingle();
 if (profile) {
-document.getElementById('side-name').innerText = profile.full_name || "User";
-document.getElementById('drop-name').innerText = profile.full_name || "User";
-document.getElementById('user-circle').innerText = (profile.full_name || "U").charAt(0).toUpperCase();
-document.getElementById('mobile-side-name').innerText = profile.full_name || "User";
-document.getElementById('mobile-user-circle').innerText = (profile.full_name || "U").charAt(0).toUpperCase();
+document.getElementById('side-name').innerText = profile.customer_name || "User";
+document.getElementById('drop-name').innerText = profile.customer_name || "User";
+document.getElementById('user-circle').innerText = (profile.customer_name || "U").charAt(0).toUpperCase();
+document.getElementById('mobile-side-name').innerText = profile.customer_name || "User";
+document.getElementById('mobile-user-circle').innerText = (profile.customer_name || "U").charAt(0).toUpperCase();
 }
 document.getElementById('mobile-side-email').innerText = user.email || "";
 
