@@ -211,7 +211,57 @@ font-weight: 600;
 font-size: 0.9rem;
 }
 .hidden { display: none; }
-</style>
+    .site-footer {
+      margin-top: 40px;
+      padding: 28px 20px;
+      background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+      border-top: 1px solid #dbe7ff;
+      text-align: center;
+    }
+    .site-footer .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .site-footer .footer-nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px 18px;
+      margin-bottom: 12px;
+    }
+    .site-footer .footer-nav a {
+      color: #2563eb;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.1px;
+    }
+    .site-footer .footer-nav a:hover {
+      color: #1d4ed8;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .site-footer .footer-contact {
+      margin: 0 0 6px 0;
+      color: #64748b;
+      font-size: 0.86rem;
+      line-height: 1.5;
+    }
+    .site-footer .footer-contact a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .site-footer .footer-contact a:hover {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .site-footer .footer-copy {
+      margin: 4px 0 0 0;
+      color: #64748b;
+      font-size: 0.82rem;
+    }
+  </style>
 </head>
 <body>
 
@@ -236,39 +286,39 @@ font-size: 0.9rem;
 <p style="font-weight: 800; font-size: 0.85rem; margin-bottom: 15px; color: var(--dark);">ENTER NEW DELIVERY ADDRESS</p>
 <div class="form-group">
 <label>Full Name</label>
-<input type="text" id="new-full-name" placeholder="Enter recipient name">
+<input type="text" id="new-full-name" placeholder="Enter recipient name" required>
 </div>
 
 <div class="form-group">
 <label>Mobile Number</label>
-<input type="tel" id="new-mobile" maxlength="10" placeholder="10-digit mobile number">
+<input type="tel" id="new-mobile" maxlength="10" placeholder="10-digit mobile number" required>
 </div>
 
 <div class="form-row">
 <div class="form-group">
 <label>Pincode</label>
-<input type="text" id="new-pincode" maxlength="6" placeholder="6 digits">
+<input type="text" id="new-pincode" maxlength="6" placeholder="6 digits" required>
 </div>
 <div class="form-group">
 <label>Town/City</label>
-<input type="text" id="new-city" placeholder="City name">
+<input type="text" id="new-city" placeholder="City name" required>
 </div>
 </div>
 
 <div class="form-group">
 <label>Flat, House no., Building</label>
-<input type="text" id="new-flat" placeholder="Flat/House number">
+<input type="text" id="new-flat" placeholder="Flat/House number" required>
 </div>
 
 <div class="form-group">
 <label>Area, Street, Sector</label>
-<input type="text" id="new-area" placeholder="Area / Street / Sector">
+<input type="text" id="new-area" placeholder="Area / Street / Sector" required>
 </div>
 
 <div class="form-row">
 <div class="form-group">
 <label>State</label>
-<input type="text" id="new-state" placeholder="State">
+<input type="text" id="new-state" placeholder="State" required>
 </div>
 <div class="form-group">
 <label>Address Type</label>
@@ -501,12 +551,13 @@ document.getElementById('cust-alt-phone').value = profile.phone_number || "";
 }
 
 // Load Addresses Cards
-const { data: addresses } = await supa.from('customer_addresses').select('*').eq('user_id', user.id);
+const { data: rawAddresses } = await supa.from('customer_addresses').select('*').eq('user_id', user.id);
 const listDiv = document.getElementById('address-list');
 const selectedText = document.getElementById('selected-address-text');
 const dropdown = document.getElementById('address-dropdown');
 listDiv.innerHTML = "";
 
+const addresses = (rawAddresses || []).filter((addr) => sanitizeValue(addr.user_id) === sanitizeValue(user.id));
 if (addresses && addresses.length > 0) {
 const preferredAddressId = sanitizeValue(checkoutData?.selectedAddressId);
 const preferredAddressLabel = normalizeText(checkoutData?.selectedAddressText);
@@ -619,15 +670,21 @@ else finalAddress = pin;
 
 // Save to customer_addresses table
 if (document.getElementById('save-to-profile').checked) {
-const { error: addrError } = await supa.from('customer_addresses').insert([{
-user_id: user.id,
-full_name: manualName || profileName || "Customer",
-full_address: `${flat}, ${area}`,
-city: city,
-state: state,
-pincode: pin,
-address_type: type
-}]);
+const { data: { user: sessionUser } } = await supa.auth.getUser();
+if (!sessionUser) {
+throw new Error("User not logged in");
+}
+const { error: addrError } = await supa
+  .from('customer_addresses')
+  .upsert({
+    user_id: sessionUser.id,
+    address_type: type,
+    full_address: `${flat}, ${area}`,
+    pincode: pin,
+    city: city,
+    full_name: manualName || profileName || "Customer",
+    is_default: true
+  }, { onConflict: "user_id" });
 if (addrError) throw new Error("Could not save address to profile: " + addrError.message);
 }
 } else {
@@ -688,7 +745,7 @@ await supa.from('products').update({ stock: p.stock - 1 }).eq('id', checkoutData
 localStorage.removeItem('hc-cart');
 localStorage.removeItem('checkout-item');
 
-const msg = `*NEW ORDER*\nItem: ${checkoutData.itemsText || checkoutData.name}\nAddress: ${finalAddress}\nTotal: ₹${checkoutData.price}`;
+const msg = `*NEW ORDER*\nItem: ${checkoutData.itemsText || checkoutData.name}\nAddress: ${finalAddress}\nTotal: ?${checkoutData.price}`;
 window.open(`https://wa.me/919307760665?text=${encodeURIComponent(msg)}`, '_blank');
 
 location.href = "index.html";
@@ -715,20 +772,29 @@ const dropdown = document.getElementById('address-dropdown');
 if (dropdown && !e.target.closest('#address-dropdown')) dropdown.classList.remove('open');
 });
 </script>
-<footer style="margin-top:40px; padding:28px 20px; background:#ffffff; border-top:1px solid #e2e8f0; text-align:center;">
-  <div style="max-width:1100px; margin:0 auto;">
-    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:14px 18px; font-size:0.9rem; font-weight:700; margin-bottom:12px;">
-      <a href="index.html" style="color:#2563eb; text-decoration:none;">Home</a>
-      <a href="products.html" style="color:#2563eb; text-decoration:none;">Products</a>
-      <a href="about.html" style="color:#2563eb; text-decoration:none;">About</a>
-      <a href="contact.html" style="color:#2563eb; text-decoration:none;">Contact</a>
-      <a href="orders.html" style="color:#2563eb; text-decoration:none;">Orders</a>
-      <a href="privacy-policy.html" style="color:#2563eb; text-decoration:none;">Privacy Policy</a>
-    </div>
-    <p style="margin:0 0 6px 0; color:#64748b; font-size:0.86rem;">Phone: <a href="tel:+919307760665" style="color:#2563eb; text-decoration:none;">+91 9307760665</a> | WhatsApp: <a href="https://wa.me/919307760665" target="_blank" rel="noopener">Chat Support</a></p>
-    <p style="margin:0 0 8px 0; color:#64748b; font-size:0.86rem;">Email: <a href="mailto:hygienicsandcomfort@gmail.com" style="color:#2563eb; text-decoration:none;">hygienicsandcomfort@gmail.com</a></p>
-    <p style="margin:0; color:#64748b; font-size:0.82rem;">&copy; 2026 Hygienic &amp; Comfort Co. All rights reserved.</p>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <nav class="footer-nav" aria-label="Footer Navigation">
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="orders.html">Orders</a>
+      <a href="privacy-policy.html">Privacy Policy</a>
+    </nav>
+    <p class="footer-contact">
+      Phone: <a href="tel:+919307760665">+91 9307760665</a> |
+      WhatsApp: <a href="https://wa.me/919307760665" target="_blank" rel="noopener">Chat Support</a>
+    </p>
+    <p class="footer-contact">
+      Email: <a href="mailto:hygienicsandcomfort@gmail.com">hygienicsandcomfort@gmail.com</a>
+    </p>
+    <p class="footer-copy">&copy; 2026 Hygienic &amp; Comfort Co. All rights reserved.</p>
   </div>
 </footer>
 </body>
 </html>
+
+
+
+
