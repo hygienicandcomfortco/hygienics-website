@@ -332,6 +332,17 @@
 
 <script>
   const _supabase = supabase.createClient('https://uhkheprfbxxwuojswyht.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es');
+  const digitsOnly = (value) => (value || "").toString().replace(/[^0-9]/g, '');
+
+  function applyProfileName(name) {
+    const safeName = (name || "User").toString().trim() || "User";
+    document.getElementById('prof-name').value = safeName;
+    document.getElementById('side-name').innerText = safeName;
+    document.getElementById('drop-name').innerText = safeName;
+    document.getElementById('user-circle').innerText = safeName.charAt(0).toUpperCase();
+    document.getElementById('mobile-side-name').innerText = safeName;
+    document.getElementById('mobile-user-circle').innerText = safeName.charAt(0).toUpperCase();
+  }
 
   async function initializeProfile() {
     const { data: { user } } = await _supabase.auth.getUser();
@@ -346,15 +357,28 @@
       .select('*')
       .eq('user_id', user.id)
       .maybeSingle();
-    if (profile) {
-        const customerName = profile.customer_name || "User";
-        document.getElementById('prof-name').value = customerName;
-        document.getElementById('prof-mobile').value = profile.phone_number || "";
-        document.getElementById('side-name').innerText = customerName;
-        document.getElementById('drop-name').innerText = customerName;
-        document.getElementById('user-circle').innerText = customerName.charAt(0).toUpperCase();
-        document.getElementById('mobile-side-name').innerText = customerName;
-        document.getElementById('mobile-user-circle').innerText = customerName.charAt(0).toUpperCase();
+
+    const signupName = (user.user_metadata?.full_name || user.user_metadata?.name || "").toString().trim();
+    const signupPhone = digitsOnly(user.user_metadata?.phone_number || user.phone || "");
+    const dbName = (profile?.customer_name || "").toString().trim();
+    const dbPhone = digitsOnly(profile?.phone_number || "");
+
+    const finalName = dbName || signupName || (user.email ? user.email.split('@')[0] : "User");
+    const finalPhone = dbPhone || signupPhone;
+
+    applyProfileName(finalName);
+    document.getElementById('prof-mobile').value = finalPhone;
+
+    // Auto-sync signup name/phone into customers profile when missing.
+    if ((!dbName && signupName) || (!dbPhone && signupPhone) || !profile) {
+      await _supabase
+        .from('customers')
+        .upsert({
+          user_id: user.id,
+          customer_name: dbName || signupName || finalName,
+          phone_number: dbPhone || signupPhone || null,
+          email: user.email || null
+        }, { onConflict: 'user_id' });
     }
     document.getElementById('mobile-side-email').innerText = user.email || "";
 
@@ -391,9 +415,8 @@
 
     if (data) {
       const updatedName = data.customer_name || "User";
-      document.getElementById('side-name').innerText = updatedName;
-      document.getElementById('drop-name').innerText = updatedName;
-      document.getElementById('user-circle').innerText = updatedName.charAt(0).toUpperCase();
+      applyProfileName(updatedName);
+      document.getElementById('prof-mobile').value = digitsOnly(data.phone_number || phoneNumber);
     }
 
     alert("Profile updated!");
