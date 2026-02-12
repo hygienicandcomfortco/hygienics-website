@@ -341,15 +341,20 @@
     document.getElementById('side-email').innerText = user.email || "";
     document.getElementById('drop-email').innerText = user.email || "";
 
-    const { data: profile } = await _supabase.from('customer_signup').select('*').eq('id', user.id).maybeSingle();
+    const { data: profile } = await _supabase
+      .from('customers')
+      .select('*')
+      .eq('user_id', user.id)
+      .maybeSingle();
     if (profile) {
-        document.getElementById('prof-name').value = profile.full_name || "";
+        const customerName = profile.customer_name || "User";
+        document.getElementById('prof-name').value = customerName;
         document.getElementById('prof-mobile').value = profile.phone_number || "";
-        document.getElementById('side-name').innerText = profile.full_name || "User";
-        document.getElementById('drop-name').innerText = profile.full_name || "User";
-        document.getElementById('user-circle').innerText = (profile.full_name || "U").charAt(0).toUpperCase();
-        document.getElementById('mobile-side-name').innerText = profile.full_name || "User";
-        document.getElementById('mobile-user-circle').innerText = (profile.full_name || "U").charAt(0).toUpperCase();
+        document.getElementById('side-name').innerText = customerName;
+        document.getElementById('drop-name').innerText = customerName;
+        document.getElementById('user-circle').innerText = customerName.charAt(0).toUpperCase();
+        document.getElementById('mobile-side-name').innerText = customerName;
+        document.getElementById('mobile-user-circle').innerText = customerName.charAt(0).toUpperCase();
     }
     document.getElementById('mobile-side-email').innerText = user.email || "";
 
@@ -366,15 +371,15 @@
     const phoneNumber = phoneRaw.replace(/[^0-9]/g, '');
 
     const payload = {
-      id: user.id,
-      full_name: fullName,
+      user_id: user.id,
+      customer_name: fullName,
       phone_number: phoneNumber,
-      email_or_phone: user.email || user.phone || user.id
+      email: user.email || null
     };
 
     const { data, error } = await _supabase
-      .from('customer_signup')
-      .upsert(payload, { onConflict: 'id' })
+      .from('customers')
+      .upsert(payload, { onConflict: 'user_id' })
       .select()
       .maybeSingle();
 
@@ -385,9 +390,10 @@
     }
 
     if (data) {
-      document.getElementById('side-name').innerText = data.full_name || "User";
-      document.getElementById('drop-name').innerText = data.full_name || "User";
-      document.getElementById('user-circle').innerText = (data.full_name || "U").charAt(0).toUpperCase();
+      const updatedName = data.customer_name || "User";
+      document.getElementById('side-name').innerText = updatedName;
+      document.getElementById('drop-name').innerText = updatedName;
+      document.getElementById('user-circle').innerText = updatedName.charAt(0).toUpperCase();
     }
 
     alert("Profile updated!");
