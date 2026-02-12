@@ -455,7 +455,8 @@
     const _supabase = supabase.createClient('https://uhkheprfbxxwuojswyht.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es');
 
     async function checkUserSession() {
-      const { data: { user } } = await _supabase.auth.getUser();
+      const { data: { session }, error: sessionError } = await _supabase.auth.getSession();
+      const user = session?.user || null;
       const guestItems = document.getElementById('guest-items');
       const authItems = document.getElementById('auth-items');
       const userDisplay = document.getElementById('user-display-name');
@@ -471,7 +472,7 @@
         lucide.createIcons();
       };
 
-      if (user) {
+      if (!sessionError && user) {
         guestItems.style.display = 'none';
         authItems.style.display = 'flex';
         userDisplay.innerText = 'Welcome Back!';
