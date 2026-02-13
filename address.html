@@ -111,10 +111,26 @@ margin-bottom: 5px; cursor: pointer;
 .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
 .form-group { display: flex; flex-direction: column; gap: 6px; }
 .form-group.full { grid-column: 1 / -1; }
-.form-group label { font-size: 0.75rem; font-weight: 700; color: #444; }
+.form-group label { font-size: 0.8rem; font-weight: 800; color: #475569; text-transform: uppercase; }
 .form-group input, .form-group select { 
-padding: 12px; border-radius: 8px; border: 1px solid #888c8c; outline: none; 
+padding: 12px; border-radius: 12px; border: 1px solid #cbd5e1; outline: none; 
 font-family: inherit; font-size: 0.95rem; transition: 0.2s;
+background: #fff;
+}
+.form-group input:focus, .form-group select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+.form-panel {
+border: 1px dashed #cbd5e1;
+border-radius: 14px;
+padding: 16px;
+margin-bottom: 16px;
+background: #fbfdff;
+}
+.form-panel h3 {
+font-size: 0.95rem;
+font-weight: 800;
+margin-bottom: 14px;
+color: #0f172a;
+text-transform: uppercase;
 }
 
 .action-btn { 
@@ -124,10 +140,56 @@ border: 1px solid #FCD200; border-radius: 8px; font-weight: 700; cursor: pointer
 .action-btn:hover { background: #f7ca00; }
 
 .address-card { 
-border: 1px solid var(--border); padding: 20px; border-radius: 12px; 
-display: flex; justify-content: space-between; align-items: flex-start; background: #fdfdfd; margin-bottom: 15px;
+border: 1px solid var(--border);
+padding: 18px;
+border-radius: 14px;
+display: grid;
+grid-template-columns: 1fr auto;
+gap: 12px;
+align-items: start;
+background: #ffffff;
+margin-bottom: 14px;
+}
+.address-actions {
+display: flex;
+flex-direction: row;
+align-items: center;
+justify-content: flex-end;
+gap: 6px;
+min-width: 0;
+flex-wrap: nowrap;
+}
+.link-btn {
+background: #f8fafc;
+border: 1px solid #e2e8f0;
+padding: 6px 9px;
+border-radius: 999px;
+font-size: 0.76rem;
+font-weight: 700;
+cursor: pointer;
+text-decoration: none;
+line-height: 1;
+transition: 0.2s;
+white-space: nowrap;
+flex: 0 0 auto;
+}
+.link-btn:hover { transform: translateY(-1px); }
+.edit-btn { color: var(--primary); background: #eff6ff; border-color: #bfdbfe; }
+.default-btn { color: #0f766e; background: #ecfeff; border-color: #99f6e4; }
+.default-pill {
+display: inline-block;
+margin-left: 8px;
+padding: 2px 8px;
+border-radius: 999px;
+font-size: 0.68rem;
+font-weight: 800;
+background: #dcfce7;
+color: #166534;
+white-space: nowrap;
+flex: 0 0 auto;
 }
 .delete-btn { color: #cc0c39; cursor: pointer; font-size: 0.8rem; font-weight: 700; text-decoration: underline; }
+.delete-btn.link-btn { color: #be123c; background: #fff1f2; border-color: #fecdd3; text-decoration: none; }
 
 .mobile-sidebar {
 position: fixed;
@@ -170,6 +232,8 @@ color: var(--primary);
 .sidebar { display: none; }
 .form-grid { grid-template-columns: 1fr; }
 .mobile-menu-btn { display: inline-flex; }
+.address-card { grid-template-columns: 1fr; gap: 10px; }
+.address-actions { align-items: center; justify-content: flex-start; min-width: 0; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 }
     @media (max-width: 600px) {
         .logo-area h2 { font-size: 0.95rem; }
@@ -303,22 +367,32 @@ color: var(--primary);
 <div class="card" id="address-sec">
 <h2 class="card-head"><i data-lucide="map-pin"></i> Delivery Addresses</h2>
 <form id="address-form" style="margin-bottom:30px;">
+<div class="form-panel">
+<h3>Enter New Delivery Address</h3>
 <div class="form-grid">
 <div class="form-group full">
 <label for="addr-contact-name">Full name</label>
-<input type="text" id="addr-contact-name" required>
+<input type="text" id="addr-contact-name" placeholder="Enter recipient name" required>
+</div>
+<div class="form-group full">
+<label for="addr-mobile">Mobile number</label>
+<input type="tel" id="addr-mobile" maxlength="10" placeholder="10-digit mobile number">
 </div>
 <div class="form-group">
 <label for="addr-pin">Pincode</label>
-<input type="text" id="addr-pin" maxlength="6" required>
+<input type="text" id="addr-pin" maxlength="6" placeholder="6 digits" required>
 </div>
 <div class="form-group">
 <label for="addr-city">Town/City</label>
-<input type="text" id="addr-city" required>
+<input type="text" id="addr-city" placeholder="City name" required>
 </div>
 <div class="form-group full">
-<label for="addr-flat">House / Flat Address</label>
-<input type="text" id="addr-flat" required>
+<label for="addr-flat">Flat, House No., Building</label>
+<input type="text" id="addr-flat" placeholder="Flat/House number" required>
+</div>
+<div class="form-group full">
+<label for="addr-area">Area, Street, Sector</label>
+<input type="text" id="addr-area" placeholder="Area / Street / Sector" required>
 </div>
 <div class="form-group">
 <label for="addr-state">State</label>
@@ -335,7 +409,12 @@ color: var(--primary);
 </select>
 </div>
 </div>
-<button type="submit" class="action-btn" id="save-addr-btn" style="margin-top:15px;">Add Address</button>
+</div>
+<input type="hidden" id="editing-address-id" value="">
+<div style="margin-top:15px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+<button type="submit" class="action-btn" id="save-addr-btn">Add Address</button>
+<button type="button" class="action-btn" id="cancel-edit-btn" style="display:none; background:#e2e8f0; border-color:#cbd5e1;">Cancel Edit</button>
+</div>
 </form>
 <div id="address-container"></div>
 </div>
@@ -348,22 +427,34 @@ async function blockAdminFromCustomerSite() {
 const { data: { user } } = await _supabase.auth.getUser();
 if (!user) return null;
 
-const { data: profile } = await _supabase
+const { data: profile, error: profileError } = await _supabase
 .from('profiles')
 .select('role')
 .eq('id', user.id)
-.single();
+.maybeSingle();
 
-if (!profile) return null;
+if (profileError && profileError.code !== 'PGRST116') {
+console.warn("Role lookup failed:", profileError);
+}
 
-if (profile.role === 'admin' || profile.role === 'staff') {
+let role = (profile?.role || "").toLowerCase();
+if (!role) {
+const { data: userRole } = await _supabase
+.from('user_roles')
+.select('role')
+.eq('id', user.id)
+.maybeSingle();
+role = (userRole?.role || "").toLowerCase();
+}
+
+if (role === 'admin' || role === 'staff') {
 await _supabase.auth.signOut();
 alert("Admin accounts must login from Admin Panel.");
 window.location.href = "login.html";
 throw new Error("Admin blocked from customer site");
 }
 
-return profile;
+return profile || null;
 }
 
 (async () => {
@@ -371,6 +462,29 @@ await blockAdminFromCustomerSite();
 })();
 
 const normalizeId = (value) => (value ?? "").toString().trim();
+const editIdInput = document.getElementById('editing-address-id');
+const saveBtn = document.getElementById('save-addr-btn');
+const cancelEditBtn = document.getElementById('cancel-edit-btn');
+
+function escapeHtml(value = "") {
+return String(value)
+.replace(/&/g, "&amp;")
+.replace(/</g, "&lt;")
+.replace(/>/g, "&gt;")
+.replace(/"/g, "&quot;")
+.replace(/'/g, "&#39;");
+}
+
+function splitFullAddress(fullAddress = "") {
+const parts = String(fullAddress).split(',').map((p) => p.trim()).filter(Boolean);
+if (parts.length <= 1) return { flat: parts[0] || "", area: "" };
+return { flat: parts[0], area: parts.slice(1).join(', ') };
+}
+
+function composeFullAddress(flat = "", area = "") {
+const pieces = [flat, area].map((v) => (v || "").trim()).filter(Boolean);
+return pieces.join(', ');
+}
 
 async function initializePage() {
 const { data: { user } } = await _supabase.auth.getUser();
@@ -398,14 +512,26 @@ const { data } = await _supabase.from('customer_addresses').select('*').eq('user
 const container = document.getElementById('address-container');
 const safeData = (data || []).filter(addr => normalizeId(addr.user_id) === normalizeId(userId));
 if (safeData.length > 0) {
-container.innerHTML = safeData.map(addr => `
+container.innerHTML = safeData.map(addr => {
+const isDefault = Boolean(addr.is_default || addr.default || addr.is_primary);
+const safeName = escapeHtml(addr.full_name || "");
+const safeLine = escapeHtml(`${addr.full_address || ""}, ${addr.city || ""}, ${addr.state || ""} - ${addr.pincode || ""}`.replace(/\s+,/g, ',').replace(/,\s*,/g, ', '));
+const safeId = escapeHtml(addr.id || "");
+return `
            <div class="address-card">
                <div>
-                   <b>${addr.full_name}</b>
-                   <p>${addr.full_address}, ${addr.city}, ${addr.state} - ${addr.pincode}</p>
+                   <b>${safeName}${isDefault ? '<span class="default-pill">Default</span>' : ''}</b>
+                   <p>${safeLine}</p>
                </div>
-               <div class="delete-btn" onclick="deleteAddress('${addr.id}')">Remove</div>
-           </div>`).join('');
+               <div class="address-actions">
+                 <button type="button" class="link-btn edit-btn" onclick="startEditAddress('${safeId}')">Edit</button>
+                 ${isDefault
+                   ? ``
+                   : `<button type="button" class="link-btn default-btn" onclick="setDefaultAddress('${safeId}')">Set as Default</button>`}
+                 <button type="button" class="link-btn delete-btn" onclick="deleteAddress('${safeId}')">Remove</button>
+               </div>
+           </div>`;
+}).join('');
 } else {
 container.innerHTML = `<div style="color: var(--grey); font-size: 0.9rem;">No saved addresses yet.</div>`;
 }
@@ -414,12 +540,101 @@ container.innerHTML = `<div style="color: var(--grey); font-size: 0.9rem;">No sa
 async function deleteAddress(id) {
 const { data: { user } } = await _supabase.auth.getUser();
 if (!user) return alert("Please log in again.");
+const { data: target } = await _supabase
+.from('customer_addresses')
+.select('id,is_default')
+.eq('id', id)
+.eq('user_id', user.id)
+.maybeSingle();
+
 const { error } = await _supabase.from('customer_addresses').delete().eq('id', id).eq('user_id', user.id);
 if (error) {
 console.error("Delete address error:", error);
 alert("Delete failed: " + error.message);
 return;
 }
+
+if (target?.is_default) {
+const { data: remaining } = await _supabase
+.from('customer_addresses')
+.select('id')
+.eq('user_id', user.id)
+.order('created_at', { ascending: false })
+.limit(1);
+if (remaining?.[0]?.id) {
+await _supabase
+.from('customer_addresses')
+.update({ is_default: true })
+.eq('id', remaining[0].id)
+.eq('user_id', user.id);
+}
+}
+
+if (normalizeId(editIdInput.value) === normalizeId(id)) resetAddressForm();
+loadAddresses(user.id);
+}
+
+async function startEditAddress(id) {
+const { data: { user } } = await _supabase.auth.getUser();
+if (!user) return alert("Please log in again.");
+const { data: row, error } = await _supabase
+.from('customer_addresses')
+.select('*')
+.eq('id', id)
+.eq('user_id', user.id)
+.maybeSingle();
+if (error || !row) {
+alert("Could not load this address for editing.");
+return;
+}
+
+editIdInput.value = row.id || "";
+const split = splitFullAddress(row.full_address || "");
+document.getElementById('addr-contact-name').value = row.full_name || "";
+document.getElementById('addr-mobile').value = row.phone_number || row.mobile || "";
+document.getElementById('addr-pin').value = row.pincode || "";
+document.getElementById('addr-city').value = row.city || "";
+document.getElementById('addr-flat').value = split.flat;
+document.getElementById('addr-area').value = split.area;
+document.getElementById('addr-state').value = row.state || "Maharashtra";
+document.getElementById('addr-type').value = row.type || row.address_type || "Home";
+saveBtn.innerText = "Update Address";
+cancelEditBtn.style.display = "inline-block";
+window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function resetAddressForm() {
+editIdInput.value = "";
+document.getElementById('address-form').reset();
+document.getElementById('addr-state').value = "Maharashtra";
+document.getElementById('addr-type').value = "Home";
+saveBtn.innerText = "Add Address";
+cancelEditBtn.style.display = "none";
+}
+
+async function setDefaultAddress(id) {
+const { data: { user } } = await _supabase.auth.getUser();
+if (!user) return alert("Please log in again.");
+
+const { error: clearError } = await _supabase
+.from('customer_addresses')
+.update({ is_default: false })
+.eq('user_id', user.id);
+if (clearError) {
+alert("Could not update default address: " + clearError.message);
+return;
+}
+
+const { error: setError } = await _supabase
+.from('customer_addresses')
+.update({ is_default: true })
+.eq('id', id)
+.eq('user_id', user.id);
+if (setError) {
+alert("Could not set default address: " + setError.message);
+return;
+}
+
 loadAddresses(user.id);
 }
 
@@ -427,16 +642,43 @@ document.getElementById('address-form').addEventListener('submit', async (e) => 
 e.preventDefault();
 const { data: { user } } = await _supabase.auth.getUser();
 if (!user) return alert("Please log in again.");
+const pinRaw = document.getElementById('addr-pin').value.trim();
+const mobileRaw = document.getElementById('addr-mobile').value.trim();
+if (!/^\d{6}$/.test(pinRaw)) return alert("Please enter a valid 6-digit pincode.");
+if (mobileRaw && !/^\d{10}$/.test(mobileRaw)) return alert("Please enter a valid 10-digit mobile number.");
 
 const payload = {
 user_id: user.id,
 full_name: document.getElementById('addr-contact-name').value.trim(),
-pincode: document.getElementById('addr-pin').value.trim(),
+pincode: pinRaw,
 city: document.getElementById('addr-city').value.trim(),
-full_address: document.getElementById('addr-flat').value.trim(),
+full_address: composeFullAddress(
+document.getElementById('addr-flat').value.trim(),
+document.getElementById('addr-area').value.trim()
+),
 state: document.getElementById('addr-state').value,
-type: document.getElementById('addr-type').value
+type: document.getElementById('addr-type').value,
+address_type: document.getElementById('addr-type').value
 };
+
+const editingId = normalizeId(editIdInput.value);
+if (editingId) {
+const { error } = await _supabase
+.from('customer_addresses')
+.update(payload)
+.eq('id', editingId)
+.eq('user_id', user.id);
+if (error) {
+console.error("Update address error:", error);
+alert("Address not updated: " + error.message);
+return;
+}
+} else {
+const { count } = await _supabase
+.from('customer_addresses')
+.select('id', { count: 'exact', head: true })
+.eq('user_id', user.id);
+payload.is_default = !count;
 
 const { error } = await _supabase.from('customer_addresses').insert(payload);
 if (error) {
@@ -444,14 +686,24 @@ console.error("Save address error:", error);
 alert("Address not saved: " + error.message);
 return;
 }
+}
 
-e.target.reset();
+resetAddressForm();
 loadAddresses(user.id);
 });
 
 document.getElementById('profile-btn')?.addEventListener('click', (e) => {
 e.stopPropagation();
 document.getElementById('profile-dropdown').classList.toggle('active');
+});
+document.getElementById('addr-pin')?.addEventListener('input', (e) => {
+e.target.value = (e.target.value || "").replace(/\D/g, '').slice(0, 6);
+});
+document.getElementById('addr-mobile')?.addEventListener('input', (e) => {
+e.target.value = (e.target.value || "").replace(/\D/g, '').slice(0, 10);
+});
+cancelEditBtn?.addEventListener('click', () => {
+resetAddressForm();
 });
 
 const mobileSidebar = document.getElementById('mobile-sidebar');
