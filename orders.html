@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>My Orders | Hygienic & Comfort Co.</title>
+  <title>Hygienic & Comfort Co.</title>
   
   <link rel="icon" type="image/png" href="logo.png">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -171,6 +171,43 @@
     .order-body { padding: 25px; }
     .product-info h4 { color: var(--grey); font-size: 0.75rem; text-transform: uppercase; margin-bottom: 8px; }
     .items-text { font-size: 1.05rem; font-weight: 700; color: var(--dark); margin-bottom: 15px; }
+    .items-list { display: grid; gap: 12px; margin: 6px 0 14px; }
+    .item-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      background: #fff;
+    }
+    .item-img {
+      width: 54px;
+      height: 54px;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .item-img img { width: 100%; height: 100%; object-fit: contain; }
+    .item-info { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .item-name {
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: var(--dark);
+      text-decoration: none;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .item-name:hover { color: var(--primary); text-decoration: underline; text-underline-offset: 2px; }
+    .item-qty { font-size: 0.8rem; font-weight: 700; color: var(--grey); }
     .address-info { font-size: 0.85rem; color: var(--grey); padding-top: 15px; border-top: 1px dashed #e2e8f0; }
 
     /* --- Buttons --- */
@@ -211,8 +248,14 @@
             margin: 0;
             background: #fff !important;
         }
+        html, body {
+            height: auto;
+        }
         body * {
             visibility: hidden !important;
+        }
+        body > *:not(#invoice-print-area) {
+            display: none !important;
         }
         #invoice-print-area,
         #invoice-print-area * {
@@ -220,12 +263,16 @@
         }
         #invoice-print-area {
             display: block !important;
-            position: fixed;
-            inset: 0;
-            width: auto;
+            position: static;
+            inset: auto;
+            width: 100%;
             padding: 0;
             margin: 0;
             background: white;
+        }
+        .invoice-page {
+            break-inside: avoid;
+            page-break-inside: avoid;
         }
     }
 
@@ -282,6 +329,9 @@
           line-height: 1.35;
           margin-bottom: 12px;
         }
+        .item-row { padding: 10px; }
+        .item-img { width: 48px; height: 48px; }
+        .item-name { font-size: 0.92rem; }
         .address-info {
           font-size: 0.8rem;
           padding-top: 12px;
@@ -420,6 +470,20 @@
 
 <script>
   const _supabase = supabase.createClient('https://uhkheprfbxxwuojswyht.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es');
+  let productLookup = {};
+  const fallbackProductImage = "logo.png";
+
+  function normalizeImageUrl(rawUrl) {
+    const url = (rawUrl || "").trim();
+    if (!url) return "";
+    const idMatch =
+      url.match(/\/file\/d\/([^/]+)/) ||
+      url.match(/[?&]id=([^&]+)/);
+    if (idMatch && idMatch[1]) {
+      return `https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=w800`;
+    }
+    return url;
+  }
   async function blockAdminFromCustomerSite() {
     const { data: { user } } = await _supabase.auth.getUser();
     if (!user) return null;
@@ -458,6 +522,23 @@
     await blockAdminFromCustomerSite();
   })();
 
+  async function loadProductLookup() {
+    if (Object.keys(productLookup).length) return;
+    const { data, error } = await _supabase.from('products').select('id,name,images,price');
+    if (error || !data) {
+      console.warn("Product lookup load failed:", error);
+      return;
+    }
+    const map = {};
+    data.forEach((p) => {
+      const key = String(p.name || "").trim().toLowerCase();
+      if (!key) return;
+      const img = normalizeImageUrl((p.images || [])[0] || "");
+      map[key] = { id: p.id, image: img || fallbackProductImage, name: p.name, price: Number(p.price) };
+    });
+    productLookup = map;
+  }
+
   async function initSidebarUser() {
     const { data: { user } } = await _supabase.auth.getUser();
     if (!user) return;
@@ -494,6 +575,7 @@
         return;
     }
 
+    await loadProductLookup();
     const { data: profile } = await _supabase.from('customers').select('phone_number,email,customer_name').eq('user_id', user.id).maybeSingle();
     const identifiers = [user.email, user.phone, profile?.email, profile?.phone_number].filter(Boolean);
     await initSidebarUser();
@@ -539,6 +621,8 @@
     }
 
     container.innerHTML = orders.map(order => {
+        const orderSeq = order.invoice_number || 1;
+        const orderDisplayNo = formatOrderNumber(order.created_at, orderSeq);
         const date = new Date(order.created_at).toLocaleDateString('en-IN', { 
             day: 'numeric', month: 'short', year: 'numeric' 
         });
@@ -553,7 +637,7 @@
                 <div class="order-header">
                     <div class="meta-item"><label>Order Date</label><p>${date}</p></div>
                     <div class="meta-item"><label>Total</label><p>₹${order.total_price}</p></div>
-                    <div class="meta-item"><label>Order ID</label><p>#${order.id.substring(0, 8)}</p></div>
+                    <div class="meta-item"><label>Order ID</label><p>${orderDisplayNo}</p></div>
                     <div class="meta-item" style="text-align:right">
                         <span class="status-badge ${statusClass}">
                             <i data-lucide="${status.toLowerCase() === 'delivered' ? 'check-circle' : 'package'}" style="width:14px"></i>
@@ -564,7 +648,7 @@
                 <div class="order-body">
                     <div class="product-info">
                         <h4>Items Purchased</h4>
-                        <p class="items-text">${order.items}</p>
+                        ${buildOrderItemsHtml(order.items || "")}
                         <div class="address-info">
                              <p><i data-lucide="map-pin" style="width:14px; vertical-align:middle; margin-right:5px;"></i> <b>Shipping to:</b> ${order.address || 'Address provided at checkout'}</p>
                         </div>
@@ -581,15 +665,66 @@
   }
 
   function parseOrderItems(itemsText = "") {
-    const parts = itemsText.split(',').map(p => p.trim()).filter(Boolean);
-    if (parts.length === 0) return [];
+    const text = String(itemsText || "").trim();
+    if (!text) return [];
+    const results = [];
+    const re = /(.+?)\s+x(\d+)(?=,|$)/gi;
+    let lastIndex = 0;
+    let match;
+    while ((match = re.exec(text)) !== null) {
+      const name = match[1].trim().replace(/^,+\s*/, "");
+      const qty = parseInt(match[2], 10) || 1;
+      if (name) results.push({ name, qty });
+      lastIndex = re.lastIndex;
+    }
+    if (results.length) return results;
+    const parts = text.split(',').map(p => p.trim()).filter(Boolean);
     return parts.map(p => {
-      const match = p.match(/(.+?)\s+x(\d+)$/i);
-      if (match) {
-        return { name: match[1].trim(), qty: parseInt(match[2], 10) || 1 };
-      }
+      const m = p.match(/(.+?)\s+x(\d+)$/i);
+      if (m) return { name: m[1].trim(), qty: parseInt(m[2], 10) || 1 };
       return { name: p, qty: 1 };
     });
+  }
+
+  function getProductInfoByName(name) {
+    const key = String(name || "").trim().toLowerCase();
+    return productLookup[key] || null;
+  }
+
+  function getItemUnitPrice(name, fallbackUnit) {
+    const info = getProductInfoByName(name);
+    const price = info && Number.isFinite(info.price) ? Number(info.price) : null;
+    if (price && price > 0) return price;
+    return Number.isFinite(fallbackUnit) ? fallbackUnit : null;
+  }
+
+  function buildOrderItemsHtml(itemsText = "") {
+    const items = parseOrderItems(itemsText);
+    if (!items.length) {
+      return `<p class="items-text">${escapeHtml(itemsText || "Items not available")}</p>`;
+    }
+    return `
+      <div class="items-list">
+        ${items.map((item) => {
+          const info = getProductInfoByName(item.name);
+          const img = info?.image || fallbackProductImage;
+          const href = info?.id
+            ? `products.html?id=${encodeURIComponent(info.id)}`
+            : `products.html?brand=${encodeURIComponent(item.name)}`;
+          return `
+            <div class="item-row">
+              <div class="item-img">
+                <img src="${escapeHtml(img)}" alt="${escapeHtml(item.name)}">
+              </div>
+              <div class="item-info">
+                <a class="item-name" href="${href}">${escapeHtml(item.name)}</a>
+                <div class="item-qty">Qty: ${item.qty}</div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
   }
 
   function formatMoney(val) {
@@ -606,23 +741,44 @@
       .replace(/'/g, "&#39;");
   }
 
+  function formatInvoiceNumber(seq) {
+    const num = Math.max(1, parseInt(seq, 10) || 1);
+    const padded = String(num).padStart(2, "0");
+    return `#INV-${padded}`;
+  }
+
+  function formatOrderNumber(dateValue, seq) {
+    const dt = dateValue ? new Date(dateValue) : new Date();
+    const y = dt.getFullYear();
+    const m = String(dt.getMonth() + 1).padStart(2, "0");
+    const d = String(dt.getDate()).padStart(2, "0");
+    const num = Math.max(1, parseInt(seq, 10) || 1);
+    const padded = String(num).padStart(4, "0");
+    return `HC-${y}${m}${d}-${padded}`;
+  }
+
   function downloadInvoice(order) {
     const date = new Date(order.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
     const printArea = document.getElementById('invoice-print-area');
     const items = parseOrderItems(order.items || "");
     const totalQty = items.reduce((s, i) => s + (i.qty || 1), 0);
     const singleItem = items.length === 1;
-    const unitPriceSingle = singleItem && totalQty > 0 ? (Number(order.total_price) / totalQty) : null;
+    const avgUnitPrice = totalQty > 0 ? (Number(order.total_price) / totalQty) : null;
     const customerName = escapeHtml(order.customer_name || "Customer");
     const customerAddress = escapeHtml(order.address || "Address provided at checkout");
     const orderIdShort = escapeHtml((order.id || "").toString().substring(0, 12));
+    const orderSeq = order.invoice_number || 1;
+    const orderNumber = formatOrderNumber(order.created_at, orderSeq);
+    const invoiceNumber = formatInvoiceNumber(order.invoice_number || 1);
     const orderStatus = escapeHtml(order.status || "New");
     const orderItemsText = escapeHtml(order.items || "-");
     const paymentMethod = escapeHtml(order.payment_method || "Cash on Delivery");
 
+    let computedSubtotal = 0;
     const rowsHtml = items.map(it => {
-      const unit = singleItem ? unitPriceSingle : null;
-      const lineTotal = singleItem ? Number(order.total_price) : null;
+      const unit = getItemUnitPrice(it.name, avgUnitPrice);
+      const lineTotal = unit ? unit * (it.qty || 1) : (singleItem ? Number(order.total_price) : null);
+      if (Number.isFinite(lineTotal)) computedSubtotal += lineTotal;
       return `
         <tr>
           <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">${escapeHtml(it.name)}</td>
@@ -634,33 +790,27 @@
     }).join('');
     
     printArea.innerHTML = `
-        <div style="font-family:'Plus Jakarta Sans','Segoe UI',sans-serif; color:#0f172a; padding:20px; border:1px solid #e2e8f0; border-radius:12px;">
+        <div class="invoice-page" style="font-family:'Plus Jakarta Sans','Segoe UI',sans-serif; color:#0f172a; padding:20px; border:1px solid #e2e8f0; border-radius:12px;">
             <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:20px; padding-bottom:18px; border-bottom:2px solid #2563eb;">
                 <div>
                     <p style="margin:0; font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.08em;">Tax Invoice</p>
                     <h1 style="margin:6px 0 0 0; font-size:30px; color:#2563eb; line-height:1;">INVOICE</h1>
-                    <p style="margin:10px 0 0 0; font-size:14px;"><b>Invoice No:</b> INV-${orderIdShort}</p>
-                    <p style="margin:4px 0 0 0; font-size:14px;"><b>Order ID:</b> #${orderIdShort}</p>
+                    <p style="margin:10px 0 0 0; font-size:14px;"><b>Invoice No:</b> ${invoiceNumber}</p>
+                    <p style="margin:4px 0 0 0; font-size:14px;"><b>Order ID:</b> ${orderNumber}</p>
                     <p style="margin:4px 0 0 0; font-size:14px;"><b>Date:</b> ${date}</p>
                     <p style="margin:4px 0 0 0; font-size:14px;"><b>Status:</b> ${orderStatus}</p>
                 </div>
                 <div style="text-align:right;">
-                    <h2 style="margin:0 0 6px 0; font-size:30px; line-height:1; color:#111827;">Hygienic & Comfort Co.</h2>
+                   <h2 style="margin:0 0 6px 0; font-size:30px; line-height:1; color:#111827;">Hygienic & Comfort Co.</h2>
                     <p style="margin:0; color:#334155; font-size:14px;">Ambernath East, Maharashtra</p>
                     <p style="margin:4px 0 0 0; color:#334155; font-size:14px;">Contact: +91 9307760665</p>
                     <p style="margin:4px 0 0 0; color:#334155; font-size:14px;">hygienicsandcomfort@gmail.com</p>
                 </div>
             </div>
 
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0;">
+            <div style="display:grid; grid-template-columns:1fr; gap:16px; margin:20px 0;">
                 <div style="border:1px solid #e2e8f0; border-radius:10px; padding:14px;">
-                    <p style="margin:0 0 8px 0; font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase;">Bill From</p>
-                    <p style="margin:0; font-weight:700;">Hygienic & Comfort Co.</p>
-                    <p style="margin:4px 0 0 0;">Ambernath East, Maharashtra</p>
-                    <p style="margin:4px 0 0 0;">Phone: +91 9307760665</p>
-                </div>
-                <div style="border:1px solid #e2e8f0; border-radius:10px; padding:14px;">
-                    <p style="margin:0 0 8px 0; font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase;">Bill To</p>
+                    <p style="margin:0 0 8px 0; font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase;">Shipping Address</p>
                     <p style="margin:0; font-weight:700;">${customerName}</p>
                     <p style="margin:4px 0 0 0;">${customerAddress}</p>
                     <p style="margin:4px 0 0 0;">Phone: ${escapeHtml(order.phone_number || "-")}</p>
@@ -773,7 +923,6 @@
 </footer>
 </body>
 </html>
-
 
 
 
