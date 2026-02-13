@@ -320,22 +320,34 @@
             const { data: { user } } = await _supabase.auth.getUser();
             if (!user) return null;
 
-            const { data: profile } = await _supabase
+            const { data: profile, error: profileError } = await _supabase
                 .from('profiles')
                 .select('role')
                 .eq('id', user.id)
-                .single();
+                .maybeSingle();
 
-            if (!profile) return null;
+            if (profileError && profileError.code !== 'PGRST116') {
+                console.warn("Role lookup failed:", profileError);
+            }
 
-            if (profile.role === 'admin' || profile.role === 'staff') {
+            let role = (profile?.role || "").toLowerCase();
+            if (!role) {
+                const { data: userRole } = await _supabase
+                    .from('user_roles')
+                    .select('role')
+                    .eq('id', user.id)
+                    .maybeSingle();
+                role = (userRole?.role || "").toLowerCase();
+            }
+
+            if (role === 'admin' || role === 'staff') {
                 await _supabase.auth.signOut();
                 alert("Admin accounts must login from Admin Panel.");
                 window.location.href = "login.html";
                 throw new Error("Admin blocked from customer site");
             }
 
-            return profile;
+            return profile || null;
         }
 
         (async () => {
@@ -622,6 +634,5 @@
     </footer>
     </body>
     </html>
-
 
 
