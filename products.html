@@ -541,6 +541,31 @@ pointer-events: auto;
 const SUPABASE_URL = "https://uhkheprfbxxwuojswyht.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es";
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+async function blockAdminFromCustomerSite() {
+const { data: { user } } = await _supabase.auth.getUser();
+if (!user) return null;
+
+const { data: profile } = await _supabase
+.from('profiles')
+.select('role')
+.eq('id', user.id)
+.single();
+
+if (!profile) return null;
+
+if (profile.role === 'admin' || profile.role === 'staff') {
+await _supabase.auth.signOut();
+alert("Admin accounts must login from Admin Panel.");
+window.location.href = "login.html";
+throw new Error("Admin blocked from customer site");
+}
+
+return profile;
+}
+
+(async () => {
+await blockAdminFromCustomerSite();
+})();
 
 let allProducts = [];
 let cart = JSON.parse(localStorage.getItem('hc-cart')) || [];
