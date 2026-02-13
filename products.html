@@ -241,6 +241,12 @@ position: relative;
 .details { padding: 12px 15px; flex-grow: 1; display: flex; flex-direction: column; border-top: 1px solid #f8fafc; }
 .p-category { font-size: 0.65rem; text-transform: uppercase; font-weight: 800; color: var(--primary); margin-bottom: 3px; }
 .p-name { font-weight: 700; font-size: 0.85rem; margin-bottom: 8px; color: var(--dark); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.6em; }
+.p-rating { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; min-height: 18px; }
+.p-rating-stars { display: inline-flex; gap: 1px; line-height: 1; }
+.p-rating-stars .star { color: #cbd5e1; font-size: 0.82rem; }
+.p-rating-stars .star.filled { color: #f59e0b; }
+.p-rating-meta { font-size: 0.75rem; color: #475569; font-weight: 700; }
+.p-rating.no-rating { font-size: 0.75rem; color: #94a3b8; font-weight: 700; }
 
 .p-discount-tag { color: var(--amazon-orange); font-size: 1.1rem; font-weight: 400; margin-right: 4px; }
 .p-main-price { font-size: 1.2rem; font-weight: 800; color: #0F1111; }
@@ -283,6 +289,24 @@ position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95); z-index: 5000; displ
 
 .rich-description { color: #334155; font-size: 0.95rem; line-height: 1.7; white-space: pre-wrap; }
 .btn-whatsapp { background: #22c55e; color: white; padding: 18px; border-radius: 15px; font-weight: 800; text-decoration: none; border: none; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1rem; cursor: pointer; }
+.reviews-section { margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+.detail-rating-summary { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+.detail-rating-summary .count { font-size: 0.9rem; color: #64748b; font-weight: 700; }
+.review-list { display: grid; gap: 10px; margin-bottom: 18px; }
+.review-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; }
+.review-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+.reviewer-name { font-size: 0.86rem; font-weight: 800; color: #0f172a; }
+.review-date { font-size: 0.76rem; color: #64748b; font-weight: 700; }
+.review-text { font-size: 0.9rem; color: #334155; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+.review-form-wrap { background: #f8fbff; border: 1px solid #dbeafe; border-radius: 12px; padding: 14px; }
+.review-note { font-size: 0.82rem; color: #64748b; margin-bottom: 10px; font-weight: 700; }
+.review-note.blocked { color: #b45309; }
+.review-stars-input { display: flex; gap: 6px; margin-bottom: 10px; }
+.review-star-btn { width: 34px; height: 34px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; color: #cbd5e1; cursor: pointer; font-size: 1rem; }
+.review-star-btn.active { color: #f59e0b; border-color: #fbbf24; background: #fffbeb; }
+.review-star-btn:disabled { cursor: not-allowed; opacity: 0.6; }
+.review-textarea { width: 100%; min-height: 95px; border-radius: 10px; border: 1.5px solid #e2e8f0; padding: 10px 12px; font-family: inherit; resize: vertical; outline: none; font-size: 0.9rem; }
+.review-textarea:disabled { background: #f1f5f9; cursor: not-allowed; }
 
 /* --- App Generic UI --- */
 .filter-overlay {
@@ -545,22 +569,34 @@ async function blockAdminFromCustomerSite() {
 const { data: { user } } = await _supabase.auth.getUser();
 if (!user) return null;
 
-const { data: profile } = await _supabase
+const { data: profile, error: profileError } = await _supabase
 .from('profiles')
 .select('role')
 .eq('id', user.id)
-.single();
+.maybeSingle();
 
-if (!profile) return null;
+if (profileError && profileError.code !== 'PGRST116') {
+console.warn("Role lookup failed:", profileError);
+}
 
-if (profile.role === 'admin' || profile.role === 'staff') {
+let role = (profile?.role || "").toLowerCase();
+if (!role) {
+const { data: userRole } = await _supabase
+.from('user_roles')
+.select('role')
+.eq('id', user.id)
+.maybeSingle();
+role = (userRole?.role || "").toLowerCase();
+}
+
+if (role === 'admin' || role === 'staff') {
 await _supabase.auth.signOut();
 alert("Admin accounts must login from Admin Panel.");
 window.location.href = "login.html";
 throw new Error("Admin blocked from customer site");
 }
 
-return profile;
+return profile || null;
 }
 
 (async () => {
@@ -577,6 +613,9 @@ let currentPage = 1;
 let pageSize = 10;
 let searchTerm = '';
 let lastTotalPages = 1;
+let productReviewMap = {};
+let currentProductReviews = [];
+let selectedReviewRating = 5;
 
 function setPageSize() {
 pageSize = window.innerWidth >= 1024 ? 12 : 10;
@@ -677,6 +716,7 @@ allProducts = data.map(p => ({
 ...p,
 images: (p.images || []).map(img => normalizeImageUrl(img))
 }));
+await loadReviewSummary();
 
 const urlParams = new URLSearchParams(window.location.search);
 const productId = urlParams.get('id');
@@ -694,6 +734,219 @@ updateCatalog();
 }
 lucide.createIcons();
 setupCardCarousels();
+}
+
+function escapeReviewHtml(value = "") {
+return value
+.replace(/&/g, "&amp;")
+.replace(/</g, "&lt;")
+.replace(/>/g, "&gt;")
+.replace(/"/g, "&quot;")
+.replace(/'/g, "&#39;");
+}
+
+function renderStars(rating) {
+const safeRating = Math.max(0, Math.min(5, Math.round(Number(rating) || 0)));
+let html = '';
+for (let i = 1; i <= 5; i++) {
+html += `<span class="star ${i <= safeRating ? 'filled' : ''}">&#9733;</span>`;
+}
+return html;
+}
+
+function getProductReviewInfo(productId) {
+return productReviewMap[String(productId)] || { avg: 0, count: 0 };
+}
+
+async function loadReviewSummary() {
+const { data, error } = await _supabase
+.from('product_reviews')
+.select('product_id,rating');
+
+if (error) {
+console.warn("Review summary load failed:", error);
+productReviewMap = {};
+return;
+}
+
+const aggregate = {};
+(data || []).forEach((row) => {
+const key = String(row.product_id || '');
+const rating = Number(row.rating) || 0;
+if (!key || rating <= 0) return;
+if (!aggregate[key]) aggregate[key] = { sum: 0, count: 0 };
+aggregate[key].sum += rating;
+aggregate[key].count += 1;
+});
+
+productReviewMap = {};
+Object.keys(aggregate).forEach((k) => {
+productReviewMap[k] = {
+avg: aggregate[k].sum / aggregate[k].count,
+count: aggregate[k].count
+};
+});
+}
+
+async function canUserReviewProduct(productId) {
+if (!currentUser) {
+return { allowed: false, reason: "Please sign in to rate this product." };
+}
+
+const alreadyReviewed = currentProductReviews.some((r) => String(r.user_id) === String(currentUser.id));
+if (alreadyReviewed) {
+return { allowed: false, reason: "You already submitted a review for this product." };
+}
+
+const { data, error } = await _supabase
+.from('order_items')
+.select('order_id,orders!inner(user_id)')
+.eq('product_id', String(productId))
+.eq('orders.user_id', currentUser.id)
+.limit(1);
+
+if (error) {
+console.warn("Ordered-check failed:", error);
+return { allowed: false, reason: "Could not verify your order history. Try again." };
+}
+
+if (!data || data.length === 0) {
+return { allowed: false, reason: "Only customers who ordered this item can write a review." };
+}
+
+return { allowed: true, reason: "" };
+}
+
+function renderDetailReviewSummary(productId) {
+const summaryEl = document.getElementById('detail-rating-summary');
+if (!summaryEl) return;
+const info = getProductReviewInfo(productId);
+if (!info.count) {
+summaryEl.innerHTML = `<span class="p-rating no-rating">No ratings yet</span>`;
+return;
+}
+
+summaryEl.innerHTML = `
+<span class="p-rating-stars">${renderStars(info.avg)}</span>
+<span class="count">${info.avg.toFixed(1)} out of 5 (${info.count} reviews)</span>
+`;
+}
+
+function renderReviewList(productId) {
+renderDetailReviewSummary(productId);
+const listEl = document.getElementById('review-list');
+if (!listEl) return;
+
+if (!currentProductReviews.length) {
+listEl.innerHTML = `<div class="review-note">No reviews yet. Be the first verified buyer to review this product.</div>`;
+return;
+}
+
+listEl.innerHTML = currentProductReviews.map((row) => {
+const safeName = escapeReviewHtml((row.reviewer_name || "Verified Buyer").toString());
+const safeReview = escapeReviewHtml((row.review || "").toString());
+const safeDate = row.created_at
+? new Date(row.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+: "";
+return `
+<div class="review-item">
+<div class="review-head">
+<span class="reviewer-name">${safeName}</span>
+<span class="review-date">${safeDate}</span>
+</div>
+<div class="p-rating-stars" style="margin-bottom:6px;">${renderStars(row.rating)}</div>
+${safeReview ? `<p class="review-text">${safeReview}</p>` : ``}
+</div>
+`;
+}).join('');
+}
+
+async function renderReviewComposerState(productId) {
+const noteEl = document.getElementById('review-eligibility-note');
+const starsWrap = document.getElementById('review-stars-input');
+const txtEl = document.getElementById('review-text');
+const submitBtn = document.getElementById('review-submit-btn');
+if (!noteEl || !starsWrap || !txtEl || !submitBtn) return;
+
+const eligibility = await canUserReviewProduct(productId);
+const enabled = eligibility.allowed;
+
+noteEl.textContent = enabled ? "Verified buyer: You can submit one review." : eligibility.reason;
+noteEl.classList.toggle('blocked', !enabled);
+txtEl.disabled = !enabled;
+submitBtn.disabled = !enabled;
+starsWrap.querySelectorAll('.review-star-btn').forEach((btn) => {
+btn.disabled = !enabled;
+});
+setSelectedRating(selectedReviewRating);
+}
+
+async function loadProductReviews(productId) {
+const { data, error } = await _supabase
+.from('product_reviews')
+.select('id,product_id,user_id,rating,review,reviewer_name,created_at')
+.eq('product_id', String(productId))
+.order('created_at', { ascending: false });
+
+if (error) {
+console.warn("Review list load failed:", error);
+currentProductReviews = [];
+} else {
+currentProductReviews = data || [];
+}
+
+renderReviewList(productId);
+await renderReviewComposerState(productId);
+}
+
+function setSelectedRating(rating) {
+selectedReviewRating = Math.max(1, Math.min(5, Number(rating) || 5));
+document.querySelectorAll('#review-stars-input .review-star-btn').forEach((btn) => {
+const val = Number(btn.getAttribute('data-rating') || "0");
+btn.classList.toggle('active', val <= selectedReviewRating);
+});
+}
+
+async function submitReview(productId) {
+if (!currentUser) {
+window.location.href = "login.html";
+return;
+}
+
+const reviewInput = document.getElementById('review-text');
+if (!reviewInput) return;
+const reviewBody = reviewInput.value.trim();
+
+const eligibility = await canUserReviewProduct(productId);
+if (!eligibility.allowed) {
+alert(eligibility.reason);
+await renderReviewComposerState(productId);
+return;
+}
+
+const reviewerName = (document.getElementById('user-display-name')?.innerText || "Verified Buyer").trim();
+const { error } = await _supabase
+.from('product_reviews')
+.insert([{
+product_id: String(productId),
+user_id: currentUser.id,
+rating: selectedReviewRating,
+review: reviewBody || null,
+reviewer_name: reviewerName
+}]);
+
+if (error) {
+console.warn("Review submit failed:", error);
+alert("Could not submit review. Please try again.");
+return;
+}
+
+reviewInput.value = '';
+setSelectedRating(5);
+await loadReviewSummary();
+updateCatalog();
+await loadProductReviews(productId);
+showToast("Review submitted");
 }
 
 // ?? NEW CATEGORY FILTER LOGIC
@@ -934,6 +1187,10 @@ const isOut = stockCount <= 0;
 const curPrice = Number(p.price);
 const mrp = Number(p.mrp || Math.round(curPrice * 1.25));
 const disc = Math.round(((mrp - curPrice) / mrp) * 100);
+const ratingInfo = getProductReviewInfo(p.id);
+const ratingHtml = ratingInfo.count
+? `<div class="p-rating"><span class="p-rating-stars">${renderStars(ratingInfo.avg)}</span><span class="p-rating-meta">${ratingInfo.avg.toFixed(1)} (${ratingInfo.count})</span></div>`
+: ``;
 
 return `
          <div class="product-card ${isOut ? 'out-of-stock' : ''}" onclick="if (!this.dataset.noOpen) openProductPage('${p.id}')">
@@ -952,6 +1209,7 @@ return `
            <div class="details">
              <span class="p-category">${p.category} ${isOut ? '<span style="color:red; font-size:0.6rem;">(Sold Out)</span>' : ''}</span>
              <div class="p-name">${p.name}</div>
+             ${ratingHtml}
              <div style="display: flex; align-items: center;">
                <span class="p-discount-tag">-${disc}%</span>
                <span class="p-main-price">&#8377;${curPrice.toLocaleString('en-IN')}</span>
@@ -1017,12 +1275,32 @@ detailContainer.innerHTML = `
            <h3 class="section-title">Features & Details</h3>
            <p class="rich-description">${product.description || "Premium quality protection and comfort for daily hygiene."}</p>
          </div>
+         <div class="reviews-section">
+           <h3 class="section-title">Ratings & Reviews</h3>
+           <div id="detail-rating-summary" class="detail-rating-summary"></div>
+           <div id="review-list" class="review-list"></div>
+           <div class="review-form-wrap">
+             <h4 style="font-size:0.95rem; font-weight:800; margin-bottom:8px;">Write a Rating / Review</h4>
+             <div id="review-eligibility-note" class="review-note">Checking eligibility...</div>
+             <div id="review-stars-input" class="review-stars-input">
+               <button type="button" class="review-star-btn" data-rating="1" onclick="setSelectedRating(1)">&#9733;</button>
+               <button type="button" class="review-star-btn" data-rating="2" onclick="setSelectedRating(2)">&#9733;</button>
+               <button type="button" class="review-star-btn" data-rating="3" onclick="setSelectedRating(3)">&#9733;</button>
+               <button type="button" class="review-star-btn" data-rating="4" onclick="setSelectedRating(4)">&#9733;</button>
+               <button type="button" class="review-star-btn active" data-rating="5" onclick="setSelectedRating(5)">&#9733;</button>
+             </div>
+             <textarea id="review-text" class="review-textarea" maxlength="500" placeholder="Share your experience with this product (optional)"></textarea>
+             <button id="review-submit-btn" class="add-to-cart-full-btn" style="margin-top:10px;" onclick="submitReview('${product.id}')">Submit Review</button>
+           </div>
+         </div>
        </div>
      </div>
    `;
 window.scrollTo(0,0);
 lucide.createIcons();
 setupCardCarousels();
+setSelectedRating(5);
+loadProductReviews(product.id);
 }
 
 function showCatalog() {
@@ -1086,8 +1364,9 @@ const badge = document.getElementById('cart-badge-count');
 if(badge) badge.innerText = totalQty;
 }
 
-function showToast() {
+function showToast(message = "Added to cart!") {
 const t = document.getElementById('toast');
+t.innerText = message;
 t.classList.add('show');
 setTimeout(() => t.classList.remove('show'), 2000);
 }
