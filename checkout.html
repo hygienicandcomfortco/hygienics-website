@@ -366,22 +366,33 @@ async function blockAdminFromCustomerSite() {
   const { data: { user } } = await supa.auth.getUser();
   if (!user) return null;
 
-  const { data: profile } = await supa
+  const { data: profile, error: profileError } = await supa
     .from('profiles')
     .select('role')
     .eq('id', user.id)
-    .single();
+    .maybeSingle();
+  if (profileError && profileError.code !== 'PGRST116') {
+    console.warn("Role lookup failed:", profileError);
+  }
 
-  if (!profile) return null;
+  let role = (profile?.role || "").toLowerCase();
+  if (!role) {
+    const { data: userRole } = await supa
+      .from('user_roles')
+      .select('role')
+      .eq('id', user.id)
+      .maybeSingle();
+    role = (userRole?.role || "").toLowerCase();
+  }
 
-  if (profile.role === 'admin' || profile.role === 'staff') {
+  if (role === 'admin' || role === 'staff') {
     await supa.auth.signOut();
     alert("Admin accounts must login from Admin Panel.");
     window.location.href = "login.html";
     throw new Error("Admin blocked from customer site");
   }
 
-  return profile;
+  return profile || null;
 }
 
 (async () => {
@@ -696,6 +707,10 @@ return normalizeText(label) === preferredAddressLabel;
 });
 }
 
+if (selectedIndex < 0) {
+selectedIndex = addresses.findIndex((addr) => Boolean(addr.is_default || addr.default || addr.is_primary));
+}
+
 if (selectedIndex < 0) selectedIndex = 0;
 
 addresses.forEach((addr, index) => {
@@ -705,7 +720,9 @@ const isSelected = index === selectedIndex;
 card.className = `address-card ${isSelected ? 'selected' : ''}`;
 if (isSelected) selectedAddressText = fullAddrStr;
 
-const badgeText = (addr.type || addr.address_type || "Address").toString();
+const badgeText = (addr.is_default || addr.default || addr.is_primary)
+? "Default"
+: (addr.type || addr.address_type || "Address").toString();
 const recipientName = (addr.full_name || addr.recipient_name || "").toString();
 card.innerHTML = `<span class="badge">${badgeText}</span><p><b>${recipientName}</b> ${fullAddrStr}</p>`;
 card.onclick = () => {
