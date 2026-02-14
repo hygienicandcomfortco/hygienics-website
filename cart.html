@@ -214,7 +214,17 @@
       font-size: 0.82rem;
     }
   .cart-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
-  .cart-item { display: flex; gap: 12px; padding: 15px 0; border-bottom: 1px solid #eee; }
+  .cart-selection-bar { display: grid; grid-template-columns: 1fr; gap: 10px; margin: 0 0 10px; padding: 12px 14px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc; }
+  .cart-selection-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; }
+  .cart-selection-actions { display: flex; justify-content: flex-end; }
+  .select-all-btn { border: none; background: transparent; color: var(--primary); font-size: 0.88rem; font-weight: 800; cursor: pointer; padding: 0; }
+  .selection-count { font-size: 0.82rem; color: #475569; font-weight: 700; white-space: nowrap; }
+  .delete-selected-btn { border: 1px solid #fecaca; background: #fff1f2; color: #be123c; font-size: 0.8rem; font-weight: 800; border-radius: 8px; padding: 7px 12px; cursor: pointer; }
+  .delete-selected-btn:hover { background: #ffe4e6; }
+  .cart-item { display: flex; gap: 12px; padding: 15px 0; border-bottom: 1px solid #eee; border-radius: 8px; }
+  .cart-item.is-selected { background: #f8fbff; }
+  .cart-item-select { display: flex; align-items: flex-start; padding-top: 4px; }
+  .cart-item-select input { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
   .cart-img-link { display: block; flex-shrink: 0; }
   .cart-img { width: 100px; height: 100px; object-fit: contain; background: #fff; border: 1px solid #f0f0f0; border-radius: 4px; }
   .suggestions-wrap { margin-top: 14px; border-top: 1px solid #eee; padding-top: 14px; }
@@ -225,7 +235,7 @@
   .suggestion-card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px; background: #fff; display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; align-items: center; gap: 10px; min-width: 320px; max-width: 320px; flex: 0 0 320px; scroll-snap-align: start; }
   .suggestion-img { width: 56px; height: 56px; object-fit: contain; border: 1px solid #f1f5f9; border-radius: 8px; background: #fff; }
   .suggestion-info { flex: 1; min-width: 0; }
-  .suggestion-name { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 0.82rem; font-weight: 700; color: #0f172a; text-decoration: none; line-height: 1.25; }
+  .suggestion-name { display: -webkit-box; line-clamp: 3; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 0.82rem; font-weight: 700; color: #0f172a; text-decoration: none; line-height: 1.25; }
   .suggestion-price { font-size: 0.85rem; font-weight: 800; color: #0f172a; margin-top: 4px; }
   .suggestion-add { border: 1px solid #d1d5db; background: #f8fafc; border-radius: 7px; padding: 7px 10px; font-size: 0.75rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
   @media(max-width: 600px) { .suggestion-card { min-width: 290px; max-width: 290px; flex-basis: 290px; } }
@@ -233,13 +243,13 @@
   .suggestions-list { gap: 12px; padding: 2px 2px 10px; scroll-padding-left: 2px; align-items: stretch; }
   .suggestion-card { min-width: clamp(280px, 28vw, 350px); max-width: clamp(280px, 28vw, 350px); flex-basis: clamp(280px, 28vw, 350px); min-height: 106px; }
   .suggestion-info { display: flex; flex-direction: column; justify-content: center; padding-right: 8px; }
-  .suggestion-name { -webkit-line-clamp: 2; font-size: 0.9rem; }
+  .suggestion-name { line-clamp: 2; -webkit-line-clamp: 2; font-size: 0.9rem; }
   .suggestion-price { margin-top: 4px; font-size: 0.92rem; }
   .suggestion-add { align-self: center; }
   }
   .item-content { flex: 1; min-width: 0; }
   .name-price-flex { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 8px; }
-  .item-name { min-width: 0; font-weight: 700; font-size: 0.95rem; color: #007185; line-height: 1.2; text-decoration: none; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .item-name { min-width: 0; font-weight: 700; font-size: 0.95rem; color: #007185; line-height: 1.2; text-decoration: none; display: -webkit-box; line-clamp: 2; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .item-price { white-space: nowrap; justify-self: end; font-size: 1.1rem; font-weight: 800; color: #0F1111; }
   .action-row { margin-top: 12px; display: flex; gap: 15px; flex-wrap: wrap; align-items: center; }
   .qty-ctrl { display: flex; background: #F0F2F2; border: 1px solid #D5D9D9; border-radius: 8px; overflow: hidden; }
@@ -259,6 +269,11 @@
   }
   @media(max-width: 859px) { .summary-card { order: 1; } .cart-main { order: 2; } }
   @media(max-width: 600px) {
+  .cart-selection-bar { padding: 11px 12px; gap: 8px; }
+  .cart-selection-top { gap: 8px; }
+  .selection-count { font-size: 0.78rem; }
+  .cart-selection-actions { justify-content: stretch; }
+  .delete-selected-btn { width: 100%; text-align: center; padding: 9px 12px; }
   .name-price-flex {
   grid-template-columns: 1fr;
   gap: 4px;
@@ -366,6 +381,7 @@
 
   <section class="cart-main">
   <h2 class="cart-title">Shopping Cart</h2>
+  <div id="cart-selection-controls"></div>
   <div id="cart-list"></div>
   <div class="site-footer">
   <button type="button" class="checkout-btn" id="proceed-btn" disabled onclick="checkAuthAndProceed()">Proceed to Buy</button>
@@ -432,7 +448,51 @@
   let addressesCache = [];
   let suggestionsState = { key: '', mode: '', items: [] };
   let suggestionReqId = 0;
+  let currentDeliveryZone = null;
+  const deliveryRates = { 1: { base: 33, add: 31 }, 2: { base: 36, add: 33 }, 3: { base: 50, add: 44 }, 4: { base: 58, add: 50 }, 5: { base: 70, add: 59 } };
+  let selectedCartKeys = new Set(JSON.parse(localStorage.getItem('hc-cart-selected') || '[]'));
   const normalizeId = (value) => (value ?? "").toString().trim();
+
+  function getCartItemKey(item, index) {
+  const id = normalizeId(item?.id);
+  return id || `idx-${index}`;
+  }
+
+  function persistSelectedKeys() {
+  if (!selectedCartKeys.size) localStorage.removeItem('hc-cart-selected');
+  else localStorage.setItem('hc-cart-selected', JSON.stringify(Array.from(selectedCartKeys)));
+  }
+
+  function syncSelectedKeys(opts = {}) {
+  const { selectAllIfEmpty = false } = opts;
+  const validKeys = cart.map((item, index) => getCartItemKey(item, index));
+  const validSet = new Set(validKeys);
+  selectedCartKeys.forEach((key) => { if (!validSet.has(key)) selectedCartKeys.delete(key); });
+  if (selectAllIfEmpty && cart.length && !selectedCartKeys.size) validKeys.forEach((key) => selectedCartKeys.add(key));
+  persistSelectedKeys();
+  }
+
+  function getSelectedCartItems() {
+  return cart.filter((item, index) => selectedCartKeys.has(getCartItemKey(item, index)));
+  }
+
+  function isAllCartSelected() {
+  return cart.length > 0 && getSelectedCartItems().length === cart.length;
+  }
+
+  function recalculateDeliveryFee() {
+  if (!pincodeVerified || !currentDeliveryZone || !deliveryRates[currentDeliveryZone]) return;
+  const zRate = deliveryRates[currentDeliveryZone];
+  const selectedItems = getSelectedCartItems();
+  const weightGrams = selectedItems.reduce((s, i) => s + (i.qty || 1), 0) * 500;
+  let fee = zRate.base;
+  if (weightGrams > 500) fee += (Math.ceil((weightGrams - 500) / 500) * zRate.add);
+  const subtotal = selectedItems.reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
+  if (subtotal >= freeDeliveryTarget || !selectedItems.length) fee = 0;
+  currentDeliveryFee = fee;
+  const feeEl = document.getElementById('delivery-fee');
+  if (feeEl) feeEl.innerText = `\u20B9${fee}`;
+  }
 
   function buildCartSummary(cartItems) {
   const items = cartItems.map(p => `${p.name} x${p.qty || 1}`);
@@ -476,17 +536,21 @@
   }
 
   function checkAuthAndProceed() {
+  const selectedItems = getSelectedCartItems();
+  if (!selectedItems.length) { alert("Please select at least one product to proceed."); return; }
+  const remainingItems = cart.filter((item, index) => !selectedCartKeys.has(getCartItemKey(item, index)));
   if (!currentUser) { 
   // ?? Store current cart total and intent before redirecting to login.html
-  const subtotal = cart.reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
-  const summary = buildCartSummary(cart);
+  const subtotal = selectedItems.reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
+  const summary = buildCartSummary(selectedItems);
   const selectedAddressLabel = document.getElementById('selected-address-text')?.innerText?.trim() || "";
   localStorage.setItem('checkout-item', JSON.stringify({
   id: "CART_ORDER",
   name: summary.displayName,
   itemsText: summary.itemsText,
   price: subtotal + currentDeliveryFee,
-  cartItems: cart,
+  cartItems: selectedItems,
+  remainingCartItems: remainingItems,
   isFromCart: true,
   selectedAddressId: selectedAddressId || null,
   selectedAddressText: selectedAddressLabel,
@@ -500,16 +564,19 @@
   }
 
   async function handleProceedToBuy() {
-  if (cart.length === 0) { alert("Your cart is empty!"); return; }
-  const subtotal = cart.reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
-  const summary = buildCartSummary(cart);
+  const selectedItems = getSelectedCartItems();
+  if (!selectedItems.length) { alert("Please select at least one product to proceed."); return; }
+  const remainingItems = cart.filter((item, index) => !selectedCartKeys.has(getCartItemKey(item, index)));
+  const subtotal = selectedItems.reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
+  const summary = buildCartSummary(selectedItems);
   const selectedAddressLabel = document.getElementById('selected-address-text')?.innerText?.trim() || "";
   localStorage.setItem('checkout-item', JSON.stringify({
   id: "CART_ORDER",
   name: summary.displayName,
   itemsText: summary.itemsText,
   price: subtotal + currentDeliveryFee,
-  cartItems: cart,
+  cartItems: selectedItems,
+  remainingCartItems: remainingItems,
   isFromCart: true,
   selectedAddressId: selectedAddressId || null,
   selectedAddressText: selectedAddressLabel,
@@ -528,7 +595,7 @@
 
   function updateProceedState() {
   const btn = document.getElementById('proceed-btn');
-  btn.disabled = !cart.length || !pincodeVerified;
+  btn.disabled = !getSelectedCartItems().length || !pincodeVerified;
   }
 
   function updateFreeDeliveryGoal(subtotal) {
@@ -548,7 +615,7 @@
   }
   }
 
-  async function applyPincode(pinStr, opts = {}) {
+async function applyPincode(pinStr, opts = {}) {
   const { showAlerts = true, fromAddress = false } = opts;
   const btn = document.getElementById('apply-pin-btn');
   const pinError = document.getElementById('pincode-error-msg');
@@ -557,6 +624,9 @@
 
   if (pinStr.length !== 6 || pinStr.startsWith('0')) {
   pincodeVerified = false;
+  currentDeliveryZone = null;
+  currentDeliveryFee = 0;
+  document.getElementById('delivery-fee').innerText = `\u20B90`;
   updateProceedState();
   if (showAlerts) alert("Enter valid 6-digit Pincode");
   return;
@@ -569,6 +639,9 @@
   if (data[0].Status !== "Success") {
   pincodeVerified = false;
   freeDeliveryTarget = 999;
+  currentDeliveryZone = null;
+  currentDeliveryFee = 0;
+  document.getElementById('delivery-fee').innerText = `\u20B90`;
   if (showAlerts) alert("Pincode not found");
   } else {
   const state = data[0].PostOffice[0].State.toUpperCase();
@@ -579,19 +652,11 @@
   else if (["WEST BENGAL", "KARNATAKA", "TAMIL NADU", "DELHI", "TELANGANA"].includes(state)) { zone = 3; days = "5-6 Days"; }
   else if (["KERALA", "JAMMU & KASHMIR", "ASSAM", "MANIPUR", "ARUNACHAL PRADESH", "MEGHALAYA", "MIZORAM", "NAGALAND", "SIKKIM", "TRIPURA"].includes(state)) { zone = 5; days = "9-10 Days"; }
 
-  const rates = { 1: { base: 33, add: 31 }, 2: { base: 36, add: 33 }, 3: { base: 50, add: 44 }, 4: { base: 58, add: 50 }, 5: { base: 70, add: 59 } };
-  const zRate = rates[zone];
   freeDeliveryTarget = zone === 1 ? 499 : 999;
-  const weightGrams = cart.reduce((s,i)=>s+(i.qty||1),0) * 500;
-  let fee = zRate.base;
-  if (weightGrams > 500) fee += (Math.ceil((weightGrams - 500) / 500) * zRate.add);
-  let subtotal = cart.reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
-  if (subtotal >= freeDeliveryTarget) fee = 0;
-
-  currentDeliveryFee = fee; 
+  currentDeliveryZone = zone;
   pincodeVerified = true;
   lastVerifiedPincode = pinStr;
-  document.getElementById('delivery-fee').innerText = `₹${fee}`;
+  recalculateDeliveryFee();
   document.getElementById('est-days-text').innerText = days;
   document.getElementById('delivery-info-box').style.display = 'flex';
   note.style.display = fromAddress ? 'block' : 'none';
@@ -600,6 +665,9 @@
   } catch (e) { 
   if (showAlerts) alert("Pincode check failed."); 
   pincodeVerified = false;
+  currentDeliveryZone = null;
+  currentDeliveryFee = 0;
+  document.getElementById('delivery-fee').innerText = `\u20B90`;
   } finally { 
   btn.disabled = false; 
   btn.innerText = "Apply"; 
@@ -694,8 +762,12 @@
   selectedAddressId = null;
   lastVerifiedPincode = "";
   pincodeVerified = false;
+  currentDeliveryZone = null;
+  currentDeliveryFee = 0;
   freeDeliveryTarget = 999;
+  document.getElementById('delivery-fee').innerText = `\u20B90`;
   document.getElementById('pin-note').style.display = 'none';
+  renderUI();
   updateProceedState();
   const selectedText = document.getElementById('selected-address-text');
   if (selectedText) selectedText.innerText = "Use a different pincode";
@@ -703,18 +775,32 @@
   if (dropdown) dropdown.classList.remove('open');
   }
 
-  function renderUI() {
+function renderUI() {
   const proceedBtn = document.getElementById('proceed-btn');
   const cartList = document.getElementById('cart-list');
+  const controls = document.getElementById('cart-selection-controls');
   const suggestionSection = document.getElementById('suggestions-section');
-  if(!cart.length && !saved.length) { cartList.innerHTML = `<p style="text-align:center;padding:40px;">Your cart is empty.</p>`; document.getElementById('summary-section').style.display = 'none'; if (suggestionSection) suggestionSection.style.display = 'none'; proceedBtn.style.display = 'none'; return; }
+  syncSelectedKeys({ selectAllIfEmpty: false });
+  if(!cart.length && !saved.length) { cartList.innerHTML = `<p style="text-align:center;padding:40px;">Your cart is empty.</p>`; controls.innerHTML = ''; document.getElementById('summary-section').style.display = 'none'; if (suggestionSection) suggestionSection.style.display = 'none'; proceedBtn.style.display = 'none'; return; }
   document.getElementById('summary-section').style.display = cart.length ? 'block' : 'none';
   proceedBtn.style.display = cart.length ? 'block' : 'none';
-  let subtotal = 0;
+  const selectedCount = getSelectedCartItems().length;
+  controls.innerHTML = cart.length ? `<div class="cart-selection-bar">
+    <div class="cart-selection-top">
+      <button type="button" class="select-all-btn" onclick="toggleSelectAll()">${isAllCartSelected() ? 'Deselect all' : 'Select all'}</button>
+      <span class="selection-count">${selectedCount} of ${cart.length} selected</span>
+    </div>
+    ${selectedCount ? '<div class="cart-selection-actions"><button type="button" class="delete-selected-btn" onclick="deleteSelectedItems()">Delete selected</button></div>' : ''}
+  </div>` : '';
   cartList.innerHTML = cart.map((p, i) => {
-  const qty = p.qty || 1; subtotal += p.price * qty;
+  const qty = p.qty || 1;
   const prodLink = `products.html?id=${p.id}`;
-  return `<div class="cart-item">
+  const itemKey = getCartItemKey(p, i);
+  const isSelected = selectedCartKeys.has(itemKey);
+  return `<div class="cart-item ${isSelected ? 'is-selected' : ''}">
+      <label class="cart-item-select">
+        <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="toggleItemSelection(${i}, this.checked)" aria-label="Select ${p.name}">
+      </label>
       <a href="${prodLink}" class="cart-img-link">
         <img class="cart-img" src="${p.images?.[0]||'logo.png'}" alt="${p.name}">
       </a>
@@ -732,6 +818,8 @@
       </div>
     </div>`;
   }).join('');
+  const subtotal = getSelectedCartItems().reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
+  if (pincodeVerified && currentDeliveryZone) recalculateDeliveryFee();
   document.getElementById('sub-total').innerText = `\u20B9${subtotal.toLocaleString()}`;
   document.getElementById('grand-total').innerText = `\u20B9${(subtotal + currentDeliveryFee).toLocaleString()}`;
   updateFreeDeliveryGoal(subtotal);
@@ -836,14 +924,15 @@
   drawSuggestions(mode, products);
   }
 
-  function addSuggestionByIndex(idx) {
+function addSuggestionByIndex(idx) {
   const item = suggestionsState.items[idx];
   if (!item) return;
   const existing = cart.find(p => String(p.id) === String(item.id));
   if (existing) existing.qty = (existing.qty || 1) + 1;
   else cart.push({ ...item, qty: 1 });
+  syncSelectedKeys({ selectAllIfEmpty: true });
   localStorage.setItem('hc-cart', JSON.stringify(cart));
-  if (pincodeVerified && lastVerifiedPincode) applyPincode(lastVerifiedPincode, { showAlerts: false, fromAddress: !!selectedAddressPin });
+  if (pincodeVerified && currentDeliveryZone) recalculateDeliveryFee();
   renderUI();
   }
 
@@ -854,14 +943,45 @@
   if (newQty > (data.stock || 0)) return alert(`Limited stock available.`);
   cart[idx].qty = newQty;
   localStorage.setItem('hc-cart', JSON.stringify(cart));
-  if (pincodeVerified && lastVerifiedPincode) applyPincode(lastVerifiedPincode, { showAlerts: false, fromAddress: !!selectedAddressPin });
+  if (pincodeVerified && currentDeliveryZone) recalculateDeliveryFee();
   renderUI();
   }
 
-  function updateStorage() { localStorage.setItem('hc-cart', JSON.stringify(cart)); localStorage.setItem('hc-saved', JSON.stringify(saved)); renderUI(); }
-  function deleteItem(i) { cart.splice(i, 1); updateStorage(); }
-  function saveItem(i) { saved.push(cart.splice(i, 1)[0]); updateStorage(); }
-  function moveToCart(i) { cart.push(saved.splice(i, 1)[0]); updateStorage(); }
+  function toggleItemSelection(index, checked) {
+  const key = getCartItemKey(cart[index], index);
+  if (checked) selectedCartKeys.add(key);
+  else selectedCartKeys.delete(key);
+  persistSelectedKeys();
+  if (pincodeVerified && currentDeliveryZone) recalculateDeliveryFee();
+  renderUI();
+  }
+
+  function toggleSelectAll() {
+  if (isAllCartSelected()) selectedCartKeys.clear();
+  else cart.forEach((item, index) => selectedCartKeys.add(getCartItemKey(item, index)));
+  persistSelectedKeys();
+  if (pincodeVerified && currentDeliveryZone) recalculateDeliveryFee();
+  renderUI();
+  }
+
+  function deleteSelectedItems() {
+  const selected = getSelectedCartItems();
+  if (!selected.length) return;
+  if (!confirm(`Delete ${selected.length} selected item${selected.length > 1 ? 's' : ''} from cart?`)) return;
+  cart = cart.filter((item, index) => !selectedCartKeys.has(getCartItemKey(item, index)));
+  selectedCartKeys.clear();
+  updateStorage();
+  }
+
+  function updateStorage() {
+  syncSelectedKeys({ selectAllIfEmpty: false });
+  localStorage.setItem('hc-cart', JSON.stringify(cart));
+  localStorage.setItem('hc-saved', JSON.stringify(saved));
+  renderUI();
+  }
+  function deleteItem(i) { selectedCartKeys.delete(getCartItemKey(cart[i], i)); cart.splice(i, 1); updateStorage(); }
+  function saveItem(i) { selectedCartKeys.delete(getCartItemKey(cart[i], i)); saved.push(cart.splice(i, 1)[0]); updateStorage(); }
+  function moveToCart(i) { cart.push(saved.splice(i, 1)[0]); syncSelectedKeys({ selectAllIfEmpty: true }); updateStorage(); }
   function deleteSaved(i) { saved.splice(i, 1); updateStorage(); }
 
   function renderSaved() {
@@ -916,7 +1036,7 @@
   if (dropdown) dropdown.classList.toggle('open');
   });
 
-  window.onload = () => { renderUI(); checkUserSession(); };
+  window.onload = () => { syncSelectedKeys({ selectAllIfEmpty: true }); renderUI(); checkUserSession(); };
   window.onclick = (e) => { if (!e.target.closest('.profile-section')) document.getElementById('profile-dropdown').classList.remove('active'); };
   document.addEventListener('click', (e) => {
   const dropdown = document.getElementById('address-dropdown');
@@ -947,3 +1067,4 @@
 
 </body>
 </html>
+
