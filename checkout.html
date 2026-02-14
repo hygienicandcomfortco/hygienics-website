@@ -958,7 +958,12 @@ if (checkoutData.cartItems && checkoutData.cartItems.length > 0) {
 }
 
 // PHASE 4: Success Cleanup
+if (Array.isArray(checkoutData.remainingCartItems)) {
+localStorage.setItem('hc-cart', JSON.stringify(checkoutData.remainingCartItems));
+} else {
 localStorage.removeItem('hc-cart');
+}
+localStorage.removeItem('hc-cart-selected');
 localStorage.removeItem('checkout-item');
 
 const msg = `*NEW ORDER*\nItem: ${checkoutData.itemsText || checkoutData.name}\nAddress: ${finalAddress}\nTotal: ?${checkoutData.price}`;
