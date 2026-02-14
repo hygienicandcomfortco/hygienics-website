@@ -315,6 +315,15 @@
       font-weight: 700;
       margin-bottom: 4px;
     }
+    .item-name-link {
+      color: inherit;
+      text-decoration: none;
+    }
+    .item-name-link:hover {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
 
     .item-meta {
       color: var(--muted);
@@ -408,6 +417,16 @@
     .invoice-btn:hover {
       background: #dbeafe;
       border-color: #93c5fd;
+    }
+    .summary-btn {
+      margin-top: 10px;
+      background: #f8fafc;
+      border-color: #dbeafe;
+      color: #1d4ed8;
+    }
+    .summary-btn:hover {
+      background: #eff6ff;
+      border-color: #bfdbfe;
     }
 
     .order-details-grid {
@@ -503,6 +522,13 @@
 
     .btn-outline:hover {
       background: #eff6ff;
+    }
+    .btn-outline:disabled {
+      background: #e2e8f0;
+      color: #475569;
+      border-color: #cbd5e1;
+      cursor: not-allowed;
+      opacity: 1;
     }
 
     .btn-solid {
@@ -886,6 +912,7 @@
         <div id="bill-saved" class="saved-chip" style="display:none;">Saved</div>
       </div>
       <button class="invoice-btn" type="button" id="download-invoice-btn">Download Invoice</button>
+      <button class="invoice-btn summary-btn" type="button" id="download-summary-btn" style="display:none;">Download Order Summary</button>
     </section>
 
     <section class="card details-card">
@@ -939,7 +966,7 @@
 
   <div class="sticky-actions" id="sticky-actions" style="display:none;">
     <div class="actions-inner">
-      <button class="btn-outline" type="button" onclick="rateProducts()">Rate Products</button>
+      <button class="btn-outline" id="rate-products-btn" type="button" onclick="rateProducts()">Rate Products</button>
       <button class="btn-solid" type="button" onclick="orderAgain()">Order Again</button>
     </div>
   </div>
@@ -1016,9 +1043,8 @@
     }
 
     function formatDateTime(value) {
-      if (!value) return "-";
-      const d = new Date(value);
-      if (Number.isNaN(d.getTime())) return "-";
+      const d = parseFlexibleDate(value);
+      if (!d) return "-";
       return d.toLocaleString("en-IN", {
         day: "numeric",
         month: "short",
@@ -1026,6 +1052,43 @@
         hour: "numeric",
         minute: "2-digit"
       });
+    }
+
+    function parseFlexibleDate(value) {
+      if (!value && value !== 0) return null;
+      if (value instanceof Date) {
+        return Number.isNaN(value.getTime()) ? null : value;
+      }
+      if (typeof value === "number") {
+        const ms = value > 1e12 ? value : value * 1000;
+        const d = new Date(ms);
+        return Number.isNaN(d.getTime()) ? null : d;
+      }
+      const raw = String(value).trim();
+      if (!raw) return null;
+
+      const direct = new Date(raw);
+      if (!Number.isNaN(direct.getTime())) return direct;
+
+      const m = raw.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})(?:[,\sT]+(\d{1,2}):(\d{2})(?::(\d{2}))?)?$/);
+      if (m) {
+        const day = Number(m[1]);
+        const month = Number(m[2]);
+        let year = Number(m[3]);
+        if (year < 100) year += 2000;
+        const hour = Number(m[4] || 0);
+        const minute = Number(m[5] || 0);
+        const second = Number(m[6] || 0);
+        const d = new Date(year, month - 1, day, hour, minute, second);
+        if (!Number.isNaN(d.getTime())) return d;
+      }
+      return null;
+    }
+
+    function formatDateOnly(value) {
+      const d = parseFlexibleDate(value);
+      if (!d) return "-";
+      return d.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
     }
 
     function parseOrderItems(itemsText = "") {
@@ -1102,16 +1165,40 @@
     function getDeliveredDateValue(order) {
       const candidates = [
         order?.delivered_at,
+        order?.delivery_date,
+        order?.delivered_date,
         order?.delivered_on,
         order?.delivery_time,
+        order?.delivered_time,
         order?.completed_at,
         order?.status_updated_at,
         order?.updated_at
       ];
       for (const value of candidates) {
-        if (!value) continue;
-        const d = new Date(value);
-        if (!Number.isNaN(d.getTime())) return value;
+        const d = parseFlexibleDate(value);
+        if (d) return d;
+      }
+      return null;
+    }
+
+    function getExpectedDateValue(order) {
+      const candidates = [
+        order?.expected_delivery_date,
+        order?.expected_delivery,
+        order?.estimated_delivery_date,
+        order?.estimated_delivery,
+        order?.expected_date,
+        order?.expected_at,
+        order?.eta,
+        order?.delivery_eta,
+        order?.estimated_eta,
+        order?.promised_date,
+        order?.promised_at,
+        order?.delivery_date_estimate
+      ];
+      for (const value of candidates) {
+        const d = parseFlexibleDate(value);
+        if (d) return d;
       }
       return null;
     }
@@ -1122,6 +1209,10 @@
       if (key === "shipped") return { text: "Shipped", icon: "truck", cls: "status-shipped" };
       if (key === "packed") return { text: "Packed", icon: "package", cls: "status-packed" };
       return { text: "New", icon: "circle", cls: "status-new" };
+    }
+
+    function isDeliveredStatus(rawStatus) {
+      return String(rawStatus || "").trim().toLowerCase() === "delivered";
     }
 
     async function initSidebarUser() {
@@ -1204,6 +1295,10 @@
       let mrpTotal = 0;
       const itemHtml = items.map((it) => {
         const info = getProductInfoByName(it.name);
+        const productId = info?.id ? encodeURIComponent(String(info.id)) : "";
+        const productNameHtml = productId
+          ? `<a class="item-name item-name-link" href="products.html?id=${productId}">${escapeHtml(it.name)}</a>`
+          : `<div class="item-name">${escapeHtml(it.name)}</div>`;
         const unit = Number(info?.price) || (items.length ? (total / items.reduce((s, r) => s + (r.qty || 1), 0)) : 0);
         const line = Math.round(unit * (it.qty || 1));
         const unitMrp = Number(info?.mrp) || 0;
@@ -1216,7 +1311,7 @@
               <img src="${escapeHtml(info?.image || fallbackProductImage)}" alt="${escapeHtml(it.name)}">
             </div>
             <div>
-              <div class="item-name">${escapeHtml(it.name)}</div>
+              ${productNameHtml}
               <div class="item-meta">Qty: ${it.qty}</div>
             </div>
             <div class="price-col">
@@ -1296,7 +1391,30 @@
         statusKey === "delivered"
           ? (deliveredDateValue ? formatDateTime(deliveredDateValue) : "Delivered")
           : "Not delivered yet";
-      document.getElementById("download-invoice-btn").onclick = () => downloadInvoice(order);
+      const rateBtn = document.getElementById("rate-products-btn");
+      if (rateBtn) {
+        const canRate = statusKey === "delivered";
+        rateBtn.disabled = false;
+        rateBtn.textContent = "Rate Products";
+        rateBtn.title = canRate ? "Rate your purchased items" : "Open to view rating availability";
+      }
+      const docBtn = document.getElementById("download-invoice-btn");
+      const summaryBtn = document.getElementById("download-summary-btn");
+      if (docBtn && summaryBtn) {
+        const canDownloadInvoice = isDeliveredStatus(order.status);
+        if (canDownloadInvoice) {
+          summaryBtn.style.display = "";
+          summaryBtn.onclick = () => downloadOrderSummary(order);
+          docBtn.textContent = "Download Invoice";
+          docBtn.title = "Download tax invoice for delivered order";
+          docBtn.onclick = () => downloadInvoice(order);
+        } else {
+          summaryBtn.style.display = "none";
+          docBtn.textContent = "Download Order Summary";
+          docBtn.title = "Download order summary";
+          docBtn.onclick = () => downloadOrderSummary(order);
+        }
+      }
 
       document.getElementById("page-wrap").style.display = "";
       document.getElementById("sticky-actions").style.display = "";
@@ -1346,6 +1464,10 @@
       window.location.href = "cart.html";
     }
 
+    function isCurrentOrderDelivered() {
+      return isDeliveredStatus(currentOrder?.status);
+    }
+
     function getRateableProducts() {
       const seen = new Set();
       const rows = [];
@@ -1360,20 +1482,61 @@
           image: info?.image || fallbackProductImage,
           rating: 5,
           review: "",
-          status: ""
+          status: "",
+          locked: false
         });
       });
       return rows;
     }
 
+    async function applyExistingReviews(rows) {
+      const productIds = rows
+        .map((row) => row.productId)
+        .filter((id) => id !== null && id !== undefined);
+      if (!productIds.length) return rows;
+
+      const { data: { user } } = await _supabase.auth.getUser();
+      if (!user) return rows;
+
+      const { data: reviews, error } = await _supabase
+        .from("product_reviews")
+        .select("product_id,rating,review")
+        .eq("user_id", user.id)
+        .in("product_id", productIds);
+
+      if (error || !Array.isArray(reviews)) return rows;
+
+      const reviewMap = {};
+      reviews.forEach((rev) => {
+        const key = String(rev.product_id);
+        reviewMap[key] = rev;
+      });
+
+      return rows.map((row) => {
+        const existing = row.productId ? reviewMap[String(row.productId)] : null;
+        if (!existing) return row;
+        return {
+          ...row,
+          rating: Math.max(1, Math.min(5, Number(existing.rating) || 5)),
+          review: String(existing.review || ""),
+          status: "Review already submitted",
+          locked: true
+        };
+      });
+    }
+
     function renderRateProductsModal() {
       const list = document.getElementById("rate-products-list");
       if (!list) return;
+      const canRate = isCurrentOrderDelivered();
+      const blockedNote = !canRate
+        ? `<div class="rate-item"><p class="rate-status">Once the order is delivered, you can rate the product.</p></div>`
+        : "";
       if (!rateProductRows.length) {
         list.innerHTML = `<div class="rate-item"><p class="rate-status">No products available for rating.</p></div>`;
         return;
       }
-      list.innerHTML = rateProductRows.map((row, idx) => `
+      list.innerHTML = blockedNote + rateProductRows.map((row, idx) => `
         <div class="rate-item">
           <div class="rate-item-top">
             <img class="rate-thumb" src="${escapeHtml(row.image || fallbackProductImage)}" alt="${escapeHtml(row.name)}">
@@ -1381,14 +1544,14 @@
           </div>
           <div class="rate-stars" id="rate-stars-${idx}">
             ${[1,2,3,4,5].map((val) => `
-              <button type="button" class="rate-star ${val <= row.rating ? "active" : ""}" onclick="setProductRating(${idx}, ${val})">&#9733;</button>
+              <button type="button" class="rate-star ${val <= row.rating ? "active" : ""}" onclick="setProductRating(${idx}, ${val})" ${(canRate && !row.locked) ? "" : "disabled"}>&#9733;</button>
             `).join("")}
           </div>
-          <textarea id="rate-text-${idx}" class="rate-text" maxlength="500" placeholder="Write your review (optional)" oninput="setProductReviewText(${idx}, this.value)">${escapeHtml(row.review || "")}</textarea>
+          <textarea id="rate-text-${idx}" class="rate-text" maxlength="500" placeholder="Write your review (optional)" oninput="setProductReviewText(${idx}, this.value)" ${(canRate && !row.locked) ? "" : "disabled"}>${escapeHtml(row.review || "")}</textarea>
           <div class="rate-actions">
-            <span class="rate-status" id="rate-status-${idx}">${escapeHtml(row.status || "")}</span>
-            <button type="button" class="rate-submit" id="rate-submit-${idx}" onclick="submitProductReviewFromOrder(${idx})" ${row.productId ? "" : "disabled"}>
-              ${row.productId ? "Submit Review" : "Product not linked"}
+            <span class="rate-status" id="rate-status-${idx}">${escapeHtml(row.status || (canRate ? "" : "Rating will be enabled after delivery"))}</span>
+            <button type="button" class="rate-submit" id="rate-submit-${idx}" onclick="submitProductReviewFromOrder(${idx})" ${(canRate && row.productId && !row.locked) ? "" : "disabled"}>
+              ${canRate ? (row.locked ? "Already Submitted" : (row.productId ? "Submit Review" : "Product not linked")) : "Rate After Delivery"}
             </button>
           </div>
         </div>
@@ -1396,12 +1559,13 @@
       lucide.createIcons();
     }
 
-    function rateProducts() {
+    async function rateProducts() {
       if (!currentItems.length) {
         alert("No products available to rate.");
         return;
       }
-      rateProductRows = getRateableProducts();
+      const rows = getRateableProducts();
+      rateProductRows = await applyExistingReviews(rows);
       renderRateProductsModal();
       const modal = document.getElementById("rate-products-modal");
       modal.classList.add("show");
@@ -1415,7 +1579,9 @@
     }
 
     function setProductRating(index, rating) {
+      if (!isCurrentOrderDelivered()) return;
       if (!rateProductRows[index]) return;
+      if (rateProductRows[index].locked) return;
       rateProductRows[index].rating = Math.max(1, Math.min(5, Number(rating) || 5));
       const starsWrap = document.getElementById(`rate-stars-${index}`);
       if (!starsWrap) return;
@@ -1425,13 +1591,21 @@
     }
 
     function setProductReviewText(index, text) {
+      if (!isCurrentOrderDelivered()) return;
       if (!rateProductRows[index]) return;
+      if (rateProductRows[index].locked) return;
       rateProductRows[index].review = String(text || "");
     }
 
     async function submitProductReviewFromOrder(index) {
+      if (!isCurrentOrderDelivered()) {
+        alert("You can rate products only after the order is delivered.");
+        closeRateProductsModal();
+        return;
+      }
       const row = rateProductRows[index];
       if (!row || !row.productId) return;
+      if (row.locked) return;
 
       const submitBtn = document.getElementById(`rate-submit-${index}`);
       const statusEl = document.getElementById(`rate-status-${index}`);
@@ -1458,7 +1632,7 @@
 
       const { data: existing, error: existingErr } = await _supabase
         .from("product_reviews")
-        .select("id")
+        .select("id,rating,review")
         .eq("product_id", row.productId)
         .eq("user_id", user.id)
         .maybeSingle();
@@ -1470,40 +1644,37 @@
         return;
       }
 
-      let writeError = null;
       if (existing?.id) {
-        const { error } = await _supabase
-          .from("product_reviews")
-          .update({
-            rating,
-            review: reviewText || null,
-            reviewer_name: reviewerName
-          })
-          .eq("id", existing.id);
-        writeError = error || null;
-      } else {
-        const { error } = await _supabase
-          .from("product_reviews")
-          .insert([{
-            product_id: row.productId,
-            user_id: user.id,
-            rating,
-            review: reviewText || null,
-            reviewer_name: reviewerName
-          }]);
-        writeError = error || null;
+        row.locked = true;
+        row.status = "Review already submitted";
+        row.rating = Math.max(1, Math.min(5, Number(existing.rating) || 5));
+        row.review = String(existing.review || "");
+        renderRateProductsModal();
+        return;
       }
 
-      if (writeError) {
+      const { error: insertError } = await _supabase
+        .from("product_reviews")
+        .insert([{
+          product_id: row.productId,
+          user_id: user.id,
+          rating,
+          review: reviewText || null,
+          reviewer_name: reviewerName
+        }]);
+
+      if (insertError) {
         statusEl.textContent = "Submit failed. Try again.";
         submitBtn.disabled = false;
         submitBtn.textContent = "Submit Review";
         return;
       }
 
+      row.locked = true;
       row.status = "Review submitted";
-      statusEl.textContent = row.status;
-      submitBtn.textContent = "Submitted";
+      row.rating = rating;
+      row.review = reviewText;
+      renderRateProductsModal();
     }
 
     async function handleLogout() {
@@ -1513,6 +1684,10 @@
     }
 
     function downloadInvoice(order) {
+      if (!isDeliveredStatus(order?.status)) {
+        downloadOrderSummary(order);
+        return;
+      }
       const date = new Date(order.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
       const printArea = document.getElementById("invoice-print-area");
       const items = parseOrderItems(order.items || "");
@@ -1527,38 +1702,65 @@
       const orderStatus = escapeHtml(order.status || "New");
       const orderItemsText = escapeHtml(order.items || "-");
       const paymentMethod = escapeHtml(order.payment_method || "Cash on Delivery");
+      const logoSrc = escapeHtml(new URL("logo.png", window.location.href).href);
+      const orderTotal = Math.max(0, Number(order.total_price) || 0);
+      const deliveredDateValue = getDeliveredDateValue(order);
+      const deliveredDateText = formatDateOnly(deliveredDateValue);
+      let invoiceMrpTotal = 0;
+      let invoiceSellingTotal = 0;
 
       const rows = items.map((it) => {
+        const qty = Math.max(1, Number(it.qty) || 1);
+        const info = getProductInfoByName(it.name);
         const unit = getItemUnitPrice(it.name, avgUnitPrice);
-        const line = unit ? unit * (it.qty || 1) : (singleItem ? Number(order.total_price) : null);
+        const unitMrpRaw = Number(info?.mrp);
+        const unitMrp = Number.isFinite(unitMrpRaw) && unitMrpRaw > 0
+          ? unitMrpRaw
+          : (Number.isFinite(unit) ? unit : null);
+        const line = Number.isFinite(unit) ? unit * qty : (singleItem ? orderTotal : null);
+        const mrpLine = Number.isFinite(unitMrp) ? unitMrp * qty : line;
+        const discountLine = (Number.isFinite(mrpLine) && Number.isFinite(line))
+          ? Math.max(0, mrpLine - line)
+          : 0;
+        invoiceMrpTotal += Number.isFinite(mrpLine) ? mrpLine : 0;
+        invoiceSellingTotal += Number.isFinite(line) ? line : 0;
         return `
           <tr>
-            <td style="padding:12px;border-bottom:1px solid #e2e8f0;">${escapeHtml(it.name)}</td>
-            <td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:center;">${it.qty}</td>
+              <td style="padding:12px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.35;overflow-wrap:anywhere;">${escapeHtml(it.name)}</td>
+            <td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:center;">${qty}</td>
+            <td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;">${formatMoney(unitMrp)}</td>
             <td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;">${formatMoney(unit)}</td>
+            <td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;">${discountLine > 0 ? formatMoney(discountLine) : "-"}</td>
             <td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;font-weight:700;">${formatMoney(line)}</td>
           </tr>
         `;
       }).join("");
+      const effectiveMrpTotal = invoiceMrpTotal > 0 ? invoiceMrpTotal : orderTotal;
+      const effectiveSellingTotal = invoiceSellingTotal > 0 ? invoiceSellingTotal : orderTotal;
+      const effectiveDiscount = Math.max(0, effectiveMrpTotal - effectiveSellingTotal);
 
-      printArea.innerHTML = `
-        <div class="invoice-page" style="font-family:'Plus Jakarta Sans','Segoe UI',sans-serif;color:#0f172a;padding:20px;border:1px solid #e2e8f0;border-radius:12px;">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:20px;padding-bottom:18px;border-bottom:2px solid #2563eb;">
-            <div>
-              <p style="margin:0;font-size:12px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.08em;">Tax Invoice</p>
-              <h1 style="margin:6px 0 0 0;font-size:30px;color:#2563eb;line-height:1;">INVOICE</h1>
-              <p style="margin:10px 0 0 0;font-size:14px;"><b>Invoice No:</b> ${invoiceNo}</p>
-              <p style="margin:4px 0 0 0;font-size:14px;"><b>Order ID:</b> ${orderNo}</p>
-              <p style="margin:4px 0 0 0;font-size:14px;"><b>Date:</b> ${date}</p>
-              <p style="margin:4px 0 0 0;font-size:14px;"><b>Status:</b> ${orderStatus}</p>
-            </div>
-            <div style="text-align:right;">
-              <h2 style="margin:0 0 6px 0;font-size:30px;line-height:1;color:#111827;">Hygienic & Comfort Co.</h2>
-              <p style="margin:0;color:#334155;font-size:14px;">Ambernath East, Maharashtra</p>
-              <p style="margin:4px 0 0 0;color:#334155;font-size:14px;">Contact: +91 9307760665</p>
-              <p style="margin:4px 0 0 0;color:#334155;font-size:14px;">hygienicsandcomfort@gmail.com</p>
-            </div>
-          </div>
+        printArea.innerHTML = `
+          <div class="invoice-page" style="font-family:'Plus Jakarta Sans','Segoe UI',sans-serif;color:#0f172a;padding:20px;border:1px solid #e2e8f0;border-radius:12px;">
+              <div style="display:grid;grid-template-columns:1.15fr 0.85fr;align-items:start;gap:20px;padding-bottom:18px;border-bottom:2px solid #2563eb;">
+                <div>
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                    <img src="${logoSrc}" alt="Hygienic & Comfort Co. logo" style="width:50px;height:50px;border-radius:50%;border:1px solid #dbe7ff;object-fit:contain;padding:2px;background:#fff;display:block;">
+                    <h2 style="margin:0;font-size:26px;line-height:1;color:#111827;white-space:nowrap;">Hygienic & Comfort Co.</h2>
+                  </div>
+                  <p style="margin:0;color:#334155;font-size:14px;">Ambernath East, Maharashtra</p>
+                  <p style="margin:4px 0 0 0;color:#334155;font-size:14px;">Contact: +91 9307760665</p>
+                  <p style="margin:4px 0 0 0;color:#334155;font-size:14px;">hygienicsandcomfort@gmail.com</p>
+                </div>
+                <div style="text-align:right;">
+                  <p style="margin:0;font-size:12px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.08em;">Tax Invoice</p>
+                  <h1 style="margin:6px 0 0 0;font-size:30px;color:#2563eb;line-height:1;">INVOICE</h1>
+                  <p style="margin:10px 0 0 0;font-size:14px;"><b>Invoice No:</b> ${invoiceNo}</p>
+                  <p style="margin:4px 0 0 0;font-size:14px;"><b>Order ID:</b> ${orderNo}</p>
+                  <p style="margin:4px 0 0 0;font-size:14px;"><b>Date:</b> ${date}</p>
+                  <p style="margin:4px 0 0 0;font-size:14px;"><b>Delivery Date:</b> ${deliveredDateText}</p>
+                  <p style="margin:4px 0 0 0;font-size:14px;"><b>Status:</b> ${orderStatus}</p>
+                </div>
+              </div>
 
           <div style="display:grid;grid-template-columns:1fr;gap:16px;margin:20px 0;">
             <div style="border:1px solid #e2e8f0;border-radius:10px;padding:14px;">
@@ -1571,47 +1773,233 @@
             </div>
           </div>
 
-          <table style="width:100%;border-collapse:collapse;margin-bottom:20px;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
-            <thead>
-              <tr style="background:#f8fafc;border-bottom:1px solid #e2e8f0;">
-                <th style="text-align:left;padding:12px;">Item Description</th>
+            <table style="width:100%;table-layout:fixed;border-collapse:collapse;margin-bottom:20px;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
+              <colgroup>
+                <col style="width:auto;">
+                  <col style="width:62px;">
+                  <col style="width:96px;">
+                  <col style="width:96px;">
+                  <col style="width:96px;">
+                  <col style="width:110px;">
+              </colgroup>
+              <thead>
+                <tr style="background:#f8fafc;border-bottom:1px solid #e2e8f0;">
+                  <th style="text-align:left;padding:12px;">Item Description</th>
                 <th style="text-align:center;padding:12px;width:80px;">Qty</th>
+                <th style="text-align:right;padding:12px;width:120px;">MRP</th>
                 <th style="text-align:right;padding:12px;width:140px;">Unit Price</th>
-                <th style="text-align:right;padding:12px;width:140px;">Line Total</th>
+                <th style="text-align:right;padding:12px;width:120px;">Discount</th>
+                <th style="text-align:right;padding:12px;width:140px;">Total</th>
               </tr>
             </thead>
-            <tbody>
-              ${rows || `
-                <tr>
-                  <td style="padding:12px;border-bottom:1px solid #e2e8f0;">${orderItemsText}</td>
-                  <td style="padding:12px;text-align:center;border-bottom:1px solid #e2e8f0;">-</td>
-                  <td style="padding:12px;text-align:right;border-bottom:1px solid #e2e8f0;">-</td>
-                  <td style="padding:12px;text-align:right;border-bottom:1px solid #e2e8f0;font-weight:700;">${formatMoney(order.total_price)}</td>
+              <tbody>
+                ${rows || `
+                  <tr>
+                      <td style="padding:12px;border-bottom:1px solid #e2e8f0;vertical-align:top;overflow-wrap:anywhere;">${orderItemsText}</td>
+                    <td style="padding:12px;text-align:center;border-bottom:1px solid #e2e8f0;">-</td>
+                    <td style="padding:12px;text-align:right;border-bottom:1px solid #e2e8f0;">${formatMoney(orderTotal)}</td>
+                    <td style="padding:12px;text-align:right;border-bottom:1px solid #e2e8f0;">-</td>
+                    <td style="padding:12px;text-align:right;border-bottom:1px solid #e2e8f0;">-</td>
+                    <td style="padding:12px;text-align:right;border-bottom:1px solid #e2e8f0;font-weight:700;">${formatMoney(order.total_price)}</td>
+                  </tr>
+                `}
+              </tbody>
+              <tfoot>
+                <tr style="background:#f8fafc;border-top:1px solid #cbd5e1;">
+                  <td style="padding:10px 12px;font-weight:800;color:#0f172a;">Totals</td>
+                  <td style="padding:10px 12px;text-align:center;font-weight:800;color:#0f172a;">${totalQty || "-"}</td>
+                  <td style="padding:10px 12px;text-align:right;font-weight:800;color:#0f172a;">${formatMoney(effectiveMrpTotal)}</td>
+                  <td style="padding:10px 12px;text-align:right;font-weight:800;color:#0f172a;">${formatMoney(effectiveSellingTotal)}</td>
+                  <td style="padding:10px 12px;text-align:right;font-weight:800;color:#15803d;">${effectiveDiscount > 0 ? formatMoney(effectiveDiscount) : "-"}</td>
+                  <td style="padding:10px 12px;text-align:right;font-weight:900;color:#0f172a;">${formatMoney(orderTotal)}</td>
                 </tr>
-              `}
-            </tbody>
-          </table>
+              </tfoot>
+              </table>
 
-          <div style="display:flex;justify-content:flex-end;margin-bottom:24px;">
-            <div style="min-width:280px;border:1px solid #e2e8f0;border-radius:10px;padding:14px;">
-              <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;">
-                <span style="color:#64748b;">Total Qty</span>
-                <span style="font-weight:700;">${totalQty || "-"}</span>
+              <p style="margin:-6px 0 18px 0;text-align:right;color:#64748b;font-size:13px;">
+                Payment Method: <span style="font-weight:700;color:#0f172a;">${paymentMethod}</span>
+              </p>
+
+            <div style="border-top:1px solid #e2e8f0;padding-top:14px;text-align:center;color:#64748b;font-size:12px;">
+              <p style="margin:0 0 4px 0;">Thank you for shopping with Hygienic & Comfort Co.!</p>
+              <p style="margin:0;">This is a computer-generated invoice and does not require a physical signature.</p>
+          </div>
+        </div>
+      `;
+
+      printArea.style.display = "block";
+      window.print();
+      printArea.style.display = "none";
+    }
+
+    function downloadOrderSummary(order) {
+      const date = new Date(order.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
+      const printArea = document.getElementById("invoice-print-area");
+      const items = parseOrderItems(order.items || "");
+      const totalQty = items.reduce((s, i) => s + (i.qty || 1), 0);
+      const avgUnitPrice = totalQty > 0 ? (Number(order.total_price) / totalQty) : null;
+      const customerName = escapeHtml(order.customer_name || "Customer");
+      const customerAddress = escapeHtml(order.address || "Address provided at checkout");
+      const orderSeq = order.invoice_number || 1;
+      const orderNo = formatOrderNumber(order.created_at, orderSeq);
+      const statusMeta = getStatusMeta(order.status);
+      const paymentMethod = escapeHtml(order.payment_method || "Cash on Delivery");
+      const logoSrc = escapeHtml(new URL("logo.png", window.location.href).href);
+      const orderTotal = Math.max(0, Number(order.total_price) || 0);
+      const isDelivered = isDeliveredStatus(order.status);
+      const deliveredDateValue = getDeliveredDateValue(order);
+      const expectedDateValue = getExpectedDateValue(order);
+      const etaLabel = isDelivered ? "Delivery Date" : "Expected By";
+      const etaText = isDelivered
+        ? formatDateOnly(deliveredDateValue)
+        : formatDateOnly(expectedDateValue);
+
+      let itemsMrpTotal = 0;
+      let itemsSellingTotal = 0;
+      let itemsDiscountTotal = 0;
+      const itemRows = items.map((it) => {
+        const qty = Math.max(1, Number(it.qty) || 1);
+        const info = getProductInfoByName(it.name);
+        const unit = getItemUnitPrice(it.name, avgUnitPrice);
+        const unitMrpRaw = Number(info?.mrp);
+        const unitMrp = Number.isFinite(unitMrpRaw) && unitMrpRaw > 0
+          ? unitMrpRaw
+          : (Number.isFinite(unit) ? unit : 0);
+        const line = Number.isFinite(unit) ? (unit * qty) : 0;
+        const mrpLine = unitMrp * qty;
+        const discountLine = Math.max(0, mrpLine - line);
+        itemsMrpTotal += mrpLine;
+        itemsSellingTotal += line;
+        itemsDiscountTotal += discountLine;
+        return `
+          <tr>
+              <td style="padding:10px 12px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.35;overflow-wrap:anywhere;">${escapeHtml(it.name)}</td>
+            <td style="padding:10px 12px;border-bottom:1px solid #e2e8f0;text-align:center;">${qty}</td>
+            <td style="padding:10px 12px;border-bottom:1px solid #e2e8f0;text-align:right;">${formatMoney(unitMrp)}</td>
+            <td style="padding:10px 12px;border-bottom:1px solid #e2e8f0;text-align:right;">${formatMoney(unit)}</td>
+            <td style="padding:10px 12px;border-bottom:1px solid #e2e8f0;text-align:right;">${discountLine > 0 ? formatMoney(discountLine) : "-"}</td>
+            <td style="padding:10px 12px;border-bottom:1px solid #e2e8f0;text-align:right;font-weight:700;">${formatMoney(line)}</td>
+          </tr>
+        `;
+      }).join("");
+
+      if (!itemsSellingTotal) itemsSellingTotal = orderTotal;
+      if (!itemsMrpTotal) itemsMrpTotal = itemsSellingTotal;
+
+      const deliveryFee = firstNumeric(order, [
+        "delivery_fee",
+        "shipping_fee",
+        "delivery_charges",
+        "shipping_charges",
+        "delivery_charge",
+        "shipping_charge"
+      ]);
+      const deliveryCharged = deliveryFee !== null
+        ? deliveryFee
+        : Math.max(0, Math.round(orderTotal - itemsSellingTotal));
+      const deliveryFeeMrp = firstNumeric(order, [
+        "delivery_fee_mrp",
+        "shipping_fee_mrp",
+        "delivery_fee_original",
+        "shipping_fee_original",
+        "delivery_fee_before_discount",
+        "shipping_fee_before_discount"
+      ]);
+      const deliveryBase = deliveryFeeMrp !== null
+        ? deliveryFeeMrp
+        : (deliveryCharged > 0 ? deliveryCharged : 30);
+      const shippingDiscount = Math.max(0, deliveryBase - deliveryCharged);
+      const totalDiscount = Math.max(0, itemsDiscountTotal + shippingDiscount);
+
+        printArea.innerHTML = `
+            <div class="invoice-page" style="font-family:'Plus Jakarta Sans','Segoe UI',sans-serif;color:#0f172a;padding:20px;border:1px solid #e2e8f0;border-radius:12px;">
+              <div style="display:grid;grid-template-columns:1.15fr 0.85fr;align-items:start;gap:18px;padding-bottom:14px;border-bottom:2px solid #2563eb;">
+                <div>
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                    <img src="${logoSrc}" alt="Hygienic & Comfort Co. logo" style="width:50px;height:50px;border-radius:50%;border:1px solid #dbe7ff;object-fit:contain;padding:2px;background:#fff;display:block;">
+                    <h2 style="margin:0;font-size:26px;line-height:1;color:#111827;white-space:nowrap;">Hygienic & Comfort Co.</h2>
+                  </div>
+                  <p style="margin:0;color:#334155;font-size:14px;">Ambernath East, Maharashtra</p>
+                  <p style="margin:4px 0 0 0;color:#334155;font-size:14px;">+91 9307760665</p>
+                </div>
+                <div style="text-align:right;">
+                  <p style="margin:0;font-size:12px;font-weight:800;color:#64748b;letter-spacing:0.08em;">ORDER DOCUMENT</p>
+                  <h1 style="margin:6px 0 0 0;font-size:30px;color:#1d4ed8;line-height:1;">ORDER SUMMARY</h1>
+                </div>
               </div>
-              <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:10px;">
-                <span style="color:#64748b;">Payment Method</span>
-                <span style="font-weight:700;">${paymentMethod}</span>
-              </div>
-              <div style="border-top:1px solid #e2e8f0;padding-top:10px;display:flex;justify-content:space-between;font-size:22px;font-weight:800;">
-                <span>Grand Total</span>
-                <span>${formatMoney(order.total_price)}</span>
+
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0;">
+            <div style="border:1px solid #e2e8f0;border-radius:10px;padding:12px;">
+              <p style="margin:0 0 6px 0;font-size:12px;font-weight:800;color:#64748b;text-transform:uppercase;">Order Details</p>
+              <p style="margin:0 0 4px 0;"><b>Order ID:</b> ${orderNo}</p>
+              <p style="margin:0 0 4px 0;"><b>Placed:</b> ${date}</p>
+              <p style="margin:0;"><b>Status:</b> ${escapeHtml(statusMeta.text)}</p>
+            </div>
+            <div style="border:1px solid #e2e8f0;border-radius:10px;padding:12px;">
+              <p style="margin:0 0 6px 0;font-size:12px;font-weight:800;color:#64748b;text-transform:uppercase;">Ship To</p>
+              <p style="margin:0;font-weight:700;">${customerName}</p>
+              <p style="margin:4px 0 0 0;">${customerAddress}</p>
+              <p style="margin:4px 0 0 0;">Phone: ${escapeHtml(order.phone_number || "-")}</p>
+            </div>
+              <div style="border:1px solid #e2e8f0;border-radius:10px;padding:12px;">
+                <p style="margin:0 0 6px 0;font-size:12px;font-weight:800;color:#64748b;text-transform:uppercase;">Payment & ${isDelivered ? "Delivery" : "ETA"}</p>
+                <p style="margin:0 0 4px 0;"><b>Method:</b> ${paymentMethod}</p>
+                <p style="margin:0 0 4px 0;"><b>Total Qty:</b> ${totalQty || "-"}</p>
+                <p style="margin:0;"><b>${etaLabel}:</b> ${etaText}</p>
               </div>
             </div>
-          </div>
 
-          <div style="border-top:1px solid #e2e8f0;padding-top:14px;text-align:center;color:#64748b;font-size:12px;">
-            <p style="margin:0 0 4px 0;">Thank you for shopping with Hygienic & Comfort Co.!</p>
-            <p style="margin:0;">This is a computer-generated invoice and does not require a physical signature.</p>
+            <table style="width:100%;table-layout:fixed;border-collapse:collapse;margin-bottom:14px;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
+              <colgroup>
+                <col style="width:auto;">
+                  <col style="width:62px;">
+                  <col style="width:96px;">
+                  <col style="width:96px;">
+                  <col style="width:96px;">
+                  <col style="width:110px;">
+              </colgroup>
+              <thead>
+                <tr style="background:#f8fafc;border-bottom:1px solid #e2e8f0;">
+                  <th style="text-align:left;padding:10px 12px;">Item</th>
+                <th style="text-align:center;padding:10px 12px;width:84px;">Qty</th>
+                <th style="text-align:right;padding:10px 12px;width:120px;">MRP</th>
+                <th style="text-align:right;padding:10px 12px;width:150px;">Unit Price</th>
+                <th style="text-align:right;padding:10px 12px;width:120px;">Discount</th>
+                <th style="text-align:right;padding:10px 12px;width:150px;">Total</th>
+              </tr>
+            </thead>
+              <tbody>
+                ${itemRows || `
+                  <tr>
+                      <td style="padding:10px 12px;border-bottom:1px solid #e2e8f0;vertical-align:top;overflow-wrap:anywhere;">${escapeHtml(order.items || "-")}</td>
+                    <td style="padding:10px 12px;border-bottom:1px solid #e2e8f0;text-align:center;">-</td>
+                    <td style="padding:10px 12px;border-bottom:1px solid #e2e8f0;text-align:right;">${formatMoney(orderTotal)}</td>
+                    <td style="padding:10px 12px;border-bottom:1px solid #e2e8f0;text-align:right;">-</td>
+                  <td style="padding:10px 12px;border-bottom:1px solid #e2e8f0;text-align:right;">-</td>
+                  <td style="padding:10px 12px;border-bottom:1px solid #e2e8f0;text-align:right;font-weight:700;">${formatMoney(orderTotal)}</td>
+                </tr>
+              `}
+              </tbody>
+              <tfoot>
+                <tr style="background:#f8fafc;border-top:1px solid #cbd5e1;">
+                  <td style="padding:10px 12px;font-weight:800;color:#0f172a;">Totals</td>
+                  <td style="padding:10px 12px;text-align:center;font-weight:800;color:#0f172a;">${totalQty || "-"}</td>
+                  <td style="padding:10px 12px;text-align:right;font-weight:800;color:#0f172a;">${formatMoney(itemsMrpTotal)}</td>
+                  <td style="padding:10px 12px;text-align:right;font-weight:800;color:#0f172a;">${formatMoney(itemsSellingTotal)}</td>
+                  <td style="padding:10px 12px;text-align:right;font-weight:800;color:#15803d;">${totalDiscount > 0 ? formatMoney(totalDiscount) : "-"}</td>
+                  <td style="padding:10px 12px;text-align:right;font-weight:900;color:#0f172a;">${formatMoney(orderTotal)}</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <p style="margin:-4px 0 14px 0;text-align:right;color:#64748b;font-size:13px;">
+              Shipping: <span style="font-weight:700;color:#0f172a;">${deliveryCharged > 0 ? formatMoney(deliveryCharged) : "FREE"}</span> |
+              Payment Method: <span style="font-weight:700;color:#0f172a;">${paymentMethod}</span>
+            </p>
+
+          <div style="border-top:1px solid #e2e8f0;padding-top:14px;margin-top:14px;text-align:center;color:#64748b;font-size:12px;">
+            <p style="margin:0 0 4px 0;">This is an order summary for tracking and reference.</p>
+            <p style="margin:0;">Tax invoice becomes available once your order is delivered.</p>
           </div>
         </div>
       `;
