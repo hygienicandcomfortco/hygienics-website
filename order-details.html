@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Order Details - Hygienic & Comfort Co.</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-ink: #1d4ed8;
+      --accent: #0ea5a1;
+      --success: #16a34a;
+      --text: #0f172a;
+      --muted: #64748b;
+      --surface: #ffffff;
+      --surface-soft: #f8fbff;
+      --line: #dbe7ff;
+      --bg: radial-gradient(circle at 10% 0%, #f0f6ff 0%, #eef2ff 45%, #f8fafc 100%);
+      --shadow: 0 14px 30px rgba(30, 64, 175, 0.08);
+      --radius-xl: 22px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Plus Jakarta Sans", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      min-height: 100vh;
+      padding-bottom: 116px;
+    }
+
+    .nav-header {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 12px 5%;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    }
+    .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+    .logo-img {
+      width: 34px;
+      height: 34px;
+      object-fit: contain;
+      border-radius: 50%;
+      border: 1px solid #e2e8f0;
+      background: #fff;
+      padding: 2px;
+    }
+    .logo-area h2 { white-space: nowrap; }
+    .profile-section { position: relative; }
+    .profile-btn {
+      background: #eef4ff; color: var(--primary);
+      width: 42px; height: 42px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; border: 2px solid transparent; transition: 0.3s;
+      text-decoration: none;
+    }
+    .profile-btn:hover { border-color: var(--primary); }
+    .mobile-menu-btn {
+      display: none;
+      background: #eef4ff;
+      color: var(--primary);
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      transition: 0.3s;
+    }
+    .mobile-menu-btn:hover { border-color: var(--primary); }
+    .mobile-sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 80%;
+      max-width: 320px;
+      height: 100%;
+      background: #fff;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      z-index: 3000;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .mobile-sidebar.active { transform: translateX(0); }
+    .mobile-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 2500;
+    }
+    .mobile-overlay.active { opacity: 1; pointer-events: auto; }
+    .mobile-sidebar .close-btn {
+      align-self: flex-end;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .user-profile-brief { text-align: center; margin-bottom: 30px; }
+    .user-profile-brief h3 { color: #1e293b; font-weight: 800; margin-top: 6px; }
+    .user-profile-brief p { color: #64748b; }
+    .avatar-box {
+      width: 70px; height: 70px; background: #eef4ff; color: var(--primary);
+      border-radius: 50%; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; font-weight: 800; border: 2px solid white; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    .mobile-sidebar .menu-item {
+      display: flex; align-items: center; gap: 12px; padding: 12px 15px;
+      text-decoration: none; color: #64748b; font-weight: 600; border-radius: 12px; transition: 0.3s;
+      margin-bottom: 5px; cursor: pointer;
+    }
+    .mobile-sidebar .menu-item i { width: 22px; height: 22px; color: #64748b; }
+    .mobile-sidebar .menu-item:hover, .mobile-sidebar .menu-item.active { background: #eef4ff; color: var(--primary); }
+
+    .topbar-wrap {
+      position: sticky;
+      top: 67px;
+      z-index: 50;
+      backdrop-filter: blur(14px);
+      background: rgba(248, 250, 252, 0.85);
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .topbar {
+      max-width: 980px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 12px;
+    }
+
+    .top-left {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+      border: 1px solid #d7e3f7;
+      border-radius: 50%;
+      background: #fff;
+      color: #334155;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .icon-btn:hover {
+      border-color: #b6cdf7;
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .order-headline h1 {
+      font-size: 1.02rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+      max-width: none;
+      overflow-wrap: anywhere;
+    }
+
+    .order-headline p {
+      margin-top: 3px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 16px 12px 20px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .status-card {
+      background:
+        linear-gradient(140deg, rgba(59, 130, 246, 0.08), rgba(20, 184, 166, 0.05)),
+        #fff;
+      padding: 12px 14px;
+    }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 0;
+    }
+
+    .status-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: #e2e8f0;
+      color: #475569;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .status-icon.status-new { background: #e2e8f0; color: #475569; }
+    .status-icon.status-packed { background: #fef3c7; color: #92400e; }
+    .status-icon.status-shipped { background: #dbeafe; color: #1d4ed8; }
+    .status-icon.status-delivered { background: #dcfce7; color: #15803d; }
+
+    .status-row h2 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .items-title,
+    .section-title {
+      font-size: 1.22rem;
+      line-height: 1.1;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+    }
+
+    .section-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .item-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .item-row {
+      border: 1px solid #e2ecff;
+      border-radius: 14px;
+      padding: 10px;
+      background: #fcfdff;
+      display: grid;
+      grid-template-columns: 64px 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .item-img {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .item-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .item-name {
+      font-size: 1rem;
+      line-height: 1.3;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .item-meta {
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    .price-col {
+      text-align: right;
+    }
+
+    .price-now {
+      font-size: 1.12rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .price-old {
+      margin-top: 3px;
+      color: #94a3b8;
+      text-decoration: line-through;
+      font-weight: 700;
+    }
+
+    .bill-lines {
+      display: grid;
+      gap: 11px;
+      padding: 2px 0 0;
+    }
+
+    .bill-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 1rem;
+      color: #334155;
+      font-weight: 600;
+    }
+
+    .bill-row .cut {
+      color: #9ca3af;
+      text-decoration: line-through;
+      margin-right: 8px;
+    }
+
+    .bill-row .free {
+      color: var(--success);
+      font-weight: 800;
+    }
+
+    .bill-total {
+      margin-top: 8px;
+      border-top: 1px dashed #cbd5e1;
+      padding-top: 14px;
+    }
+
+    .bill-total strong {
+      font-size: 1.18rem;
+      color: #0b2447;
+    }
+
+    .saved-chip {
+      margin-top: 10px;
+      display: inline-flex;
+      align-items: center;
+      background: #dcfce7;
+      color: #166534;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
+    .invoice-btn {
+      margin-top: 14px;
+      width: 100%;
+      border: 1px solid #bfdbfe;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: var(--primary);
+      background: #eff6ff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .invoice-btn:hover {
+      background: #dbeafe;
+      border-color: #93c5fd;
+    }
+
+    .order-details-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .detail-line {
+      border: 1px solid #e7eefc;
+      border-radius: 12px;
+      background: #fbfdff;
+      padding: 10px 12px;
+    }
+
+    .detail-line .k {
+      font-size: 0.82rem;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+    }
+
+    .detail-line .v {
+      margin-top: 3px;
+      font-size: 1rem;
+      line-height: 1.42;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .help-row-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .help-copy {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .help-copy h4 {
+      font-size: 1.14rem;
+      font-weight: 800;
+      margin-bottom: 2px;
+    }
+
+    .help-copy p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 500;
+    }
+
+    .sticky-actions {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 60;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+      background: linear-gradient(to top, rgba(248, 250, 252, 0.98), rgba(248, 250, 252, 0.88));
+      border-top: 1px solid #dbe7ff;
+      backdrop-filter: blur(8px);
+    }
+
+    .actions-inner {
+      max-width: 980px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn-outline,
+    .btn-solid {
+      min-height: 52px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-outline {
+      border: 1.5px solid #93c5fd;
+      color: var(--primary);
+      background: #fff;
+    }
+
+    .btn-outline:hover {
+      background: #eff6ff;
+    }
+
+    .btn-solid {
+      border: none;
+      color: #fff;
+      background: linear-gradient(135deg, var(--primary), var(--primary-ink));
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.28);
+    }
+
+    .btn-solid:hover {
+      filter: brightness(1.04);
+    }
+
+    .empty {
+      max-width: 820px;
+      margin: 42px auto;
+      text-align: center;
+      color: var(--muted);
+      padding: 0 14px;
+    }
+    .site-footer {
+      margin-top: 40px;
+      padding: 28px 20px;
+      background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+      border-top: 1px solid #dbe7ff;
+      text-align: center;
+    }
+    .site-footer .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .site-footer .footer-nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px 18px;
+      margin-bottom: 12px;
+    }
+    .site-footer .footer-nav a {
+      color: #2563eb;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.1px;
+    }
+    .site-footer .footer-nav a:hover {
+      color: #1d4ed8;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .site-footer .footer-contact {
+      margin: 0 0 6px 0;
+      color: #64748b;
+      font-size: 0.86rem;
+      line-height: 1.5;
+    }
+    .site-footer .footer-contact a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .site-footer .footer-contact a:hover {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .site-footer .footer-copy {
+      margin: 4px 0 0 0;
+      color: #64748b;
+      font-size: 0.82rem;
+    }
+    .rate-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(3px);
+    }
+    .rate-modal.show { display: flex; }
+    .rate-modal-card {
+      width: min(760px, 100%);
+      max-height: 86vh;
+      overflow: auto;
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #dbe7ff;
+      box-shadow: 0 24px 50px rgba(2, 6, 23, 0.25);
+      padding: 14px;
+    }
+    .rate-modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .rate-modal-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .rate-list { display: grid; gap: 10px; }
+    .rate-item {
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 10px;
+      background: #f8fbff;
+    }
+    .rate-item-top {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .rate-thumb {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      background: #fff;
+      object-fit: contain;
+    }
+    .rate-name {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.3;
+    }
+    .rate-stars {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .rate-star {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid #dbeafe;
+      background: #fff;
+      color: #cbd5e1;
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
+    }
+    .rate-star.active {
+      color: #f59e0b;
+      border-color: #fbbf24;
+      background: #fffbeb;
+    }
+    .rate-text {
+      width: 100%;
+      min-height: 74px;
+      border-radius: 10px;
+      border: 1px solid #dbeafe;
+      padding: 9px 10px;
+      font-family: inherit;
+      font-size: 0.88rem;
+      resize: vertical;
+      outline: none;
+      margin-bottom: 8px;
+    }
+    .rate-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .rate-status {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #2563eb;
+    }
+    .rate-submit {
+      border: none;
+      border-radius: 10px;
+      padding: 9px 12px;
+      background: #2563eb;
+      color: #fff;
+      font-size: 0.84rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .rate-submit:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    @media (min-width: 900px) {
+      .topbar { padding: 16px 12px; }
+      .order-headline h1 { max-width: none; }
+      .wrap {
+        padding: 18px 12px 24px;
+        grid-template-columns: 1.55fr 1fr;
+        align-items: start;
+      }
+      .status-card,
+      .items-card,
+      .details-card,
+      .support-card {
+        grid-column: 1;
+      }
+      .bill-card {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        position: sticky;
+        top: 84px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .order-headline h1 {
+        font-size: 0.95rem;
+      }
+      .nav-header { flex-direction: row; align-items: center; justify-content: space-between; gap: 10px; }
+      .logo-area { gap: 8px; }
+      .logo-img {
+        width: 30px;
+        height: 30px;
+      }
+      .logo-area h2 {
+        font-size: 0.84rem;
+        letter-spacing: -0.01em;
+      }
+      .mobile-menu-btn { display: inline-flex; }
+      .card {
+        border-radius: 16px;
+        padding: 14px;
+      }
+      .status-row h2 {
+        font-size: 1.02rem;
+      }
+      .items-title,
+      .section-title {
+        font-size: 1.02rem;
+      }
+      .item-row {
+        grid-template-columns: 58px minmax(0, 1fr) auto;
+        gap: 9px;
+      }
+      .item-img {
+        width: 58px;
+        height: 58px;
+      }
+      .item-name {
+        font-size: 0.92rem;
+      }
+      .price-now {
+        font-size: 1.02rem;
+      }
+      .price-old {
+        font-size: 0.85rem;
+      }
+      .btn-outline,
+      .btn-solid {
+        min-height: 50px;
+        font-size: 0.95rem;
+      }
+      .help-copy h4 {
+        font-size: 1.02rem;
+      }
+      .help-copy p {
+        font-size: 0.86rem;
+      }
+    }
+
+    @page {
+      size: A4;
+      margin: 14mm;
+    }
+
+    @media print {
+      body {
+        margin: 0;
+        background: #fff !important;
+      }
+      html, body {
+        height: auto;
+      }
+      body * {
+        visibility: hidden !important;
+      }
+      body > *:not(#invoice-print-area) {
+        display: none !important;
+      }
+      #invoice-print-area,
+      #invoice-print-area * {
+        visibility: visible !important;
+      }
+      #invoice-print-area {
+        display: block !important;
+        position: static;
+        inset: auto;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        background: white;
+      }
+      .invoice-page {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="nav-header">
+    <div style="display:flex; gap:10px; align-items:center;">
+      <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu">
+        <i data-lucide="menu"></i>
+      </button>
+      <a href="index.html" class="logo-area">
+        <img src="logo.png" alt="Logo" class="logo-img">
+        <h2 style="font-size: 1.08rem; font-weight: 800; letter-spacing:-0.01em;">Hygienic & Comfort Co.</h2>
+      </a>
+    </div>
+    <div class="profile-section">
+      <a class="profile-btn" href="cart.html" aria-label="Cart">
+        <i data-lucide="shopping-cart"></i>
+      </a>
+    </div>
+  </header>
+
+  <div class="mobile-overlay" id="mobile-overlay"></div>
+  <aside class="mobile-sidebar" id="mobile-sidebar">
+    <button class="close-btn" id="mobile-close-btn">Close</button>
+    <div class="user-profile-brief" style="text-align:center;">
+      <div class="avatar-box" id="mobile-user-circle" style="margin: 0 auto 12px;">?</div>
+      <h3 id="mobile-side-name" style="font-size: 1rem;">Welcome!</h3>
+      <p id="mobile-side-email" style="font-size: 0.75rem; color: #64748b;"></p>
+    </div>
+    <nav class="side-nav">
+      <a href="profile.html" class="menu-item"><i data-lucide="user"></i> Personal Info</a>
+      <a href="orders.html" class="menu-item active"><i data-lucide="package"></i> My Orders</a>
+      <a href="address.html" class="menu-item"><i data-lucide="map-pin"></i> Saved Addresses</a>
+      <div class="menu-item" style="color:#ef4444; margin-top: 20px;" onclick="handleLogout()"><i data-lucide="log-out"></i> Logout</div>
+    </nav>
+  </aside>
+
+  <div class="topbar-wrap">
+    <header class="topbar">
+      <div class="top-left">
+        <button type="button" class="icon-btn" onclick="goBack()" aria-label="Back">
+          <i data-lucide="arrow-left"></i>
+        </button>
+        <div class="order-headline">
+          <h1 id="order-number">Order</h1>
+          <p id="order-count">-</p>
+        </div>
+      </div>
+    </header>
+  </div>
+
+  <main id="page-wrap" class="wrap" style="display:none;">
+    <section class="card status-card">
+      <div class="status-row">
+        <div class="status-icon" id="status-icon"><i id="status-icon-glyph" data-lucide="circle" style="width:30px;height:30px;"></i></div>
+        <h2 id="status-text">Delivered</h2>
+      </div>
+    </section>
+
+    <section class="card items-card">
+      <div class="section-head">
+        <h3 id="items-title" class="items-title">Items in order</h3>
+      </div>
+      <div id="item-list" class="item-list"></div>
+    </section>
+
+    <section class="card bill-card">
+      <h3 class="section-title"><i data-lucide="receipt-text"></i> Bill Summary</h3>
+      <div class="bill-lines">
+        <div class="bill-row"><span>Item Total</span><span id="bill-item-total">-</span></div>
+        <div class="bill-row"><span>Delivery Fee</span><span id="bill-delivery-fee">-</span></div>
+      </div>
+      <div class="bill-total">
+        <div class="bill-row"><strong>Total Bill</strong><strong id="bill-total">-</strong></div>
+        <p style="margin-top:4px; color:#64748b; font-size:0.9rem;">Inclusive of all taxes and charges</p>
+        <div id="bill-saved" class="saved-chip" style="display:none;">Saved</div>
+      </div>
+      <button class="invoice-btn" type="button" id="download-invoice-btn">Download Invoice</button>
+    </section>
+
+    <section class="card details-card">
+      <h3 class="section-title">Order Details</h3>
+      <div class="order-details-grid">
+        <div class="detail-line">
+          <div class="k">Order ID</div>
+          <div class="v" id="detail-order-id">-</div>
+        </div>
+        <div class="detail-line">
+          <div class="k">Name</div>
+          <div class="v" id="detail-receiver">-</div>
+        </div>
+        <div class="detail-line">
+          <div class="k">Delivery Address</div>
+          <div class="v" id="detail-address">-</div>
+        </div>
+        <div class="detail-line">
+          <div class="k">Order Placed</div>
+          <div class="v" id="detail-placed-at">-</div>
+        </div>
+        <div class="detail-line">
+          <div class="k">Order Delivered</div>
+          <div class="v" id="detail-arrived-at">-</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card support-card">
+      <a href="contact.html" class="help-row-link">
+        <div class="help-copy">
+          <span class="icon-btn" style="width:40px;height:40px;border-radius:12px;border-color:#bfdbfe;color:#2563eb;">
+            <i data-lucide="message-circle-warning"></i>
+          </span>
+          <div>
+            <h4>Need help with this order?</h4>
+            <p> Chat with us on WhatsApp or email us to raise an issue.</p>
+          </div>
+        </div>
+        <i data-lucide="chevron-right" style="color:#64748b;"></i>
+      </a>
+    </section>
+  </main>
+
+  <div id="empty-state" class="empty" style="display:none;">
+    <i data-lucide="alert-circle" style="width:40px;height:40px;color:#94a3b8;"></i>
+    <h2 style="margin-top:8px; font-size:1.2rem; color:#1e293b;">Order not found</h2>
+    <p style="margin-top:6px;">We could not load this order.</p>
+    <button type="button" class="btn-solid" style="margin-top:14px; padding:12px 20px;" onclick="window.location.href='orders.html'">Back to Orders</button>
+  </div>
+
+  <div class="sticky-actions" id="sticky-actions" style="display:none;">
+    <div class="actions-inner">
+      <button class="btn-outline" type="button" onclick="rateProducts()">Rate Products</button>
+      <button class="btn-solid" type="button" onclick="orderAgain()">Order Again</button>
+    </div>
+  </div>
+
+  <div id="rate-products-modal" class="rate-modal" aria-hidden="true">
+    <div class="rate-modal-card">
+      <div class="rate-modal-head">
+        <div class="rate-modal-title">Rate Products & Write Reviews</div>
+        <button type="button" class="icon-btn" onclick="closeRateProductsModal()" aria-label="Close rating modal">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div id="rate-products-list" class="rate-list"></div>
+    </div>
+  </div>
+
+  <div id="invoice-print-area" style="display:none;"></div>
+
+  <script>
+    const _supabase = supabase.createClient('https://uhkheprfbxxwuojswyht.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es');
+    const fallbackProductImage = "logo.png";
+    let productLookup = {};
+    let productCatalog = [];
+    let currentOrder = null;
+    let currentItems = [];
+    let currentOrderItemsSubtotal = null;
+    let rateProductRows = [];
+
+    function normalizeImageUrl(rawUrl) {
+      const url = (rawUrl || "").trim();
+      if (!url) return "";
+      const idMatch = url.match(/\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
+      if (idMatch && idMatch[1]) return `https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=w800`;
+      return url;
+    }
+
+    function escapeHtml(value = "") {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function normalizeNameKey(value = "") {
+      return String(value || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, " ")
+        .trim();
+    }
+
+    function formatMoney(val) {
+      if (val === null || val === undefined || Number.isNaN(Number(val))) return "-";
+      return `&#8377;${Number(val).toLocaleString("en-IN")}`;
+    }
+
+    function firstNumeric(obj, keys = []) {
+      for (const k of keys) {
+        const v = Number(obj?.[k]);
+        if (Number.isFinite(v) && v >= 0) return v;
+      }
+      return null;
+    }
+
+    function formatOrderNumber(dateValue, seq) {
+      const dt = dateValue ? new Date(dateValue) : new Date();
+      const y = dt.getFullYear();
+      const m = String(dt.getMonth() + 1).padStart(2, "0");
+      const d = String(dt.getDate()).padStart(2, "0");
+      const num = Math.max(1, parseInt(seq, 10) || 1);
+      const padded = String(num).padStart(4, "0");
+      return `HC-${y}${m}${d}-${padded}`;
+    }
+
+    function formatDateTime(value) {
+      if (!value) return "-";
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return "-";
+      return d.toLocaleString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit"
+      });
+    }
+
+    function parseOrderItems(itemsText = "") {
+      const text = String(itemsText || "").trim();
+      if (!text) return [];
+      const results = [];
+      const re = /(.+?)\s+x(\d+)(?=,|$)/gi;
+      let match;
+      while ((match = re.exec(text)) !== null) {
+        const name = match[1].trim().replace(/^,+\s*/, "");
+        const qty = parseInt(match[2], 10) || 1;
+        if (name) results.push({ name, qty });
+      }
+      if (results.length) return results;
+      return text.split(",").map(p => p.trim()).filter(Boolean).map((p) => {
+        const m = p.match(/(.+?)\s+x(\d+)$/i);
+        if (m) return { name: m[1].trim(), qty: parseInt(m[2], 10) || 1 };
+        return { name: p, qty: 1 };
+      });
+    }
+
+    async function loadProductLookup() {
+      const { data, error } = await _supabase.from("products").select("id,name,images,price,mrp");
+      if (error || !data) return;
+      const map = {};
+      const catalog = [];
+      data.forEach((p) => {
+        const rawName = String(p.name || "").trim();
+        const key = rawName.toLowerCase();
+        const relaxedKey = normalizeNameKey(rawName);
+        if (!rawName) return;
+        const item = {
+          id: p.id,
+          name: p.name,
+          image: normalizeImageUrl((p.images || [])[0] || "") || fallbackProductImage,
+          price: Number(p.price) || 0,
+          mrp: Number(p.mrp) || 0
+        };
+        map[key] = item;
+        if (relaxedKey && !map[relaxedKey]) map[relaxedKey] = item;
+        catalog.push(item);
+      });
+      productLookup = map;
+      productCatalog = catalog;
+    }
+
+    function getProductInfoByName(name) {
+      const key = String(name || "").trim().toLowerCase();
+      if (productLookup[key]) return productLookup[key];
+      const relaxedKey = normalizeNameKey(name);
+      if (relaxedKey && productLookup[relaxedKey]) return productLookup[relaxedKey];
+
+      if (!relaxedKey) return null;
+      const fuzzy = productCatalog.find((p) => {
+        const n = normalizeNameKey(p.name);
+        return n.includes(relaxedKey) || relaxedKey.includes(n);
+      });
+      return fuzzy || null;
+    }
+
+    function getItemUnitPrice(name, fallbackUnit) {
+      const info = getProductInfoByName(name);
+      const price = info && Number.isFinite(info.price) ? Number(info.price) : null;
+      if (price && price > 0) return price;
+      return Number.isFinite(fallbackUnit) ? fallbackUnit : null;
+    }
+
+    function formatInvoiceNumber(seq) {
+      const num = Math.max(1, parseInt(seq, 10) || 1);
+      const padded = String(num).padStart(2, "0");
+      return `#INV-${padded}`;
+    }
+
+    function getDeliveredDateValue(order) {
+      const candidates = [
+        order?.delivered_at,
+        order?.delivered_on,
+        order?.delivery_time,
+        order?.completed_at,
+        order?.status_updated_at,
+        order?.updated_at
+      ];
+      for (const value of candidates) {
+        if (!value) continue;
+        const d = new Date(value);
+        if (!Number.isNaN(d.getTime())) return value;
+      }
+      return null;
+    }
+
+    function getStatusMeta(rawStatus) {
+      const key = String(rawStatus || "new").trim().toLowerCase();
+      if (key === "delivered") return { text: "Delivered", icon: "check", cls: "status-delivered" };
+      if (key === "shipped") return { text: "Shipped", icon: "truck", cls: "status-shipped" };
+      if (key === "packed") return { text: "Packed", icon: "package", cls: "status-packed" };
+      return { text: "New", icon: "circle", cls: "status-new" };
+    }
+
+    async function initSidebarUser() {
+      const { data: { user } } = await _supabase.auth.getUser();
+      if (!user) return;
+      const { data: profile } = await _supabase.from("customers").select("customer_name").eq("user_id", user.id).maybeSingle();
+      const metaName = user.user_metadata?.full_name || user.user_metadata?.name || "";
+      const safeName = profile?.customer_name || metaName || (user.email ? user.email.split("@")[0] : "") || "User";
+      const emailEl = document.getElementById("mobile-side-email");
+      const nameEl = document.getElementById("mobile-side-name");
+      const circleEl = document.getElementById("mobile-user-circle");
+      if (emailEl) emailEl.innerText = user.email || "";
+      if (nameEl) nameEl.innerText = safeName;
+      if (circleEl) circleEl.innerText = safeName.charAt(0).toUpperCase();
+    }
+
+    async function loadOrder() {
+      const params = new URLSearchParams(window.location.search);
+      const orderId = params.get("orderId");
+      if (!orderId) {
+        showEmpty();
+        return;
+      }
+
+      const { data: { user } } = await _supabase.auth.getUser();
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const { data: profile } = await _supabase
+        .from("customers")
+        .select("phone_number,email,customer_name")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      const identifiers = [user.email, user.phone, profile?.email, profile?.phone_number].filter(Boolean);
+      const { data: order, error } = await _supabase.from("orders").select("*").eq("id", orderId).maybeSingle();
+      if (error || !order) {
+        showEmpty();
+        return;
+      }
+
+      const orderMatch = [order.email, order.phone_number, order.alt_phone].filter(Boolean).some((v) => identifiers.includes(v));
+      if (!orderMatch) {
+        showEmpty();
+        return;
+      }
+
+      await loadProductLookup();
+      const { data: orderItems } = await _supabase
+        .from("order_items")
+        .select("quantity,unit_price")
+        .eq("order_id", orderId);
+
+      if (Array.isArray(orderItems) && orderItems.length) {
+        currentOrderItemsSubtotal = orderItems.reduce((sum, row) => {
+          const qty = Math.max(1, Number(row.quantity) || 1);
+          const unit = Math.max(0, Number(row.unit_price) || 0);
+          return sum + (qty * unit);
+        }, 0);
+      } else {
+        currentOrderItemsSubtotal = null;
+      }
+
+      currentOrder = order;
+      currentItems = parseOrderItems(order.items || "");
+      renderOrder(order, profile?.customer_name || "");
+    }
+
+    function renderOrder(order, profileName) {
+      const orderSeq = order.invoice_number || 1;
+      const orderNo = formatOrderNumber(order.created_at, orderSeq);
+      const items = currentItems;
+      const statusMeta = getStatusMeta(order.status);
+      const statusKey = String(order.status || "new").trim().toLowerCase();
+      const total = Number(order.total_price) || 0;
+
+      let itemTotal = 0;
+      let mrpTotal = 0;
+      const itemHtml = items.map((it) => {
+        const info = getProductInfoByName(it.name);
+        const unit = Number(info?.price) || (items.length ? (total / items.reduce((s, r) => s + (r.qty || 1), 0)) : 0);
+        const line = Math.round(unit * (it.qty || 1));
+        const unitMrp = Number(info?.mrp) || 0;
+        const mrpLine = unitMrp > 0 ? Math.round(unitMrp * (it.qty || 1)) : null;
+        itemTotal += line;
+        mrpTotal += mrpLine && mrpLine >= line ? mrpLine : line;
+        return `
+          <div class="item-row">
+            <div class="item-img">
+              <img src="${escapeHtml(info?.image || fallbackProductImage)}" alt="${escapeHtml(it.name)}">
+            </div>
+            <div>
+              <div class="item-name">${escapeHtml(it.name)}</div>
+              <div class="item-meta">Qty: ${it.qty}</div>
+            </div>
+            <div class="price-col">
+              <div class="price-now">${formatMoney(line)}</div>
+              ${mrpLine && mrpLine > line ? `<div class="price-old">${formatMoney(mrpLine)}</div>` : ""}
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      if (!itemTotal) itemTotal = total;
+      if (!mrpTotal) mrpTotal = itemTotal;
+      const derivedDeliveryFee = currentOrderItemsSubtotal !== null
+        ? Math.max(0, Math.round(total - currentOrderItemsSubtotal))
+        : 0;
+      const deliveryFee = firstNumeric(order, [
+        "delivery_fee",
+        "shipping_fee",
+        "delivery_charges",
+        "shipping_charges",
+        "delivery_charge",
+        "shipping_charge"
+      ]);
+      const deliveryCharged = deliveryFee !== null ? deliveryFee : derivedDeliveryFee;
+      const deliveryFeeMrp = firstNumeric(order, [
+        "delivery_fee_mrp",
+        "shipping_fee_mrp",
+        "delivery_fee_original",
+        "shipping_fee_original",
+        "delivery_fee_before_discount",
+        "shipping_fee_before_discount"
+      ]);
+      const deliveryBase = deliveryFeeMrp !== null
+        ? deliveryFeeMrp
+        : (deliveryCharged > 0 ? deliveryCharged : 30);
+      const deliverySaved = Math.max(0, deliveryBase - deliveryCharged);
+      const chargedItemsTotal = currentOrderItemsSubtotal !== null
+        ? Math.max(0, Math.round(currentOrderItemsSubtotal))
+        : Math.max(0, Math.round(total - deliveryCharged));
+      const totalBase = mrpTotal + deliveryBase;
+      const saved = Math.max(0, mrpTotal - total) + deliverySaved;
+
+      document.getElementById("order-number").textContent = `Order #${orderNo}`;
+      document.getElementById("order-count").textContent = `${items.length || 0} item${items.length === 1 ? "" : "s"}`;
+      document.getElementById("status-text").textContent = statusMeta.text;
+      const statusIcon = document.getElementById("status-icon");
+      statusIcon.classList.remove("status-new", "status-packed", "status-shipped", "status-delivered");
+      statusIcon.classList.add(statusMeta.cls);
+      document.getElementById("status-icon-glyph").setAttribute("data-lucide", statusMeta.icon);
+      document.getElementById("items-title").textContent = `${items.length || 0} items in order`;
+      document.getElementById("item-list").innerHTML = itemHtml || `<p style="color:#64748b;">Items unavailable.</p>`;
+      document.getElementById("bill-item-total").innerHTML =
+        mrpTotal > chargedItemsTotal
+          ? `<span class="cut">${formatMoney(mrpTotal)}</span>${formatMoney(chargedItemsTotal)}`
+          : `${formatMoney(chargedItemsTotal)}`;
+      document.getElementById("bill-delivery-fee").innerHTML =
+        deliveryCharged > 0
+          ? `${formatMoney(deliveryCharged)}`
+          : `<span class="cut">${formatMoney(deliveryBase)}</span><span class="free">FREE</span>`;
+      document.getElementById("bill-total").innerHTML =
+        totalBase > total ? `<span class="cut">${formatMoney(totalBase)}</span> ${formatMoney(total)}` : `${formatMoney(total)}`;
+
+      const savedEl = document.getElementById("bill-saved");
+      if (saved > 0) {
+        savedEl.style.display = "inline-flex";
+        savedEl.innerHTML = `SAVED ${formatMoney(saved)}`;
+      } else {
+        savedEl.style.display = "none";
+      }
+
+      document.getElementById("detail-order-id").textContent = `#${orderNo}`;
+      document.getElementById("detail-receiver").textContent = `${order.customer_name || profileName || "Customer"}, ${order.phone_number || "-"}`;
+      document.getElementById("detail-address").textContent = order.address || "Address provided at checkout";
+      document.getElementById("detail-placed-at").textContent = formatDateTime(order.created_at);
+      const deliveredDateValue = getDeliveredDateValue(order);
+      document.getElementById("detail-arrived-at").textContent =
+        statusKey === "delivered"
+          ? (deliveredDateValue ? formatDateTime(deliveredDateValue) : "Delivered")
+          : "Not delivered yet";
+      document.getElementById("download-invoice-btn").onclick = () => downloadInvoice(order);
+
+      document.getElementById("page-wrap").style.display = "";
+      document.getElementById("sticky-actions").style.display = "";
+      document.getElementById("empty-state").style.display = "none";
+      lucide.createIcons();
+    }
+
+    function showEmpty() {
+      document.getElementById("page-wrap").style.display = "none";
+      document.getElementById("sticky-actions").style.display = "none";
+      document.getElementById("empty-state").style.display = "";
+      lucide.createIcons();
+    }
+
+    function goBack() {
+      if (document.referrer && document.referrer.includes(window.location.host)) {
+        window.history.back();
+        return;
+      }
+      window.location.href = "orders.html";
+    }
+
+    function orderAgain() {
+      if (!currentOrder || !currentItems.length) return;
+      const cart = JSON.parse(localStorage.getItem("hc-cart") || "[]");
+      currentItems.forEach((it) => {
+        const info = getProductInfoByName(it.name);
+        const img = info?.image || fallbackProductImage;
+        const id = info?.id || String(it.name).toLowerCase().replace(/\s+/g, "-");
+        const existing = cart.find((c) => String(c.id) === String(id));
+        if (existing) {
+          existing.qty = (existing.qty || 0) + (it.qty || 1);
+          if ((!existing.images || !existing.images.length) && img) existing.images = [img];
+          if (!existing.image && img) existing.image = img;
+        } else {
+          cart.push({
+            id,
+            name: info?.name || it.name,
+            price: Number(info?.price || 0),
+            image: img,
+            images: [img],
+            qty: it.qty || 1
+          });
+        }
+      });
+      localStorage.setItem("hc-cart", JSON.stringify(cart));
+      window.location.href = "cart.html";
+    }
+
+    function getRateableProducts() {
+      const seen = new Set();
+      const rows = [];
+      currentItems.forEach((it) => {
+        const info = getProductInfoByName(it.name);
+        const key = info?.id ? `id:${info.id}` : `name:${normalizeNameKey(it.name)}`;
+        if (!key || seen.has(key)) return;
+        seen.add(key);
+        rows.push({
+          productId: info?.id || null,
+          name: info?.name || it.name,
+          image: info?.image || fallbackProductImage,
+          rating: 5,
+          review: "",
+          status: ""
+        });
+      });
+      return rows;
+    }
+
+    function renderRateProductsModal() {
+      const list = document.getElementById("rate-products-list");
+      if (!list) return;
+      if (!rateProductRows.length) {
+        list.innerHTML = `<div class="rate-item"><p class="rate-status">No products available for rating.</p></div>`;
+        return;
+      }
+      list.innerHTML = rateProductRows.map((row, idx) => `
+        <div class="rate-item">
+          <div class="rate-item-top">
+            <img class="rate-thumb" src="${escapeHtml(row.image || fallbackProductImage)}" alt="${escapeHtml(row.name)}">
+            <div class="rate-name">${escapeHtml(row.name)}</div>
+          </div>
+          <div class="rate-stars" id="rate-stars-${idx}">
+            ${[1,2,3,4,5].map((val) => `
+              <button type="button" class="rate-star ${val <= row.rating ? "active" : ""}" onclick="setProductRating(${idx}, ${val})">&#9733;</button>
+            `).join("")}
+          </div>
+          <textarea id="rate-text-${idx}" class="rate-text" maxlength="500" placeholder="Write your review (optional)" oninput="setProductReviewText(${idx}, this.value)">${escapeHtml(row.review || "")}</textarea>
+          <div class="rate-actions">
+            <span class="rate-status" id="rate-status-${idx}">${escapeHtml(row.status || "")}</span>
+            <button type="button" class="rate-submit" id="rate-submit-${idx}" onclick="submitProductReviewFromOrder(${idx})" ${row.productId ? "" : "disabled"}>
+              ${row.productId ? "Submit Review" : "Product not linked"}
+            </button>
+          </div>
+        </div>
+      `).join("");
+      lucide.createIcons();
+    }
+
+    function rateProducts() {
+      if (!currentItems.length) {
+        alert("No products available to rate.");
+        return;
+      }
+      rateProductRows = getRateableProducts();
+      renderRateProductsModal();
+      const modal = document.getElementById("rate-products-modal");
+      modal.classList.add("show");
+      modal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeRateProductsModal() {
+      const modal = document.getElementById("rate-products-modal");
+      modal.classList.remove("show");
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+    function setProductRating(index, rating) {
+      if (!rateProductRows[index]) return;
+      rateProductRows[index].rating = Math.max(1, Math.min(5, Number(rating) || 5));
+      const starsWrap = document.getElementById(`rate-stars-${index}`);
+      if (!starsWrap) return;
+      starsWrap.querySelectorAll(".rate-star").forEach((btn, idx) => {
+        btn.classList.toggle("active", idx < rateProductRows[index].rating);
+      });
+    }
+
+    function setProductReviewText(index, text) {
+      if (!rateProductRows[index]) return;
+      rateProductRows[index].review = String(text || "");
+    }
+
+    async function submitProductReviewFromOrder(index) {
+      const row = rateProductRows[index];
+      if (!row || !row.productId) return;
+
+      const submitBtn = document.getElementById(`rate-submit-${index}`);
+      const statusEl = document.getElementById(`rate-status-${index}`);
+      const rating = Math.max(1, Math.min(5, Number(row.rating) || 5));
+      const reviewText = (document.getElementById(`rate-text-${index}`)?.value || "").trim();
+
+      const { data: { user } } = await _supabase.auth.getUser();
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Submitting...";
+      statusEl.textContent = "";
+
+      const reviewerName = (
+        currentOrder?.customer_name ||
+        document.getElementById("mobile-side-name")?.innerText ||
+        user.user_metadata?.full_name ||
+        user.user_metadata?.name ||
+        "Verified Buyer"
+      ).trim();
+
+      const { data: existing, error: existingErr } = await _supabase
+        .from("product_reviews")
+        .select("id")
+        .eq("product_id", row.productId)
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (existingErr) {
+        statusEl.textContent = "Could not verify existing review.";
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit Review";
+        return;
+      }
+
+      let writeError = null;
+      if (existing?.id) {
+        const { error } = await _supabase
+          .from("product_reviews")
+          .update({
+            rating,
+            review: reviewText || null,
+            reviewer_name: reviewerName
+          })
+          .eq("id", existing.id);
+        writeError = error || null;
+      } else {
+        const { error } = await _supabase
+          .from("product_reviews")
+          .insert([{
+            product_id: row.productId,
+            user_id: user.id,
+            rating,
+            review: reviewText || null,
+            reviewer_name: reviewerName
+          }]);
+        writeError = error || null;
+      }
+
+      if (writeError) {
+        statusEl.textContent = "Submit failed. Try again.";
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit Review";
+        return;
+      }
+
+      row.status = "Review submitted";
+      statusEl.textContent = row.status;
+      submitBtn.textContent = "Submitted";
+    }
+
+    async function handleLogout() {
+      if (!confirm("Are you sure you want to log out?")) return;
+      await _supabase.auth.signOut();
+      window.location.href = "index.html";
+    }
+
+    function downloadInvoice(order) {
+      const date = new Date(order.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
+      const printArea = document.getElementById("invoice-print-area");
+      const items = parseOrderItems(order.items || "");
+      const totalQty = items.reduce((s, i) => s + (i.qty || 1), 0);
+      const singleItem = items.length === 1;
+      const avgUnitPrice = totalQty > 0 ? (Number(order.total_price) / totalQty) : null;
+      const customerName = escapeHtml(order.customer_name || "Customer");
+      const customerAddress = escapeHtml(order.address || "Address provided at checkout");
+      const orderSeq = order.invoice_number || 1;
+      const orderNo = formatOrderNumber(order.created_at, orderSeq);
+      const invoiceNo = formatInvoiceNumber(order.invoice_number || 1);
+      const orderStatus = escapeHtml(order.status || "New");
+      const orderItemsText = escapeHtml(order.items || "-");
+      const paymentMethod = escapeHtml(order.payment_method || "Cash on Delivery");
+
+      const rows = items.map((it) => {
+        const unit = getItemUnitPrice(it.name, avgUnitPrice);
+        const line = unit ? unit * (it.qty || 1) : (singleItem ? Number(order.total_price) : null);
+        return `
+          <tr>
+            <td style="padding:12px;border-bottom:1px solid #e2e8f0;">${escapeHtml(it.name)}</td>
+            <td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:center;">${it.qty}</td>
+            <td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;">${formatMoney(unit)}</td>
+            <td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;font-weight:700;">${formatMoney(line)}</td>
+          </tr>
+        `;
+      }).join("");
+
+      printArea.innerHTML = `
+        <div class="invoice-page" style="font-family:'Plus Jakarta Sans','Segoe UI',sans-serif;color:#0f172a;padding:20px;border:1px solid #e2e8f0;border-radius:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:20px;padding-bottom:18px;border-bottom:2px solid #2563eb;">
+            <div>
+              <p style="margin:0;font-size:12px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.08em;">Tax Invoice</p>
+              <h1 style="margin:6px 0 0 0;font-size:30px;color:#2563eb;line-height:1;">INVOICE</h1>
+              <p style="margin:10px 0 0 0;font-size:14px;"><b>Invoice No:</b> ${invoiceNo}</p>
+              <p style="margin:4px 0 0 0;font-size:14px;"><b>Order ID:</b> ${orderNo}</p>
+              <p style="margin:4px 0 0 0;font-size:14px;"><b>Date:</b> ${date}</p>
+              <p style="margin:4px 0 0 0;font-size:14px;"><b>Status:</b> ${orderStatus}</p>
+            </div>
+            <div style="text-align:right;">
+              <h2 style="margin:0 0 6px 0;font-size:30px;line-height:1;color:#111827;">Hygienic & Comfort Co.</h2>
+              <p style="margin:0;color:#334155;font-size:14px;">Ambernath East, Maharashtra</p>
+              <p style="margin:4px 0 0 0;color:#334155;font-size:14px;">Contact: +91 9307760665</p>
+              <p style="margin:4px 0 0 0;color:#334155;font-size:14px;">hygienicsandcomfort@gmail.com</p>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr;gap:16px;margin:20px 0;">
+            <div style="border:1px solid #e2e8f0;border-radius:10px;padding:14px;">
+              <p style="margin:0 0 8px 0;font-size:12px;font-weight:800;color:#64748b;text-transform:uppercase;">Shipping Address</p>
+              <p style="margin:0;font-weight:700;">${customerName}</p>
+              <p style="margin:4px 0 0 0;">${customerAddress}</p>
+              <p style="margin:4px 0 0 0;">Phone: ${escapeHtml(order.phone_number || "-")}</p>
+              ${order.alt_phone ? `<p style="margin:4px 0 0 0;">Alternate: ${escapeHtml(order.alt_phone)}</p>` : ""}
+              ${order.email ? `<p style="margin:4px 0 0 0;">Email: ${escapeHtml(order.email)}</p>` : ""}
+            </div>
+          </div>
+
+          <table style="width:100%;border-collapse:collapse;margin-bottom:20px;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
+            <thead>
+              <tr style="background:#f8fafc;border-bottom:1px solid #e2e8f0;">
+                <th style="text-align:left;padding:12px;">Item Description</th>
+                <th style="text-align:center;padding:12px;width:80px;">Qty</th>
+                <th style="text-align:right;padding:12px;width:140px;">Unit Price</th>
+                <th style="text-align:right;padding:12px;width:140px;">Line Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows || `
+                <tr>
+                  <td style="padding:12px;border-bottom:1px solid #e2e8f0;">${orderItemsText}</td>
+                  <td style="padding:12px;text-align:center;border-bottom:1px solid #e2e8f0;">-</td>
+                  <td style="padding:12px;text-align:right;border-bottom:1px solid #e2e8f0;">-</td>
+                  <td style="padding:12px;text-align:right;border-bottom:1px solid #e2e8f0;font-weight:700;">${formatMoney(order.total_price)}</td>
+                </tr>
+              `}
+            </tbody>
+          </table>
+
+          <div style="display:flex;justify-content:flex-end;margin-bottom:24px;">
+            <div style="min-width:280px;border:1px solid #e2e8f0;border-radius:10px;padding:14px;">
+              <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;">
+                <span style="color:#64748b;">Total Qty</span>
+                <span style="font-weight:700;">${totalQty || "-"}</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:10px;">
+                <span style="color:#64748b;">Payment Method</span>
+                <span style="font-weight:700;">${paymentMethod}</span>
+              </div>
+              <div style="border-top:1px solid #e2e8f0;padding-top:10px;display:flex;justify-content:space-between;font-size:22px;font-weight:800;">
+                <span>Grand Total</span>
+                <span>${formatMoney(order.total_price)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="border-top:1px solid #e2e8f0;padding-top:14px;text-align:center;color:#64748b;font-size:12px;">
+            <p style="margin:0 0 4px 0;">Thank you for shopping with Hygienic & Comfort Co.!</p>
+            <p style="margin:0;">This is a computer-generated invoice and does not require a physical signature.</p>
+          </div>
+        </div>
+      `;
+
+      printArea.style.display = "block";
+      window.print();
+      printArea.style.display = "none";
+    }
+
+    window.addEventListener("load", () => {
+      lucide.createIcons();
+      initSidebarUser();
+      loadOrder();
+    });
+
+    const mobileSidebar = document.getElementById("mobile-sidebar");
+    const mobileOverlay = document.getElementById("mobile-overlay");
+    document.getElementById("mobile-menu-btn")?.addEventListener("click", () => {
+      mobileSidebar.classList.add("active");
+      mobileOverlay.classList.add("active");
+    });
+    document.getElementById("mobile-close-btn")?.addEventListener("click", () => {
+      mobileSidebar.classList.remove("active");
+      mobileOverlay.classList.remove("active");
+    });
+    mobileOverlay?.addEventListener("click", () => {
+      mobileSidebar.classList.remove("active");
+      mobileOverlay.classList.remove("active");
+    });
+    document.getElementById("rate-products-modal")?.addEventListener("click", (e) => {
+      if (e.target.id === "rate-products-modal") closeRateProductsModal();
+    });
+  </script>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <nav class="footer-nav" aria-label="Footer Navigation">
+        <a href="index.html">Home</a>
+        <a href="products.html">Products</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="orders.html">Orders</a>
+        <a href="privacy-policy.html">Privacy Policy</a>
+      </nav>
+      <p class="footer-contact">
+        Phone: <a href="tel:+919307760665">+91 9307760665</a> |
+        WhatsApp: <a href="https://wa.me/919307760665" target="_blank" rel="noopener">Chat Support</a>
+      </p>
+      <p class="footer-contact">
+        Email: <a href="mailto:hygienicsandcomfort@gmail.com">hygienicsandcomfort@gmail.com</a>
+      </p>
+      <p class="footer-copy">&copy; 2026 Hygienic &amp; Comfort Co. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>
