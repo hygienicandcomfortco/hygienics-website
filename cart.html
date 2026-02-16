@@ -213,6 +213,99 @@
       color: #64748b;
       font-size: 0.82rem;
     }
+
+  /* --- Footer (Unified) --- */
+  .site-footer {
+    margin-top: 40px;
+    padding: 44px 5% 24px;
+    background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+    border-top: 1px solid #dbe7ff;
+  }
+  .site-footer .footer-inner { max-width: 1200px; margin: 0 auto; }
+  .site-footer .footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    align-items: start;
+    text-align: left;
+  }
+  .site-footer .footer-section h4 {
+    font-size: 0.95rem;
+    color: var(--dark);
+    margin: 0 0 10px 0;
+    font-weight: 800;
+  }
+  .site-footer .footer-links { display: grid; gap: 8px; }
+  .site-footer .footer-links a {
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+  .site-footer .footer-links a:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .site-footer .footer-block {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 18px 18px;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
+  }
+  .site-footer .footer-contact {
+    margin: 0 0 8px 0;
+    color: #64748b;
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+  .site-footer .footer-contact a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 700;
+  }
+  .site-footer .footer-contact a:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .site-footer .footer-divider {
+    height: 1px;
+    background: #dbe7ff;
+    margin: 28px 0 14px;
+  }
+  .site-footer .footer-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    text-align: center;
+    color: #64748b;
+    font-size: 0.82rem;
+  }
+  .site-footer .footer-bottom a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 700;
+  }
+  .site-footer .footer-bottom a:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  @media (min-width: 768px) {
+    .site-footer .footer-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+      text-align: left;
+    }
+    .site-footer .footer-bottom {
+      flex-direction: row;
+      justify-content: center;
+      text-align: center;
+      gap: 18px;
+    }
+  }
   .cart-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
   .cart-selection-bar { display: grid; grid-template-columns: 1fr; gap: 10px; margin: 0 0 10px; padding: 12px 14px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc; }
   .cart-selection-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; }
@@ -798,8 +891,8 @@ function renderUI() {
   const itemKey = getCartItemKey(p, i);
   const isSelected = selectedCartKeys.has(itemKey);
   return `<div class="cart-item ${isSelected ? 'is-selected' : ''}">
-      <label class="cart-item-select">
-        <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="toggleItemSelection(${i}, this.checked)" aria-label="Select ${p.name}">
+      <label class="cart-item-select" for="cart-item-select-${i}">
+        <input id="cart-item-select-${i}" name="cart-item-select" type="checkbox" ${isSelected ? 'checked' : ''} onchange="toggleItemSelection(${i}, this.checked)" aria-label="Select ${p.name}">
       </label>
       <a href="${prodLink}" class="cart-img-link">
         <img class="cart-img" src="${p.images?.[0]||'logo.png'}" alt="${p.name}">
@@ -829,23 +922,24 @@ function renderUI() {
   updateProceedState();
   }
 
-  function getSuggestionMode() {
-  const hasBabyDiaper = cart.some(item => {
-  const text = `${item.name || ''} ${item.category || ''} ${item.main_category || ''}`.toLowerCase();
-  return /(baby|infant|newborn|kids)/.test(text) && /(diaper|nappy|pants|pant)/.test(text);
-  });
-
-  const hasAdultDiaper = cart.some(item => {
-  const text = `${item.name || ''} ${item.category || ''} ${item.main_category || ''}`.toLowerCase();
-  return /(adult|unisex|senior)/.test(text) && /(diaper|brief|pants|pant)/.test(text);
-  });
-
-  if (hasBabyDiaper) return 'baby_wipes';
-  if (hasAdultDiaper) return 'adult_other';
-  return '';
+  function getSuggestionContext() {
+  if (!cart.length) return null;
+  const cartText = cart.map(item => `${item.name || ''} ${item.category || ''} ${item.main_category || ''}`.toLowerCase());
+  const hasBabyDiaper = cartText.some(t => /(baby|infant|newborn|kids)/.test(t) && /(diaper|nappy|pants|pant)/.test(t));
+  const hasAdultDiaper = cartText.some(t => /(adult|unisex|senior|incontinence)/.test(t) && /(diaper|brief|pants|pant)/.test(t));
+  const hasSanitary = cartText.some(t => /(sanitary|pad|pads|menstrual|period)/.test(t));
+  const title = (hasBabyDiaper && hasAdultDiaper)
+    ? 'Recommended: Wipes & Essentials'
+    : (hasBabyDiaper ? 'Recommended: Baby Wipes & Care' : (hasAdultDiaper ? 'Recommended: Adult Care Essentials' : (hasSanitary ? 'Recommended: Hygiene Essentials' : 'Recommended Add-ons')));
+  const key = [
+    hasBabyDiaper ? 'baby' : '',
+    hasAdultDiaper ? 'adult' : '',
+    hasSanitary ? 'sanitary' : ''
+  ].filter(Boolean).join('|') || 'general';
+  return { key, title, hasBabyDiaper, hasAdultDiaper, hasSanitary };
   }
 
-  function drawSuggestions(mode, products) {
+  function drawSuggestions(titleText, products) {
   const section = document.getElementById('suggestions-section');
   const list = document.getElementById('suggestions-list');
   const title = document.getElementById('suggestions-title');
@@ -856,7 +950,7 @@ function renderUI() {
   return;
   }
 
-  title.innerText = mode === 'baby_wipes' ? 'Recommended Products - Baby Wipes' : 'Recommended Products';
+  title.innerText = titleText || 'Recommended Products';
   list.innerHTML = products.map((p, i) => {
   const prodLink = `products.html?id=${p.id}`;
   const price = Number(p.price || 0).toLocaleString('en-IN');
@@ -872,11 +966,38 @@ function renderUI() {
   section.style.display = 'block';
   }
 
+  function scoreSuggestion(p, ctx) {
+  const text = `${p.name || ''} ${p.category || ''} ${p.main_category || ''}`.toLowerCase();
+  let score = 0;
+  const isWipes = /(wet ?wipe|wipes?)/.test(text);
+  const isUnderpad = /(under ?pad|bed ?pad|bed protector|chux|sheet|protector)/.test(text);
+  const isCare = /(rash|cream|powder|lotion|ointment)/.test(text);
+  const isHygiene = /(glove|cleansing|disposal|disposer|bag|liner|panty liner|sanitary)/.test(text);
+  const isDiaper = /(diaper|brief|pants|pant|nappy)/.test(text);
+
+  if (isWipes) score += (ctx.hasBabyDiaper || ctx.hasAdultDiaper) ? 5 : 2;
+  if (ctx.hasBabyDiaper && /(baby|infant|newborn|kids)/.test(text)) score += 3;
+  if (ctx.hasAdultDiaper && /(adult|senior|unisex|incontinence)/.test(text)) score += 3;
+  if (isUnderpad) score += ctx.hasAdultDiaper ? 4 : 2;
+  if (isCare) score += ctx.hasBabyDiaper ? 3 : 1;
+  if (isHygiene) score += 2;
+  if (isDiaper) score -= 4;
+  return { score, isWipes, isUnderpad, isCare, isHygiene };
+  }
+
+  function getBucket(meta) {
+  if (meta.isWipes) return 'wipes';
+  if (meta.isUnderpad) return 'underpad';
+  if (meta.isCare) return 'care';
+  if (meta.isHygiene) return 'hygiene';
+  return 'other';
+  }
+
   async function renderSuggestions() {
-  const mode = getSuggestionMode();
+  const ctx = getSuggestionContext();
   const section = document.getElementById('suggestions-section');
   const list = document.getElementById('suggestions-list');
-  if (!section || !list || !mode || !cart.length) {
+  if (!section || !list || !ctx || !cart.length) {
   if (section) section.style.display = 'none';
   if (list) list.innerHTML = '';
   suggestionsState = { key: '', mode: '', items: [] };
@@ -884,19 +1005,15 @@ function renderUI() {
   }
 
   const cartIds = new Set(cart.map(item => String(item.id)));
-  const key = `${mode}|${Array.from(cartIds).sort().join(',')}`;
+  const key = `${ctx.key}|${Array.from(cartIds).sort().join(',')}`;
   if (suggestionsState.key === key && suggestionsState.items.length) {
-  drawSuggestions(mode, suggestionsState.items);
+  drawSuggestions(ctx.title, suggestionsState.items);
   return;
   }
 
   const reqId = ++suggestionReqId;
-  let query = supa.from('products').select('id,name,price,images,category,main_category').limit(24);
-  if (mode === 'baby_wipes') {
-  query = query.or('name.ilike.%baby wipe%,name.ilike.%baby wipes%,name.ilike.%wet wipe%,name.ilike.%wet wipes%,name.ilike.%wipes%,category.ilike.%wipes%,main_category.ilike.%wipes%');
-  } else {
-  query = query.or('name.ilike.%underpad%,name.ilike.%under pad%,name.ilike.%bed protector%,name.ilike.%bed pad%,name.ilike.%chux%,name.ilike.%wipes%,name.ilike.%gloves%,name.ilike.%cleansing%,name.ilike.%pads%,category.ilike.%underpad%,category.ilike.%wipes%');
-  }
+  let query = supa.from('products').select('id,name,price,images,category,main_category').limit(60);
+  query = query.or('name.ilike.%wipe%,name.ilike.%wipes%,name.ilike.%wet wipe%,name.ilike.%underpad%,name.ilike.%under pad%,name.ilike.%bed pad%,name.ilike.%bed protector%,name.ilike.%chux%,name.ilike.%glove%,name.ilike.%cleansing%,name.ilike.%cream%,name.ilike.%rash%,name.ilike.%powder%,name.ilike.%lotion%,name.ilike.%liner%,name.ilike.%panty liner%,name.ilike.%sanitary%,name.ilike.%disposal%,name.ilike.%disposer%,category.ilike.%wipes%,category.ilike.%underpad%,category.ilike.%sanitary%,main_category.ilike.%wipes%,main_category.ilike.%underpad%,main_category.ilike.%sanitary%');
 
   const { data } = await query;
   if (reqId !== suggestionReqId) return;
@@ -904,24 +1021,34 @@ function renderUI() {
   const ranked = (data || [])
   .filter(p => !cartIds.has(String(p.id)))
   .map(p => {
-  const text = `${p.name || ''} ${p.category || ''} ${p.main_category || ''}`.toLowerCase();
-  let score = 0;
-  if (mode === 'baby_wipes') {
-  if (/(wet ?wipe|wipes?)/.test(text)) score += 2;
-  if (/(baby|infant|newborn|kids)/.test(text)) score += 2;
-  } else {
-  if (/(wipes?|under ?pad|bed ?pad|bed protector|chux|glove|cleansing|sheet|protector)/.test(text)) score += 2;
-  if (/(adult|senior|unisex)/.test(text)) score += 1;
-  if (/(diaper|brief|pants|pant)/.test(text)) score -= 3;
-  }
-  return { ...p, _score: score };
+  const meta = scoreSuggestion(p, ctx);
+  return { ...p, _score: meta.score, _bucket: getBucket(meta) };
   })
   .filter(p => p._score > 0)
   .sort((a, b) => b._score - a._score || Number(a.price || 0) - Number(b.price || 0));
 
-  const products = ranked.slice(0, 4).map(({ _score, ...rest }) => rest);
-  suggestionsState = { key, mode, items: products };
-  drawSuggestions(mode, products);
+  const buckets = { wipes: [], underpad: [], care: [], hygiene: [], other: [] };
+  ranked.forEach((p) => { if (buckets[p._bucket]) buckets[p._bucket].push(p); else buckets.other.push(p); });
+
+  const picked = [];
+  const take = (bucket, count = 1) => {
+  while (count > 0 && buckets[bucket].length) {
+  picked.push(buckets[bucket].shift());
+  count -= 1;
+  }
+  };
+
+  if (ctx.hasBabyDiaper || ctx.hasAdultDiaper) take('wipes', 2);
+  if (ctx.hasAdultDiaper) take('underpad', 1);
+  if (ctx.hasBabyDiaper) take('care', 1);
+  if (ctx.hasSanitary) take('hygiene', 1);
+
+  const fillPool = ranked.filter(p => !picked.includes(p));
+  while (picked.length < 6 && fillPool.length) picked.push(fillPool.shift());
+
+  const products = picked.slice(0, 6).map(({ _score, _bucket, ...rest }) => rest);
+  suggestionsState = { key, mode: ctx.key, items: products };
+  drawSuggestions(ctx.title, products);
   }
 
 function addSuggestionByIndex(idx) {
@@ -1046,25 +1173,41 @@ function addSuggestionByIndex(idx) {
 
 <footer class="site-footer">
   <div class="footer-inner">
-    <nav class="footer-nav" aria-label="Footer Navigation">
-      <a href="index.html">Home</a>
-      <a href="products.html">Products</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-      <a href="orders.html">Orders</a>
-      <a href="privacy-policy.html">Privacy Policy</a>
-    </nav>
-    <p class="footer-contact">
-      Phone: <a href="tel:+919307760665">+91 9307760665</a> |
-      WhatsApp: <a href="https://wa.me/919307760665" target="_blank" rel="noopener">Chat Support</a>
-    </p>
-    <p class="footer-contact">
-      Email: <a href="mailto:hygienicsandcomfort@gmail.com">hygienicsandcomfort@gmail.com</a>
-    </p>
-    <p class="footer-copy">&copy; 2026 Hygienic &amp; Comfort Co. All rights reserved.</p>
+    <div class="footer-grid">
+      <div class="footer-section footer-block">
+        <h4>Policies</h4>
+        <nav class="footer-links" aria-label="Policies">
+          <a href="privacy-policy.html">Privacy Policy</a>
+          <a href="terms-and-conditions.html">Terms &amp; Conditions</a>
+          <a href="return-and-refund-policy.html">Return &amp; Refund Policy</a>          <a href="payment-policy.html">Payment Policy</a>
+        </nav>
+      </div>
+      <div class="footer-section footer-block">
+        <h4>Contact</h4>
+        <p class="footer-contact">Phone: <a href="tel:+919307760665">+91 9307760665</a></p>
+        <p class="footer-contact">WhatsApp: <a href="https://wa.me/919307760665" target="_blank" rel="noopener">Chat Support</a></p>
+        <p class="footer-contact">Email: <a href="mailto:hygienicsandcomfort@gmail.com">hygienicsandcomfort@gmail.com</a></p>
+        <p class="footer-contact">Location: Ambernath, Maharashtra</p>
+      </div>
+    </div>
+
+    <div class="footer-divider" role="presentation"></div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 Hygienic &amp; Comfort Co. All rights reserved.</div>
+    </div>
   </div>
 </footer>
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
 
