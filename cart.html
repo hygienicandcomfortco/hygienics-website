@@ -607,9 +607,23 @@
   const userSub = document.getElementById('user-display-sub');
 
   if (user) {
+  let latestName = "";
+  try {
+  const { data: profile } = await supa
+    .from('customers')
+    .select('customer_name')
+    .eq('user_id', user.id)
+    .maybeSingle();
+  latestName = (profile?.customer_name || "").toString().trim();
+  } catch (e) {
+  console.warn("Could not fetch latest profile name:", e);
+  }
+  const metaName = (user.user_metadata?.full_name || user.user_metadata?.name || "").toString().trim();
+  const fallbackName = (user.email ? user.email.split('@')[0] : (user.phone || "User"));
+  const displayName = latestName || metaName || fallbackName || "User";
   guestItems.style.display = 'none';
   authItems.style.display = 'block';
-  userDisplay.innerText = "Welcome Back!";
+  userDisplay.innerText = displayName;
   userSub.innerText = user.email || user.phone || "Active Account";
   } else {
   guestItems.style.display = 'block';
@@ -1200,14 +1214,6 @@ function addSuggestionByIndex(idx) {
 
 </body>
 </html>
-
-
-
-
-
-
-
-
 
 
 
