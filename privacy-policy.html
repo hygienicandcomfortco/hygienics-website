@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Payment Policy | Hygienic & Comfort Co.</title>
-  <meta name="description" content="Read the Payment Policy for Hygienic & Comfort Co. hygiene products.">
-  <link rel="canonical" href="https://hygienicandcomfortco.shop/payment-policy.html" />
+  <title>Privacy Policy | Hygienic & Comfort Co.</title>
+  <meta name="description" content="Read how Hygienic & Comfort Co. collects, uses, and protects your personal information.">
+  <link rel="canonical" href="https://hygienicandcomfortco.shop/privacy-policy.html" />
   <link rel="icon" type="image/png" href="logo.png">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -16,17 +16,20 @@
       --soft-blue: #eef4ff;
       --dark: #1e293b;
       --grey: #64748b;
+      --white: #ffffff;
       --bg: #f8fafc;
       --card: #ffffff;
       --text: #1e293b;
       --muted: #64748b;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.65;
+      font-family:'Plus Jakarta Sans',sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.6;
       overflow-x: hidden;
     }
 
@@ -138,36 +141,120 @@
     .logout-btn-item { color: #ef4444 !important; }
     .logout-btn-item i { color: #ef4444 !important; }
 
-    .wrap { max-width: 980px; margin: 30px auto; padding: 0 20px; }
-    .card {
-      background: var(--card);
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 26px;
+    .wrap { max-width:1100px; margin:34px auto; padding:0 20px; }
+    .card { background:var(--card); border:1px solid #e2e8f0; border-radius:16px; padding:28px; }
+    h2 { font-size:1.8rem; margin-bottom:8px; }
+    .muted { color:var(--muted); margin-bottom:18px; }
+    h3 { font-size:1.04rem; margin:22px 0 8px; }
+    p, li { color:#334155; line-height:1.65; }
+    ul { padding-left:20px; }
+    .cart-count-btn {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: var(--primary);
+      color: #fff;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      z-index: 2000;
+      box-shadow: 0 8px 20px rgba(37,99,235,0.3);
     }
-    h1 { font-size: 1.9rem; margin-bottom: 8px; }
-    .muted { color: var(--muted); margin-bottom: 14px; }
-    h2 { font-size: 1.05rem; margin: 20px 0 8px; }
-    p, li { color: #334155; }
-    ul { padding-left: 20px; margin-top: 6px; }
-    .site-footer {
-      margin-top: 34px;
-      padding: 26px 20px;
-      border-top: 1px solid #dbe7ff;
+
+    .badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      background: #ef4444;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 800;
+      border: 2px solid #fff;
+    }
+    @media (min-width: 768px) {
+      .header-container {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 5px 0;
+      }
+      .brand-wrapper { display: contents; }
+      .logo-area { order: 1; }
+      .brand-text h1 { font-size: 1.1rem; }
+      .brand-text p { display: block; }
+      .nav-links {
+        width: auto;
+        border-top: none;
+        padding-top: 0;
+        gap: 25px;
+        margin-left: auto;
+        order: 2;
+      }
+      .profile-section { order: 3; margin-left: 12px; }
+      .header-logo { height: 50px; }
+    }
+
+    @media (max-width:700px){
+      .card{padding:20px;}
+    }
+      .site-footer {
+      margin-top: 40px;
+      padding: 28px 20px;
       background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+      border-top: 1px solid #dbe7ff;
       text-align: center;
-      color: #64748b;
-      font-size: 0.86rem;
+    }
+    .site-footer .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
     }
     .site-footer .footer-nav {
       display: flex;
-      justify-content: center;
       flex-wrap: wrap;
-      gap: 12px 16px;
-      margin-bottom: 10px;
+      justify-content: center;
+      gap: 14px 18px;
+      margin-bottom: 12px;
     }
-    .site-footer a { color: #2563eb; text-decoration: none; font-weight: 700; }
-    .site-footer a:hover { text-decoration: underline; }
+    .site-footer .footer-nav a {
+      color: #2563eb;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.1px;
+    }
+    .site-footer .footer-nav a:hover {
+      color: #1d4ed8;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .site-footer .footer-contact {
+      margin: 0 0 6px 0;
+      color: #64748b;
+      font-size: 0.86rem;
+      line-height: 1.5;
+    }
+    .site-footer .footer-contact a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .site-footer .footer-contact a:hover {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .site-footer .footer-copy {
+      margin: 4px 0 0 0;
+      color: #64748b;
+      font-size: 0.82rem;
+    }
 
     /* --- Footer (Unified) --- */
     .site-footer {
@@ -175,8 +262,6 @@
       padding: 44px 5% 24px;
       background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
       border-top: 1px solid #dbe7ff;
-      color: #64748b;
-      font-size: 0.82rem;
     }
     .site-footer .footer-inner { max-width: 1200px; margin: 0 auto; }
     .site-footer .footer-grid {
@@ -249,38 +334,6 @@
       text-decoration: underline;
       text-underline-offset: 2px;
     }
-
-    .cart-count-btn {
-      position: fixed;
-      bottom: 25px;
-      right: 25px;
-      background: var(--primary);
-      color: #fff;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      z-index: 2000;
-      box-shadow: 0 8px 20px rgba(37,99,235,0.3);
-    }
-    .badge {
-      position: absolute;
-      top: -2px;
-      right: -2px;
-      background: #ef4444;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-      font-weight: 800;
-      border: 2px solid #fff;
-    }
     @media (min-width: 768px) {
       .site-footer .footer-grid {
         grid-template-columns: 1fr 1fr;
@@ -295,31 +348,6 @@
         gap: 18px;
       }
     }
-    @media (min-width: 768px) {
-      .header-container {
-        flex-direction: row;
-        justify-content: space-between;
-        padding: 5px 0;
-      }
-      .brand-wrapper { display: contents; }
-      .logo-area { order: 1; }
-      .brand-text h1 { font-size: 1.1rem; }
-      .brand-text p { display: block; }
-      .nav-links {
-        width: auto;
-        border-top: none;
-        padding-top: 0;
-        gap: 25px;
-        margin-left: auto;
-        order: 2;
-      }
-      .profile-section { order: 3; margin-left: 12px; }
-      .header-logo { height: 50px; }
-    }
-    @media (max-width:700px) {
-      .card { padding: 20px; }
-      h1 { font-size: 1.55rem; }
-    }
   </style>
 </head>
 <body>
@@ -329,8 +357,8 @@
         <a href="index.html" class="logo-area">
           <img src="logo.png" alt="Logo" class="header-logo">
           <div class="brand-text">
-            <h1>Hygienic &amp; Comfort Co.</h1>
-            <p>Care, Comfort &amp; Hygiene for Every Age</p>
+            <h1>Hygienic & Comfort Co.</h1>
+            <p>Care, Comfort & Hygiene for Every Age</p>
           </div>
         </a>
 
@@ -347,7 +375,7 @@
             <div id="guest-items">
               <a href="login.html" class="dropdown-item">
                 <i data-lucide="log-in"></i>
-                <div class="item-info"><b>Sign In</b><span>Access orders &amp; profile</span></div>
+                <div class="item-info"><b>Sign In</b><span>Access orders & profile</span></div>
               </a>
             </div>
             <div id="auth-items" style="display:none">
@@ -372,55 +400,129 @@
         <a href="index.html">Home</a>
         <a href="products.html">Products</a>
         <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
-      </nav>
+        <a href="contact.html">Contact</a>      </nav>
     </div>
   </header>
 
   <main class="wrap">
     <section class="card">
-      <h1>Payment Policy</h1>
-      <p class="muted">Effective date: 16 February 2026</p>
-      <p>At Hygienic &amp; Comfort Co., we currently accept <strong>Cash on Delivery (COD)</strong> as the only payment method. This policy explains how COD works, what to expect at delivery, and how we handle payment-related issues.</p>
+      <h2>Privacy Policy</h2>
+      <p class="muted"><strong>Last Updated:</strong> February 11, 2026</p>
 
-      <h2>1. Accepted Payment Methods</h2>
-      <p>We accept <strong>Cash on Delivery (COD)</strong> and <strong>UPI at the doorstep</strong> for all orders placed on our website or through direct confirmation. Online/prepaid payments and card payments are not available at this time.</p>
+      <p>
+        At Hygienic &amp; Comfort Co., accessible from
+        <a href="https://hygienicandcomfortco.shop/" target="_blank" rel="noopener">https://hygienicandcomfortco.shop/</a>,
+        protecting the privacy of our visitors and customers is one of our main priorities.
+        This Privacy Policy explains what information we collect, how we use it, and the rights you have regarding your data.
+      </p>
 
-      <h2>2. Payment at Delivery</h2>
+      <h3>1. Information We Collect</h3>
+      <p>We collect personal information that you voluntarily provide when you:</p>
       <ul>
-        <li>The order amount is payable in cash or via UPI when your order is delivered.</li>
-        <li>For cash payments, please keep the exact amount ready. For UPI, please keep your preferred UPI app ready.</li>
-        <li>Payment is collected only after the package is handed over.</li>
+        <li>Register on our website</li>
+        <li>Place an order</li>
+        <li>Contact us for support or feedback</li>
+      </ul>
+      <p>This information may include:</p>
+      <ul>
+        <li>Name</li>
+        <li>Email Address</li>
+        <li>WhatsApp / Phone Number</li>
+        <li>Shipping &amp; Billing Address</li>
+        <li>Order and transaction details</li>
+      </ul>
+      <p>We only collect the information necessary to provide our services.</p>
+
+      <h3>2. Legal Basis &amp; Consent</h3>
+      <p>
+        By using our website and placing orders, you consent to the collection and use of your information in accordance with this Privacy Policy.
+      </p>
+      <p>We collect personal data only when necessary to:</p>
+      <ul>
+        <li>Process and deliver orders</li>
+        <li>Provide customer support</li>
+        <li>Improve our website and services</li>
       </ul>
 
-      <h2>3. Order Confirmation &amp; Verification</h2>
-      <p>We may contact you by phone or WhatsApp to confirm the order details, delivery address, and availability. If we are unable to reach you after reasonable attempts, the order may be delayed or cancelled.</p>
+      <h3>3. How We Use Your Information</h3>
+      <p>We use the information we collect for the following purposes:</p>
+      <p><strong>Order Fulfillment</strong><br>Processing orders and arranging local delivery in Ambernath and nearby areas.</p>
+      <p><strong>Customer Communication</strong><br>Contacting you via Email or WhatsApp regarding order confirmation, delivery updates, and support.</p>
+      <p><strong>Website Improvement</strong><br>Using feedback and usage data to improve our products and website experience.</p>
+      <p>We do not sell or rent your personal data to third-party marketing agencies.</p>
 
-      <h2>4. Delivery Attempts &amp; Unavailability</h2>
-      <p>If you are unavailable at the time of delivery, we may attempt delivery again based on availability and delivery routes. Repeated failed attempts may result in order cancellation.</p>
+      <h3>4. Third-Party Services</h3>
+      <p>
+        We may use trusted third-party services to operate our website and deliver services.
+        These services may process limited data required to perform their functions.
+      </p>
+      <p>These include:</p>
+      <ul>
+        <li>Supabase - database and authentication services</li>
+        <li>Website Hosting Provider - hosting, SSL security and performance</li>
+        <li>Payment Providers (UPI / Bank Transfer / Razorpay or similar) - secure payment processing</li>
+      </ul>
+      <p>These providers are obligated to protect your data and use it only to provide their services.</p>
 
-      <h2>5. Refusal to Accept Delivery</h2>
-      <p>If an order is refused at delivery without a valid issue (such as damage or incorrect item), it may be treated as a cancelled order. Repeated refusals may lead to restrictions on future COD orders.</p>
+      <h3>5. Cookies &amp; Security</h3>
+      <p>Our website uses secure HTTPS/SSL encryption to protect your browsing experience.</p>
+      <p>We may use basic cookies or local storage to:</p>
+      <ul>
+        <li>Maintain login sessions</li>
+        <li>Improve website functionality</li>
+      </ul>
+      <p>We do not use malicious scripts, deceptive code, or auto-downloads.</p>
 
-      <h2>6. Pricing, Taxes &amp; Invoice</h2>
-      <p>All prices shown are in INR. Applicable taxes are included unless stated otherwise. The final amount payable is confirmed at checkout and listed on your order confirmation.</p>
+      <h3>6. Data Security</h3>
+      <p>
+        We use industry-standard security measures to protect your personal information from unauthorized access,
+        disclosure, or misuse.
+      </p>
+      <p>Your data is stored securely using modern cloud infrastructure and encryption technologies.</p>
 
-      <h2>7. Incorrect or Damaged Items</h2>
-      <p>If you receive an incorrect or damaged item, please inform us within 48 hours of delivery with supporting photos. Eligible cases are handled as per our Return &amp; Refund Policy.</p>
+      <h3>7. Data Retention</h3>
+      <p>We retain customer data only as long as necessary to:</p>
+      <ul>
+        <li>Fulfill orders</li>
+        <li>Provide customer support</li>
+        <li>Meet legal or accounting requirements</li>
+      </ul>
+      <p>After this period, your data is securely deleted.</p>
 
-      <h2>8. Future Payment Options</h2>
-      <p>We may introduce additional payment methods in the future. Any updates will be reflected on this page and on the checkout screen.</p>
+      <h3>8. Your Data Rights</h3>
+      <p>You have the right to:</p>
+      <ul>
+        <li>Request access to your personal data</li>
+        <li>Request correction of incorrect information</li>
+        <li>Request deletion of your data</li>
+        <li>Withdraw consent at any time</li>
+      </ul>
+      <p>To make a request, please contact us using the details below.</p>
 
-      <h2>9. Contact Us</h2>
-      <p>If you have any questions about payments or COD, contact us at <a href="mailto:hygienicsandcomfort@gmail.com">hygienicsandcomfort@gmail.com</a> or call <a href="tel:+919307760665">+91 9307760665</a>.</p>
+      <h3>9. Children's Information</h3>
+      <p>
+        Our website does not knowingly collect personal information from children under 13 years of age.
+        If you believe a child has provided personal data on our website, please contact us and we will remove it immediately.
+      </p>
+
+      <h3>10. Updates to This Policy</h3>
+      <p>
+        We may update this Privacy Policy from time to time.
+        Any changes will be posted on this page with a new "Last Updated" date.
+      </p>
+
+      <h3>11. Contact Us</h3>
+      <p>If you have any questions about this Privacy Policy or your data, please contact us:</p>
+      <p><strong>Business Name:</strong> Hygienic &amp; Comfort Co.<br>
+         <strong>Location:</strong> Ambernath, India<br>
+         <strong>Email:</strong> <a href="mailto:hygienicsandcomfort@gmail.com">hygienicsandcomfort@gmail.com</a><br>
+         <strong>WhatsApp:</strong> <a href="https://wa.me/919307760665" target="_blank" rel="noopener">+91 9307760665</a></p>
     </section>
   </main>
-
   <a href="cart.html" class="cart-count-btn" aria-label="View Cart">
     <i data-lucide="shopping-basket"></i>
     <span class="badge" id="cart-badge">0</span>
   </a>
-
   <footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-grid">
@@ -429,8 +531,7 @@
           <nav class="footer-links" aria-label="Policies">
             <a href="privacy-policy.html">Privacy Policy</a>
             <a href="terms-and-conditions.html">Terms &amp; Conditions</a>
-            <a href="return-and-refund-policy.html">Return &amp; Refund Policy</a>
-            <a href="payment-policy.html">Payment Policy</a>
+            <a href="return-and-refund-policy.html">Return &amp; Refund Policy</a>          <a href="payment-policy.html">Payment Policy</a>
           </nav>
         </div>
         <div class="footer-section footer-block">
@@ -498,13 +599,18 @@
         setProfileIcon('user');
       }
     }
-
+    function updateCartBadge() {
+      const cart = JSON.parse(localStorage.getItem('hc-cart')) || [];
+      const totalQty = cart.reduce((sum, item) => sum + (Number(item.qty) || 1), 0);
+      const badge = document.getElementById('cart-badge');
+      if (badge) badge.innerText = totalQty;
+    }
     async function handleLogout() {
       if (!confirm('Are you sure you want to log out?')) return;
       try {
         await _supabase.auth.signOut();
         localStorage.removeItem('checkout-item');
-        window.location.href = 'index.html';
+window.location.href = 'index.html';
       } catch (err) {
         console.error('Logout Error:', err);
         window.location.reload();
@@ -524,15 +630,23 @@
     });
 
     window.onload = () => {
+      updateCartBadge();
       lucide.createIcons();
       checkUserSession();
-      const cart = JSON.parse(localStorage.getItem('hc-cart')) || [];
-      const badge = document.getElementById('cart-badge');
-      if (badge) badge.innerText = cart.length;
     };
   </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
 
 
 
