@@ -1059,7 +1059,7 @@ localStorage.removeItem('hc-cart');
 localStorage.removeItem('hc-cart-selected');
 localStorage.removeItem('checkout-item');
 
-const msg = `*NEW ORDER*\nItem: ${checkoutData.itemsText || checkoutData.name}\nAddress: ${finalAddress}\nTotal: ?${checkoutData.price}`;
+const msg = `*NEW ORDER*\nItem: ${checkoutData.itemsText || checkoutData.name}\nAddress: ${finalAddress}\nTotal: \u20B9${checkoutData.price}`;
 window.open(`https://wa.me/919307760665?text=${encodeURIComponent(msg)}`, '_blank');
 
 location.href = "index.html";
@@ -1114,3 +1114,18 @@ if (dropdown && !e.target.closest('#address-dropdown')) dropdown.classList.remov
 </footer>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
