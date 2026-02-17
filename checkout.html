@@ -354,6 +354,153 @@ font-size: 0.9rem;
         gap: 18px;
       }
     }
+  
+    /* --- Dark Theme --- */
+    body.dark-theme {
+      background: #0b1220 !important;
+      color: #e2e8f0 !important;
+    }
+    body.dark-theme .main-header {
+      background: rgba(8, 14, 27, 0.92) !important;
+      border-bottom-color: #1e293b !important;
+    }
+    body.dark-theme .nav-links { border-top-color: #1e293b !important; }
+    body.dark-theme .nav-links a { color: #cbd5e1 !important; }
+    body.dark-theme .nav-links a:hover,
+    body.dark-theme .nav-links a.active { color: #60a5fa !important; }
+    body.dark-theme .profile-btn { background: #15243c !important; color: #60a5fa !important; }
+    body.dark-theme .dropdown-menu {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+      box-shadow: 0 15px 40px rgba(2, 6, 23, 0.55) !important;
+    }
+    body.dark-theme .dropdown-header { border-bottom-color: #1e293b !important; }
+    body.dark-theme .dropdown-item { color: #e2e8f0 !important; }
+    body.dark-theme .dropdown-item:hover { background: #15243c !important; color: #60a5fa !important; }
+    body.dark-theme .dropdown-item i,
+    body.dark-theme .item-info span { color: #94a3b8 !important; }
+    body.dark-theme .item-info b { color: #e2e8f0 !important; }
+    body.dark-theme .site-footer {
+      background: linear-gradient(180deg, #0f172a 0%, #0b1220 100%) !important;
+      border-top-color: #1f2a44 !important;
+    }
+    body.dark-theme .site-footer .footer-block {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+      box-shadow: 0 10px 24px rgba(2, 6, 23, 0.38) !important;
+    }
+    body.dark-theme .site-footer .footer-contact,
+    body.dark-theme .site-footer .footer-bottom { color: #94a3b8 !important; }
+    body.dark-theme .site-footer .footer-divider { background: #1f2a44 !important; }
+    body.dark-theme .card,
+    body.dark-theme .about-card,
+    body.dark-theme .form-card,
+    body.dark-theme .checkout-container,
+    body.dark-theme .order-summary,
+    body.dark-theme .payment-method,
+    body.dark-theme .address-card,
+    body.dark-theme .product-card,
+    body.dark-theme .review-item,
+    body.dark-theme .review-form-wrap,
+    body.dark-theme .order-card,
+    body.dark-theme .info-card {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+      color: #e2e8f0 !important;
+    }
+    body.dark-theme input,
+    body.dark-theme textarea,
+    body.dark-theme select {
+      background: #111b2e !important;
+      color: #e2e8f0 !important;
+      border-color: #2a3a57 !important;
+    }
+    body.dark-theme .search-section-bar,
+    body.dark-theme .announcement-bar,
+    body.dark-theme .form-section,
+    body.dark-theme .reviews-section,
+    body.dark-theme .trust-bar {
+      background: #0f172a !important;
+      border-color: #1e293b !important;
+    }
+    body.dark-theme .suggestion-box {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+    }
+    body.dark-theme .suggestion-item:hover { background: #15243c !important; }
+  
+    /* --- Dark Mode Readability Fix --- */
+    body.dark-theme .menu-item {
+      color: #dbe7ff !important;
+    }
+    body.dark-theme .menu-item i {
+      color: #9fb3cc !important;
+    }
+    body.dark-theme .menu-item:hover,
+    body.dark-theme .menu-item.active {
+      background: #15243c !important;
+      color: #60a5fa !important;
+    }
+    body.dark-theme .sidebar,
+    body.dark-theme .mobile-sidebar,
+    body.dark-theme .user-profile-brief,
+    body.dark-theme .summary-card,
+    body.dark-theme .cart-main,
+    body.dark-theme .address-section,
+    body.dark-theme .pincode-section {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+    }
+    body.dark-theme h1,
+    body.dark-theme h2,
+    body.dark-theme h3,
+    body.dark-theme h4,
+    body.dark-theme h5,
+    body.dark-theme h6,
+    body.dark-theme .page-title,
+    body.dark-theme .card-head,
+    body.dark-theme .meta-item p,
+    body.dark-theme .meta-value,
+    body.dark-theme .items-text,
+    body.dark-theme .item-name,
+    body.dark-theme .reviewer-name,
+    body.dark-theme .p-name,
+    body.dark-theme .p-main-price,
+    body.dark-theme .sum-total {
+      color: #eaf2ff !important;
+    }
+    body.dark-theme .dropdown-header p,
+    body.dark-theme .item-info span,
+    body.dark-theme .user-profile-brief p,
+    body.dark-theme .meta-item label,
+    body.dark-theme .meta-label,
+    body.dark-theme .address-info,
+    body.dark-theme .selection-count,
+    body.dark-theme .item-qty,
+    body.dark-theme .item-unit,
+    body.dark-theme .p-mrp-line,
+    body.dark-theme .review-date,
+    body.dark-theme p[style*="color: var(--grey)"] {
+      color: #cbd5e1 !important;
+    }
+  
+    /* --- Dark Theme Inline Color Guard --- */
+    body.dark-theme [style*="color: #475569"],
+    body.dark-theme [style*="color:#475569"],
+    body.dark-theme [style*="color: #565959"],
+    body.dark-theme [style*="color:#565959"],
+    body.dark-theme [style*="color: #334155"],
+    body.dark-theme [style*="color:#334155"],
+    body.dark-theme [style*="color: #64748b"],
+    body.dark-theme [style*="color:#64748b"] {
+      color: #cbd5e1 !important;
+    }
+    body.dark-theme [style*="color: #1e293b"],
+    body.dark-theme [style*="color:#1e293b"],
+    body.dark-theme [style*="color: #0f172a"],
+    body.dark-theme [style*="color:#0f172a"] {
+      color: #eaf2ff !important;
+    }
   </style>
 </head>
 <body>
@@ -538,7 +685,7 @@ async function placeOrder(cartItems, totalAmount, customerName) {
     return null;
   }
 
-  alert("Order placed successfully 🎉");
+  alert("Order placed successfully ðŸŽ‰");
   return orderId;
 }
 
@@ -662,7 +809,7 @@ async function ensureCustomerId(user) {
   if (!user?.id) return null;
 
   /* -------------------------------------------------
-     STEP 0 — CHECK IF USER IS ADMIN
+     STEP 0 â€” CHECK IF USER IS ADMIN
      Admins must NEVER become customers
   --------------------------------------------------*/
   const { data: roleRow } = await supa
@@ -672,18 +819,18 @@ async function ensureCustomerId(user) {
     .maybeSingle();
 
   if (roleRow?.role === "admin") {
-    console.log("Admin detected — skipping customer creation");
-    return null;   // 🚫 STOP HERE FOR ADMINS
+    console.log("Admin detected â€” skipping customer creation");
+    return null;   // ðŸš« STOP HERE FOR ADMINS
   }
 
   /* -------------------------------------------------
-     STEP 1 — Try find existing customer
+     STEP 1 â€” Try find existing customer
   --------------------------------------------------*/
   const existingId = await resolveCustomerId(user);
   if (existingId) return existingId;
 
   /* -------------------------------------------------
-     STEP 2 — Create customer ONLY for real customers
+     STEP 2 â€” Create customer ONLY for real customers
   --------------------------------------------------*/
   const candidateName =
     profileName ||
@@ -931,7 +1078,7 @@ if (!sanitizeValue(finalAddress)) {
 throw new Error("Please select a delivery address or add a new delivery address before placing the order.");
 }
 
-// 🔥 GUARANTEE CUSTOMER EXISTS (fix saved address bug)
+// ðŸ”¥ GUARANTEE CUSTOMER EXISTS (fix saved address bug)
 resolvedCustomerId = await ensureCustomerId(user);
 if (!resolvedCustomerId) {
   throw new Error("Customer record missing. Please login again.");
@@ -973,7 +1120,7 @@ throw orderError;
 }
 
 // PHASE 3A: Insert Order Items
-// 🔥 INSERT ORDER ITEMS (THIS WAS MISSING)
+// ðŸ”¥ INSERT ORDER ITEMS (THIS WAS MISSING)
 let createdOrderId;
 
 // get latest order id of this user (safe way)
@@ -1029,7 +1176,7 @@ await supa.from('products').update({ stock: p.stock - 1 }).eq('id', checkoutData
 }
 
 // PHASE 3B: Insert Inventory Logs
-// 🔥 INVENTORY LOGS (THIS WAS MISSING)
+// ðŸ”¥ INVENTORY LOGS (THIS WAS MISSING)
 if (checkoutData.cartItems && checkoutData.cartItems.length > 0) {
   for (const item of checkoutData.cartItems) {
     await supa.from("inventory_logs").insert({
@@ -1112,8 +1259,31 @@ if (dropdown && !e.target.closest('#address-dropdown')) dropdown.classList.remov
     </div>
   </div>
 </footer>
+<script>
+  (function initThemeFromSettings() {
+    const THEME_STORAGE_KEY = 'hc-theme';
+    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    const mediaQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+    const hasStoredTheme = storedTheme === 'dark' || storedTheme === 'light';
+    const applyTheme = (isDark) => document.body.classList.toggle('dark-theme', isDark);
+
+    applyTheme(hasStoredTheme ? storedTheme === 'dark' : !!(mediaQuery && mediaQuery.matches));
+
+    if (!hasStoredTheme && mediaQuery) {
+      if (typeof mediaQuery.addEventListener === 'function') {
+        mediaQuery.addEventListener('change', (e) => applyTheme(e.matches));
+      } else if (typeof mediaQuery.addListener === 'function') {
+        mediaQuery.addListener((e) => applyTheme(e.matches));
+      }
+    }
+  })();
+</script>
 </body>
 </html>
+
+
+
+
 
 
 
