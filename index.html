@@ -24,6 +24,7 @@
       --accent: #38bdf8;
       --radius: 12px;
       --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --transition-fast: 0.25s ease;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -34,6 +35,7 @@
       background: var(--white);
       line-height: 1.6;
       overflow-x: hidden;
+      transition: background var(--transition-fast), color var(--transition-fast);
     }
 
     /* --- Navigation & Header --- */
@@ -115,7 +117,11 @@
     }
 
     /* --- Profile Section & Dropdown (Matches Image Layout) --- */
-    .profile-section { position: relative; }
+    .profile-section {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
     .profile-btn { 
       background: var(--soft-blue); 
       color: var(--primary); 
@@ -483,6 +489,99 @@
       text-underline-offset: 2px;
     }
 
+    /* --- Dark Theme --- */
+    body.dark-theme {
+      background: #0b1220;
+      color: #e2e8f0;
+      --soft-blue: #15243c;
+      --dark: #e2e8f0;
+      --grey: #94a3b8;
+    }
+    body.dark-theme .main-header {
+      background: rgba(8, 14, 27, 0.92);
+      border-bottom-color: #1e293b;
+    }
+    body.dark-theme .nav-links { border-top-color: #1e293b; }
+    body.dark-theme .nav-links a { color: #cbd5e1; }
+    body.dark-theme .nav-links a:hover,
+    body.dark-theme .nav-links a.active { color: #60a5fa; }
+    body.dark-theme .search-section-bar {
+      background: #0f172a;
+      border-bottom-color: #1e293b;
+    }
+    body.dark-theme .search-input-container {
+      background: #111b2e;
+      border-color: #1f2a44;
+    }
+    body.dark-theme .search-input-container:focus-within {
+      border-color: #60a5fa;
+      background: #0f1a2e;
+    }
+    body.dark-theme .search-input-container input { color: #e2e8f0; }
+    body.dark-theme .suggestion-box {
+      background: #0f1a2e;
+      border-color: #1f2a44;
+      box-shadow: 0 16px 32px rgba(2, 6, 23, 0.55);
+    }
+    body.dark-theme .suggestion-item { border-bottom-color: #1e293b; }
+    body.dark-theme .suggestion-item:hover { background: #15243c; }
+    body.dark-theme .suggestion-info h4 { color: #e2e8f0; }
+    body.dark-theme .suggestion-info p { color: #94a3b8; }
+    body.dark-theme .announcement-bar {
+      background: #13233c;
+      color: #93c5fd;
+    }
+    body.dark-theme .reviews-section { background: #0f172a; }
+    body.dark-theme .testimonial-card {
+      background: #111c31;
+      border-color: #1f2a44;
+      box-shadow: 0 10px 24px rgba(2, 6, 23, 0.38);
+    }
+    body.dark-theme .form-section { background: #0b1220; }
+    body.dark-theme .form-card {
+      background: #0f1a2e;
+      box-shadow: 0 10px 24px rgba(2, 6, 23, 0.38);
+    }
+    body.dark-theme .form-group input,
+    body.dark-theme .form-group textarea {
+      background: #111b2e;
+      color: #e2e8f0;
+      border-color: #2a3a57;
+    }
+    body.dark-theme .trust-bar {
+      background: #0f172a;
+      border-top-color: #1e293b;
+    }
+    body.dark-theme .dropdown-menu {
+      background: #0f1a2e;
+      border-color: #1f2a44;
+      box-shadow: 0 15px 40px rgba(2, 6, 23, 0.55);
+    }
+    body.dark-theme .dropdown-header { border-bottom-color: #1e293b; }
+    body.dark-theme .dropdown-item { color: #e2e8f0; }
+    body.dark-theme .dropdown-item:hover {
+      background: #15243c;
+      color: #60a5fa;
+    }
+    body.dark-theme .dropdown-item i { color: #94a3b8; }
+    body.dark-theme .item-info b { color: #e2e8f0; }
+    body.dark-theme .item-info span { color: #94a3b8; }
+    body.dark-theme .hero-text-side p,
+    body.dark-theme .form-card p,
+    body.dark-theme .site-footer .footer-contact,
+    body.dark-theme .site-footer .footer-bottom { color: #94a3b8 !important; }
+    body.dark-theme .site-footer {
+      background: linear-gradient(180deg, #0f172a 0%, #0b1220 100%);
+      border-top-color: #1f2a44;
+    }
+    body.dark-theme .site-footer .footer-block {
+      background: #0f1a2e;
+      border-color: #1f2a44;
+      box-shadow: 0 10px 24px rgba(2, 6, 23, 0.38);
+    }
+    body.dark-theme .site-footer .footer-divider { background: #1f2a44; }
+    body.dark-theme .cart-count-btn { box-shadow: 0 10px 22px rgba(37, 99, 235, 0.45); }
+
     @media (min-width: 768px) {
       .site-footer .footer-grid {
         grid-template-columns: 1fr 1fr;
@@ -497,6 +596,30 @@
         text-align: center;
         gap: 18px;
       }
+    }
+    @media (max-width: 767px) {
+      .profile-btn {
+        width: 38px;
+        height: 38px;
+      }
+    }
+  
+    /* --- Dark Theme Inline Color Guard --- */
+    body.dark-theme [style*="color: #475569"],
+    body.dark-theme [style*="color:#475569"],
+    body.dark-theme [style*="color: #565959"],
+    body.dark-theme [style*="color:#565959"],
+    body.dark-theme [style*="color: #334155"],
+    body.dark-theme [style*="color:#334155"],
+    body.dark-theme [style*="color: #64748b"],
+    body.dark-theme [style*="color:#64748b"] {
+      color: #cbd5e1 !important;
+    }
+    body.dark-theme [style*="color: #1e293b"],
+    body.dark-theme [style*="color:#1e293b"],
+    body.dark-theme [style*="color: #0f172a"],
+    body.dark-theme [style*="color:#0f172a"] {
+      color: #eaf2ff !important;
     }
   </style>
 </head>
@@ -528,6 +651,10 @@
               <i data-lucide="log-in"></i>
               <div class="item-info"><b>Sign In</b><span>Access orders & profile</span></div>
             </a>
+            <a href="settings.html" class="dropdown-item">
+              <i data-lucide="settings"></i>
+              <div class="item-info"><b>Settings</b><span>Theme preferences</span></div>
+            </a>
           </div>
           <div id="auth-items" style="display:none">
             <a href="profile.html" class="dropdown-item">
@@ -537,6 +664,10 @@
             <a href="orders.html" class="dropdown-item">
               <i data-lucide="package"></i>
               <div class="item-info"><b>My Orders</b><span>Purchase history</span></div>
+            </a>
+            <a href="settings.html" class="dropdown-item">
+              <i data-lucide="settings"></i>
+              <div class="item-info"><b>Settings</b><span>Theme preferences</span></div>
             </a>
             <div class="dropdown-item logout-btn-item" onclick="handleLogout()" style="cursor:pointer">
               <i data-lucide="log-out"></i>
@@ -678,6 +809,34 @@
 
 <script>
   const _supabase = supabase.createClient('https://uhkheprfbxxwuojswyht.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es');
+  const THEME_STORAGE_KEY = 'hc-theme';
+
+  function setTheme(theme, persist = true) {
+    const isDark = theme === 'dark';
+    document.body.classList.toggle('dark-theme', isDark);
+    if (persist) {
+      localStorage.setItem(THEME_STORAGE_KEY, isDark ? 'dark' : 'light');
+    }
+    lucide.createIcons();
+  }
+
+  function initTheme() {
+    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    const mediaQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+    const hasStoredTheme = storedTheme === 'dark' || storedTheme === 'light';
+    setTheme(hasStoredTheme ? storedTheme : ((mediaQuery && mediaQuery.matches) ? 'dark' : 'light'), false);
+
+    if (!hasStoredTheme && mediaQuery) {
+      const handleThemeChange = (e) => setTheme(e.matches ? 'dark' : 'light', false);
+      if (typeof mediaQuery.addEventListener === 'function') {
+        mediaQuery.addEventListener('change', handleThemeChange);
+      } else if (typeof mediaQuery.addListener === 'function') {
+        mediaQuery.addListener(handleThemeChange);
+      }
+    }
+  }
+  initTheme();
+
   async function blockAdminFromCustomerSite() {
     const { data: { user } } = await _supabase.auth.getUser();
     if (!user) return null;
@@ -934,6 +1093,15 @@ window.location.href = 'index.html';
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
 
 
 
