@@ -1503,6 +1503,13 @@ window.location.href = 'index.html';
     }, 150);
   });
 
+  function updateCartBadge() {
+    const cart = JSON.parse(localStorage.getItem('hc-cart')) || [];
+    const totalQty = cart.reduce((sum, item) => sum + (Number(item?.qty) || 0), 0);
+    const cartBadge = document.getElementById('cart-badge');
+    if (cartBadge) cartBadge.innerText = totalQty;
+  }
+
   window.onload = () => {
     initStars();
     fetchReviews();
@@ -1510,10 +1517,16 @@ window.location.href = 'index.html';
     checkUserSession();
     syncDeliveryAnnouncement();
     initHeroBannerSlider();
-    const cart = JSON.parse(localStorage.getItem('hc-cart')) || [];
-    const cartBadge = document.getElementById('cart-badge');
-    if(cartBadge) cartBadge.innerText = cart.length;
+    updateCartBadge();
   };
+
+  window.addEventListener('focus', updateCartBadge);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) updateCartBadge();
+  });
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'hc-cart') updateCartBadge();
+  });
 </script>
 </body>
 </html>
