@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-<title>Products | Hygienic & Comfort Co. - Quality Baby & Adult Care</title>
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Products | Hygienic & Comfort Co. - Quality Baby & Adult Care</title>
 <meta name="description" content="Browse our catalog of premium hygiene products including Healvite baby diapers, adult diapers, and comfort care essentials. Shop for quality you can trust.">
 <link rel="canonical" href="https://hygienicandcomfortco.shop/products.html" />
 
@@ -382,56 +382,7 @@ pointer-events: auto;
 @media (min-width: 1024px) { 
 .product-list { grid-template-columns: repeat(4, 1fr); } 
 }
-    .site-footer {
-      margin-top: 40px;
-      padding: 28px 20px;
-      background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
-      border-top: 1px solid #dbe7ff;
-      text-align: center;
-    }
-    .site-footer .footer-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    .site-footer .footer-nav {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 14px 18px;
-      margin-bottom: 12px;
-    }
-    .site-footer .footer-nav a {
-      color: #2563eb;
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 700;
-      letter-spacing: 0.1px;
-    }
-    .site-footer .footer-nav a:hover {
-      color: #1d4ed8;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-    .site-footer .footer-contact {
-      margin: 0 0 6px 0;
-      color: #64748b;
-      font-size: 0.86rem;
-      line-height: 1.5;
-    }
-    .site-footer .footer-contact a {
-      color: #2563eb;
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .site-footer .footer-contact a:hover {
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-    .site-footer .footer-copy {
-      margin: 4px 0 0 0;
-      color: #64748b;
-      font-size: 0.82rem;
-    }
+
 
     /* --- Footer (Unified) --- */
     .site-footer {
@@ -1042,10 +993,12 @@ await loadReviewSummary();
 const urlParams = new URLSearchParams(window.location.search);
 const productId = urlParams.get('id');
 const brandParam = urlParams.get('brand');
+const categoryParam = urlParams.get('category');
 if (productId) openProductPage(productId);
 
 generateBrandChips();
 generateMainCategoryButtons();
+applyCategoryFromUrl(categoryParam);
 if (brandParam) {
 searchTerm = brandParam;
 const input = document.getElementById('search-input');
@@ -1285,6 +1238,13 @@ currentPage = 1;
 document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
 btn.classList.add('active');
 updateCatalog();
+}
+
+function applyCategoryFromUrl(categoryName) {
+if (!categoryName) return;
+const buttons = Array.from(document.querySelectorAll('#category-bar-list .cat-btn'));
+const match = buttons.find(btn => btn.innerText.trim().toLowerCase() === categoryName.trim().toLowerCase());
+if (match) filterByCategory(match.innerText.trim(), match);
 }
 
 
@@ -1849,7 +1809,6 @@ init();
 </script>
 </body>
 </html>
-
 
 
 
