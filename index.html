@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  
+  <meta name="mobile-web-app-capable" content="yes">
   <title>Home | Hygienic & Comfort Co. - Premium Baby & Adult Hygiene</title>
   <meta name="description" content="Discover premium baby diapers and adult hygiene products at Hygienic & Comfort Co. Dermatologically tested materials for ultimate skin protection and comfort.">
   <link rel="canonical" href="https://hygienicandcomfortco.shop/" />
@@ -56,20 +56,34 @@
       flex-direction: column; 
       align-items: center;
       gap: 15px;
+      position: relative;
     }
 
     .brand-wrapper {
+      --header-logo-size: 40px;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
+      align-items: flex-start;
+      justify-content: flex-start;
       width: 100%;
+      gap: 12px;
+      padding-right: 56px;
+    }
+    .brand-identity {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
 
     .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
-    .header-logo { height: 40px; width: auto; }
-    .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
-    .header-logo { height: 40px; width: auto; }
+    .header-logo { height: var(--header-logo-size); width: auto; }
 
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+    }
     .brand-text h1 { font-size: 1rem; font-weight: 800; line-height: 1.2; }
     .brand-text p { font-size: 0.65rem; color: var(--grey); font-weight: 600; display: none; }
 
@@ -92,11 +106,10 @@
         justify-content: space-between; 
         padding: 5px 0; 
       }
-      .brand-wrapper { 
-        display: contents;
-      }
-      .logo-area {
-        order: 1;
+      .brand-wrapper {
+        --header-logo-size: 50px;
+        width: auto;
+        padding-right: 0;
       }
       .brand-text h1 { font-size: 1.1rem; }
       .brand-text p { display: block; }
@@ -110,10 +123,12 @@
         order: 2;
       }
       .profile-section {
-        order: 3; 
+        position: relative;
+        top: auto;
+        right: auto;
         margin-left: 12px;
+        order: 3;
       }
-      .header-logo { height: 50px; }
     }
 
     /* --- Profile Section & Dropdown (Matches Image Layout) --- */
@@ -292,7 +307,97 @@
     .hero-text-side p { font-size: 1rem; color: var(--grey); margin-bottom: 30px; }
 
     .hero-image-side { width: 100%; max-width: 450px; }
-    .hero-image-side img { width: 100%; border-radius: 30px; box-shadow: var(--shadow); cursor: pointer; } 
+    .hero-image-side img { width: 100%; border-radius: 30px; box-shadow: var(--shadow); cursor: pointer; }
+
+    .hero-banner-slider {
+      position: relative;
+      width: 100%;
+      border-radius: 30px;
+      overflow: hidden;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      box-shadow: var(--shadow);
+      touch-action: pan-y;
+    }
+    .banner-track {
+      display: flex;
+      transition: transform 0.45s ease;
+      will-change: transform;
+    }
+    .banner-slide {
+      min-width: 100%;
+      position: relative;
+      cursor: pointer;
+      background: linear-gradient(160deg, #ffe4f0 0%, #e0ecff 100%);
+    }
+    .banner-slide img {
+      width: 100%;
+      height: 420px;
+      object-fit: cover;
+      border-radius: 0;
+      box-shadow: none;
+      display: block;
+    }
+    .banner-overlay {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 20px 18px;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(15, 23, 42, 0.75) 65%, rgba(15, 23, 42, 0.9) 100%);
+      color: #fff;
+      text-align: left;
+    }
+    .banner-overlay h3 {
+      font-size: 1.02rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 5px;
+    }
+    .banner-overlay p {
+      font-size: 0.82rem;
+      opacity: 0.95;
+      margin: 0;
+    }
+    .banner-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 38px;
+      height: 38px;
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.6);
+      color: #fff;
+      cursor: pointer;
+      z-index: 2;
+      font-size: 1.1rem;
+    }
+    .banner-nav.prev { left: 10px; }
+    .banner-nav.next { right: 10px; }
+    .banner-nav:hover { background: rgba(15, 23, 42, 0.8); }
+    .banner-dots {
+      position: absolute;
+      left: 50%;
+      bottom: 12px;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 7px;
+      z-index: 2;
+    }
+    .banner-dot {
+      width: 8px;
+      height: 8px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.55);
+      cursor: pointer;
+      padding: 0;
+    }
+    .banner-dot.active { background: #ffffff; }
 
     .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
     .hero-btns a {
@@ -302,6 +407,93 @@
       font-weight: 800;
       font-size: 0.9rem;
       transition: 0.3s;
+    }
+
+    @media (min-width: 1024px) {
+      .hero-container {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 48px;
+        text-align: left;
+      }
+      .hero-text-side {
+        flex: 0 1 40%;
+        max-width: 520px;
+      }
+      .hero-image-side {
+        flex: 1 1 60%;
+        max-width: 860px;
+      }
+      .banner-slide img {
+        height: 560px;
+        object-fit: contain;
+        background: #020617;
+      }
+      .banner-overlay h3 {
+        font-size: 1.5rem;
+      }
+      .banner-overlay p {
+        font-size: 1rem;
+      }
+    }
+
+    .brands-section {
+      padding: 40px 5%;
+      background: #ffffff;
+      border-top: 1px solid #f1f5f9;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .brands-head {
+      text-align: center;
+      margin-bottom: 22px;
+    }
+    .brands-head p {
+      color: var(--primary);
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      letter-spacing: 0.8px;
+      margin-bottom: 6px;
+    }
+    .brands-head h2 {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--dark);
+      line-height: 1.2;
+    }
+    .brands-grid {
+      max-width: 1050px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .brand-card {
+      border: 1px solid #e2e8f0;
+      background: #f8fbff;
+      color: var(--dark);
+      border-radius: 14px;
+      padding: 12px 14px;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 0.9rem;
+      text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .brand-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+      border-color: #93c5fd;
+    }
+    @media (min-width: 768px) {
+      .brands-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .brands-head h2 {
+        font-size: 1.9rem;
+      }
     }
 
     /* --- Reviews --- */
@@ -531,7 +723,37 @@
       background: #13233c;
       color: #93c5fd;
     }
+    body.dark-theme .hero-banner-slider {
+      background: #0f1a2e;
+      border-color: #1f2a44;
+    }
+    body.dark-theme .banner-slide {
+      background: linear-gradient(160deg, #1d2b44 0%, #1c2340 100%);
+    }
+    body.dark-theme .banner-nav {
+      background: rgba(15, 23, 42, 0.75);
+    }
+    body.dark-theme .banner-dot {
+      background: rgba(148, 163, 184, 0.6);
+    }
+    body.dark-theme .banner-dot.active {
+      background: #dbeafe;
+    }
     body.dark-theme .reviews-section { background: #0f172a; }
+    body.dark-theme .brands-section {
+      background: #0f172a;
+      border-top-color: #1e293b;
+      border-bottom-color: #1e293b;
+    }
+    body.dark-theme .brand-card {
+      background: #111c31;
+      border-color: #1f2a44;
+      color: #e2e8f0;
+    }
+    body.dark-theme .brand-card:hover {
+      border-color: #3b82f6;
+      box-shadow: 0 10px 24px rgba(2, 6, 23, 0.35);
+    }
     body.dark-theme .testimonial-card {
       background: #111c31;
       border-color: #1f2a44;
@@ -598,9 +820,27 @@
       }
     }
     @media (max-width: 767px) {
+      .brand-wrapper {
+        width: 100%;
+        padding-right: 56px;
+      }
+      .profile-section {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin-left: 0;
+      }
       .profile-btn {
         width: 38px;
         height: 38px;
+      }
+      .banner-nav {
+        display: none;
+      }
+      .banner-slide img {
+        height: 360px;
+        object-fit: contain;
+        background: #020617;
       }
     }
   
@@ -628,54 +868,16 @@
 <header class="main-header">
   <div class="header-container">
     <div class="brand-wrapper">
-      <a href="index.html" class="logo-area">
-        <img src="logo.png" alt="Logo" class="header-logo">
-        <div class="brand-text">
-          <h1>Hygienic & Comfort Co.</h1>
-          <p>Care, Comfort & Hygiene for Every Age</p>
-        </div>
-      </a>
-
-      <div class="profile-section">
-        <div class="profile-btn" id="profile-btn">
-          <i data-lucide="user"></i>
-        </div>
-        
-        <div class="dropdown-menu" id="profile-dropdown">
-          <div class="dropdown-header">
-              <h4 id="user-display-name">Guest User</h4>
-              <p id="user-display-sub">Manage your account</p>
+      <div class="brand-identity">
+        <a href="index.html" class="logo-area">
+          <img src="logo.png" alt="Logo" class="header-logo">
+          <div class="brand-text">
+            <h1>Hygienic & Comfort Co.</h1>
+            <p>Care, Comfort & Hygiene for Every Age</p>
           </div>
-          <div id="guest-items">
-            <a href="login.html" class="dropdown-item">
-              <i data-lucide="log-in"></i>
-              <div class="item-info"><b>Sign In</b><span>Access orders & profile</span></div>
-            </a>
-            <a href="settings.html" class="dropdown-item">
-              <i data-lucide="settings"></i>
-              <div class="item-info"><b>Settings</b><span>Theme preferences</span></div>
-            </a>
-          </div>
-          <div id="auth-items" style="display:none">
-            <a href="profile.html" class="dropdown-item">
-              <i data-lucide="user"></i>
-              <div class="item-info"><b>My Profile</b><span>Settings</span></div>
-            </a>
-            <a href="orders.html" class="dropdown-item">
-              <i data-lucide="package"></i>
-              <div class="item-info"><b>My Orders</b><span>Purchase history</span></div>
-            </a>
-            <a href="settings.html" class="dropdown-item">
-              <i data-lucide="settings"></i>
-              <div class="item-info"><b>Settings</b><span>Theme preferences</span></div>
-            </a>
-            <div class="dropdown-item logout-btn-item" onclick="handleLogout()" style="cursor:pointer">
-              <i data-lucide="log-out"></i>
-              <div class="item-info"><b>Logout</b><span>End session safely</span></div>
-            </div>
-          </div>
-        </div>
+        </a>
       </div>
+
     </div>
     
     <nav class="nav-links">
@@ -684,14 +886,55 @@
       <a href="about.html">About</a>
       <a href="contact.html">Contact</a>
     </nav>
+
+    <div class="profile-section">
+      <div class="profile-btn" id="profile-btn">
+        <i data-lucide="user"></i>
+      </div>
+      
+      <div class="dropdown-menu" id="profile-dropdown">
+        <div class="dropdown-header">
+            <h4 id="user-display-name">Guest User</h4>
+            <p id="user-display-sub">Manage your account</p>
+        </div>
+        <div id="guest-items">
+          <a href="login.html" class="dropdown-item">
+            <i data-lucide="log-in"></i>
+            <div class="item-info"><b>Sign In</b><span>Access orders & profile</span></div>
+          </a>
+          <a href="settings.html" class="dropdown-item">
+            <i data-lucide="settings"></i>
+            <div class="item-info"><b>Settings</b><span>Theme preferences</span></div>
+          </a>
+        </div>
+        <div id="auth-items" style="display:none">
+          <a href="profile.html" class="dropdown-item">
+            <i data-lucide="user"></i>
+            <div class="item-info"><b>My Profile</b><span>Settings</span></div>
+          </a>
+          <a href="orders.html" class="dropdown-item">
+            <i data-lucide="package"></i>
+            <div class="item-info"><b>My Orders</b><span>Purchase history</span></div>
+          </a>
+          <a href="settings.html" class="dropdown-item">
+            <i data-lucide="settings"></i>
+            <div class="item-info"><b>Settings</b><span>Theme preferences</span></div>
+          </a>
+          <div class="dropdown-item logout-btn-item" onclick="handleLogout()" style="cursor:pointer">
+            <i data-lucide="log-out"></i>
+            <div class="item-info"><b>Logout</b><span>End session safely</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </header>
 
 <div class="announcement-bar">
   <div class="marquee-track">
     <div class="marquee-content">
-      <span class="marquee-text">Thank you for visiting Hygienic & Comfort Co! Available locally in Ambernath.</span>
-      <span class="marquee-text">Thank you for visiting Hygienic & Comfort Co! Available locally in Ambernath.</span>
+      <span class="marquee-text">New update: 30-minute delivery now available in Ambernath.</span>
+      <span class="marquee-text">Order now for fast local delivery in Ambernath in just 30 minutes.</span>
     </div>
   </div>
 </div>
@@ -709,16 +952,49 @@
 <main>
   <section class="hero-container">
     <div class="hero-text-side">
-        <p style="color: #2563eb; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; font-size: 0.8rem; margin-bottom: 10px;">Premium Daily Care</p>
-        <h2>Trusted Quality For Your Family</h2>
-        <p>High-quality baby and adult hygiene products for ultimate skin protection.</p>
-        <div class="hero-btns">
-            <a href="products.html" style="background: var(--primary); color: white;">View Products</a>
-            <a href="contact.html" style="border: 2px solid #e2e8f0; color: var(--dark);">Contact Us</a>
-        </div>
+        <p style="color: #2563eb; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; font-size: 0.8rem; margin-bottom: 10px;">30-Minute Delivery in Ambernath</p>
+        <h2>Trusted Quality, Delivered Fast</h2>
+        <p>Get high-quality baby and adult hygiene products delivered across Ambernath in 30 minutes.</p>
     </div>
     <div class="hero-image-side">
-        <img src="homepage.png" alt="Hero Image" onclick="window.location.href='products.html?brand=Healvite'">
+      <div class="hero-banner-slider" id="hero-banner-slider" aria-label="Promotional Banners">
+        <div class="banner-track">
+          <article class="banner-slide" data-href="products.html">
+            <img src="delivery.png" alt="30-minute delivery banner in Ambernath">
+            <div class="banner-overlay">
+              <h3>30-Minute Delivery in Ambernath</h3>
+              <p>Express doorstep delivery for hygiene essentials.</p>
+            </div>
+          </article>
+          <article class="banner-slide" data-href="products.html">
+            <img src="homepage.png" alt="Premium hygiene products banner">
+            <div class="banner-overlay">
+              <h3>Premium Series Diaper Pants</h3>
+              <p>Our Most Selling Product</p>
+            </div>
+          </article>
+          <article class="banner-slide" data-href="products.html?category=Adult%20Diaper&brand=adult">
+            <img src="Adult.png" alt="Adult diapers collection banner">
+            <div class="banner-overlay">
+              <h3>Shop Adult Diapers</h3>
+              <p>Explore soft, reliable adult diaper options for daily comfort.</p>
+            </div>
+          </article>
+        </div>
+        <button class="banner-nav prev" type="button" id="hero-banner-prev" aria-label="Previous banner">&#10094;</button>
+        <button class="banner-nav next" type="button" id="hero-banner-next" aria-label="Next banner">&#10095;</button>
+        <div class="banner-dots" id="hero-banner-dots" aria-label="Banner pagination"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="brands-section" aria-labelledby="brands-heading">
+    <div class="brands-head">
+      <p>Our Portfolio</p>
+      <h2 id="brands-heading">Brands We Deal In</h2>
+    </div>
+    <div class="brands-grid" id="brands-grid">
+      <a class="brand-card" href="products.html?brand=Healvite">Healvite</a>
     </div>
   </section>
 
@@ -810,6 +1086,11 @@
 <script>
   const _supabase = supabase.createClient('https://uhkheprfbxxwuojswyht.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es');
   const THEME_STORAGE_KEY = 'hc-theme';
+  const DELIVERY_OFF_ANNOUNCEMENT = "Currently we are not accepting 30 mins delivery, you can still place an order as per the ETA given on the cart page will deliver the order.";
+  const DELIVERY_ON_ANNOUNCEMENTS = [
+    "New update: 30-minute delivery now available in Ambernath.",
+    "Order now for fast local delivery in Ambernath in just 30 minutes."
+  ];
 
   function setTheme(theme, persist = true) {
     const isDark = theme === 'dark';
@@ -948,6 +1229,26 @@ window.location.href = 'index.html';
     return url;
   }
 
+  function renderBrandsSection(products = []) {
+    const grid = document.getElementById('brands-grid');
+    if (!grid) return;
+
+    const brands = [...new Set(products.map((p) => (p.category || '').toString().trim()).filter(Boolean))]
+      .sort((a, b) => a.localeCompare(b))
+      .slice(0, 12);
+
+    const finalBrands = brands.length ? brands : ['Healvite'];
+    grid.innerHTML = '';
+
+    finalBrands.forEach((brand) => {
+      const card = document.createElement('a');
+      card.className = 'brand-card';
+      card.href = `products.html?brand=${encodeURIComponent(brand)}`;
+      card.innerText = brand;
+      grid.appendChild(card);
+    });
+  }
+
   async function fetchSearchProducts() {
     const { data, error } = await _supabase.from("products").select("*").order('name');
     if (!error) {
@@ -955,6 +1256,9 @@ window.location.href = 'index.html';
         ...p,
         image: fixDriveLink(p.images?.[0])
       }));
+      renderBrandsSection(realProducts);
+    } else {
+      renderBrandsSection([]);
     }
   }
 
@@ -1044,6 +1348,35 @@ window.location.href = 'index.html';
     }
   });
 
+  function setAnnouncementMessages(messages = []) {
+    const content = document.querySelector('.announcement-bar .marquee-content');
+    if (!content) return;
+    const finalMessages = (messages || []).filter(Boolean);
+    if (!finalMessages.length) return;
+    content.innerHTML = finalMessages.map((msg) => `<span class="marquee-text">${msg}</span>`).join('');
+  }
+
+  async function syncDeliveryAnnouncement() {
+    try {
+      const { data, error } = await _supabase
+        .from("app_settings")
+        .select("thirty_mins_delivery_enabled")
+        .eq("id", 1)
+        .maybeSingle();
+
+      if (error) throw error;
+      const isEnabled = data?.thirty_mins_delivery_enabled !== false;
+      setAnnouncementMessages(
+        isEnabled
+          ? DELIVERY_ON_ANNOUNCEMENTS
+          : [DELIVERY_OFF_ANNOUNCEMENT, DELIVERY_OFF_ANNOUNCEMENT]
+      );
+    } catch (_err) {
+      setAnnouncementMessages(DELIVERY_ON_ANNOUNCEMENTS);
+    }
+    initAnnouncementMarquee();
+  }
+
   function initAnnouncementMarquee() {
     const bar = document.querySelector('.announcement-bar');
     const track = document.querySelector('.marquee-track');
@@ -1072,6 +1405,96 @@ window.location.href = 'index.html';
     track.style.setProperty('--marquee-duration', `${durationSeconds}s`);
   }
 
+  function initHeroBannerSlider() {
+    const slider = document.getElementById('hero-banner-slider');
+    if (!slider) return;
+
+    const track = slider.querySelector('.banner-track');
+    const slides = Array.from(slider.querySelectorAll('.banner-slide'));
+    const dotsWrap = document.getElementById('hero-banner-dots');
+    const prevBtn = document.getElementById('hero-banner-prev');
+    const nextBtn = document.getElementById('hero-banner-next');
+    if (!track || slides.length === 0 || !dotsWrap) return;
+
+    let activeIndex = 0;
+    let autoTimer = null;
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const intervalMs = 4500;
+
+    dotsWrap.innerHTML = slides.map((_, index) =>
+      `<button class="banner-dot${index === 0 ? ' active' : ''}" type="button" data-slide="${index}" aria-label="Go to banner ${index + 1}"></button>`
+    ).join('');
+    const dots = Array.from(dotsWrap.querySelectorAll('.banner-dot'));
+
+    function goToSlide(index) {
+      activeIndex = (index + slides.length) % slides.length;
+      track.style.transform = `translateX(-${activeIndex * 100}%)`;
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === activeIndex));
+    }
+
+    function startAuto() {
+      stopAuto();
+      if (slides.length <= 1) return;
+      autoTimer = window.setInterval(() => goToSlide(activeIndex + 1), intervalMs);
+    }
+
+    function stopAuto() {
+      if (autoTimer) {
+        window.clearInterval(autoTimer);
+        autoTimer = null;
+      }
+    }
+
+    dotsWrap.addEventListener('click', (e) => {
+      const dot = e.target.closest('.banner-dot');
+      if (!dot) return;
+      const index = Number(dot.getAttribute('data-slide'));
+      if (Number.isNaN(index)) return;
+      goToSlide(index);
+      startAuto();
+    });
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        goToSlide(activeIndex - 1);
+        startAuto();
+      });
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        goToSlide(activeIndex + 1);
+        startAuto();
+      });
+    }
+
+    slides.forEach((slide) => {
+      slide.addEventListener('click', () => {
+        const href = slide.getAttribute('data-href');
+        if (href) window.location.href = href;
+      });
+    });
+
+    track.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].clientX;
+    }, { passive: true });
+    track.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].clientX;
+      const delta = touchEndX - touchStartX;
+      if (Math.abs(delta) > 45) {
+        if (delta < 0) goToSlide(activeIndex + 1);
+        else goToSlide(activeIndex - 1);
+        startAuto();
+      }
+    }, { passive: true });
+
+    slider.addEventListener('mouseenter', stopAuto);
+    slider.addEventListener('mouseleave', startAuto);
+
+    goToSlide(0);
+    startAuto();
+  }
+
   let marqueeResizeTimer = null;
   window.addEventListener('resize', () => {
     if (marqueeResizeTimer) window.clearTimeout(marqueeResizeTimer);
@@ -1085,7 +1508,8 @@ window.location.href = 'index.html';
     fetchReviews();
     fetchSearchProducts();
     checkUserSession();
-    initAnnouncementMarquee();
+    syncDeliveryAnnouncement();
+    initHeroBannerSlider();
     const cart = JSON.parse(localStorage.getItem('hc-cart')) || [];
     const cartBadge = document.getElementById('cart-badge');
     if(cartBadge) cartBadge.innerText = cart.length;
