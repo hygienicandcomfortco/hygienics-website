@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checkout | Hygienic & Comfort Co.</title>
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Checkout | Hygienic & Comfort Co.</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -211,56 +212,6 @@ font-weight: 600;
 font-size: 0.9rem;
 }
 .hidden { display: none; }
-    .site-footer {
-      margin-top: 40px;
-      padding: 28px 20px;
-      background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
-      border-top: 1px solid #dbe7ff;
-      text-align: center;
-    }
-    .site-footer .footer-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    .site-footer .footer-nav {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 14px 18px;
-      margin-bottom: 12px;
-    }
-    .site-footer .footer-nav a {
-      color: #2563eb;
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 700;
-      letter-spacing: 0.1px;
-    }
-    .site-footer .footer-nav a:hover {
-      color: #1d4ed8;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-    .site-footer .footer-contact {
-      margin: 0 0 6px 0;
-      color: #64748b;
-      font-size: 0.86rem;
-      line-height: 1.5;
-    }
-    .site-footer .footer-contact a {
-      color: #2563eb;
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .site-footer .footer-contact a:hover {
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-    .site-footer .footer-copy {
-      margin: 4px 0 0 0;
-      color: #64748b;
-      font-size: 0.82rem;
-    }
 
     /* --- Footer (Unified) --- */
     .site-footer {
@@ -501,6 +452,90 @@ font-size: 0.9rem;
     body.dark-theme [style*="color:#0f172a"] {
       color: #eaf2ff !important;
     }
+
+    /* --- Checkout Dark Theme Fix --- */
+    body.dark-theme .checkout-container {
+      background: #0f1a2e !important;
+      border: 1px solid #1f2a44 !important;
+      box-shadow: 0 14px 36px rgba(2, 6, 23, 0.45) !important;
+    }
+    body.dark-theme .order-summary {
+      background: #111b2e !important;
+      border: 1px solid #2a3a57 !important;
+    }
+    body.dark-theme .order-item {
+      background: #0f172a !important;
+      border-color: #2a3a57 !important;
+    }
+    body.dark-theme .order-item img {
+      background: #111b2e !important;
+      border-color: #2a3a57 !important;
+    }
+    body.dark-theme .order-items .item-name {
+      color: #eaf2ff !important;
+      font-weight: 800 !important;
+    }
+    body.dark-theme .order-items .item-qty,
+    body.dark-theme .order-items .item-unit {
+      color: #cbd5e1 !important;
+    }
+    body.dark-theme .order-items .item-total {
+      color: #f8fafc !important;
+    }
+    body.dark-theme .order-totals {
+      border-top-color: #2a3a57 !important;
+    }
+    body.dark-theme .order-totals p {
+      color: #dbe7ff !important;
+    }
+    body.dark-theme .order-totals .grand-total {
+      color: #60a5fa !important;
+    }
+    body.dark-theme .address-select {
+      background: #111b2e !important;
+      border-color: #2a3a57 !important;
+      color: #e2e8f0 !important;
+    }
+    body.dark-theme .address-card {
+      background: #0f172a !important;
+      border-color: #2a3a57 !important;
+    }
+    body.dark-theme .address-card.selected {
+      background: #15243c !important;
+      border-color: #3b82f6 !important;
+    }
+    body.dark-theme .address-card p,
+    body.dark-theme .address-card .recipient {
+      color: #eaf2ff !important;
+    }
+    body.dark-theme .address-card .badge {
+      background: #cbd5e1 !important;
+      color: #0f172a !important;
+      border: 1px solid #94a3b8 !important;
+    }
+    body.dark-theme .address-card.selected .badge {
+      background: #3b82f6 !important;
+      color: #ffffff !important;
+      border-color: #60a5fa !important;
+    }
+    body.dark-theme #new-address-form {
+      background: #0f172a !important;
+      border-color: #2a3a57 !important;
+    }
+    body.dark-theme .payment-method {
+      background: #10261b !important;
+      border-color: #166534 !important;
+    }
+    body.dark-theme .payment-method p {
+      color: #eaf2ff !important;
+    }
+    body.dark-theme .confirm-btn {
+      background: #2563eb !important;
+      color: #ffffff !important;
+    }
+    body.dark-theme .back-link {
+      color: #cbd5e1 !important;
+    }
   </style>
 </head>
 <body>
@@ -694,6 +729,7 @@ let isManualMode = false;
 let profileName = "";
 let profilePhone = "";
 let resolvedCustomerId = null;
+let pincodeLookupSeq = 0;
 
 function setManualAddressRequired(enabled) {
 const ids = [
@@ -737,6 +773,37 @@ if (base && pin) return `${base} - ${pin}`;
 if (base) return base;
 if (pin) return pin;
 return "Address not available";
+}
+
+async function autofillCityStateFromPincode(pinRaw) {
+const pin = sanitizeValue(pinRaw).replace(/\D/g, "");
+const cityEl = document.getElementById('new-city');
+const stateEl = document.getElementById('new-state');
+if (!cityEl || !stateEl) return;
+
+if (!/^\d{6}$/.test(pin)) {
+return;
+}
+
+const currentSeq = ++pincodeLookupSeq;
+try {
+const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+const data = await res.json();
+if (currentSeq !== pincodeLookupSeq) return;
+if (!Array.isArray(data) || data[0]?.Status !== "Success") return;
+
+const postOffices = Array.isArray(data[0]?.PostOffice) ? data[0].PostOffice : [];
+const first = postOffices[0] || {};
+const district = sanitizeValue(first.District);
+const taluk = sanitizeValue(first.Block || first.Name);
+const city = district || taluk;
+const state = sanitizeValue(first.State);
+
+if (city) cityEl.value = city;
+if (state) stateEl.value = state;
+} catch (err) {
+console.warn("Pincode lookup failed:", err);
+}
 }
 
 function getSummaryItems(data) {
@@ -1222,6 +1289,19 @@ btn.innerText = "Confirm Order";
 loadCheckoutData();
 lucide.createIcons();
 
+const newPincodeEl = document.getElementById('new-pincode');
+if (newPincodeEl) {
+newPincodeEl.addEventListener('input', (e) => {
+const onlyDigits = String(e.target.value || "").replace(/\D/g, "").slice(0, 6);
+if (e.target.value !== onlyDigits) e.target.value = onlyDigits;
+if (onlyDigits.length === 6) autofillCityStateFromPincode(onlyDigits);
+});
+newPincodeEl.addEventListener('blur', () => {
+const val = String(newPincodeEl.value || "").trim();
+if (val.length === 6) autofillCityStateFromPincode(val);
+});
+}
+
 document.getElementById('address-select')?.addEventListener('click', (e) => {
 e.stopPropagation();
 const dropdown = document.getElementById('address-dropdown');
@@ -1280,10 +1360,6 @@ if (dropdown && !e.target.closest('#address-dropdown')) dropdown.classList.remov
 </script>
 </body>
 </html>
-
-
-
-
 
 
 
