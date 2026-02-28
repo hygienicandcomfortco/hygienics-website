@@ -3,7 +3,7 @@
   <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
+  <meta name="mobile-web-app-capable" content="yes">
   <title>Your Cart | Hygienic & Comfort Co. - Review Your Order</title>
   <meta name="description" content="View your shopping cart at Hygienic & Comfort Co. Review your selected baby and adult hygiene products before secure checkout and WhatsApp ordering.">
   <link rel="canonical" href="https://hygienicandcomfortco.shop/cart.html" />
@@ -66,6 +66,35 @@
   .nav-links a { text-decoration: none; color: #475569; font-weight: 700; font-size: 0.85rem; transition: 0.2s; position: relative; white-space: nowrap; }
   .nav-links a:hover, .nav-links a.active { color: var(--primary); }
   .nav-links a.active::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 100%; height: 2px; background: var(--primary); border-radius: 2px; }
+  .announcement-bar {
+    background: var(--soft-blue);
+    color: var(--primary);
+    padding: 10px 0;
+    font-weight: 700;
+    font-size: 0.8rem;
+    overflow: hidden;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    --marquee-gap: 4rem;
+  }
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    gap: var(--marquee-gap);
+    animation: marquee-scroll var(--marquee-duration, 25s) linear infinite;
+    will-change: transform;
+  }
+  .marquee-content {
+    display: flex;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+  .marquee-text { padding-right: 4rem; }
+  @keyframes marquee-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(-1 * var(--marquee-distance, 50%))); }
+  }
 
   /* --- Desktop Layout Adjustments --- */
   @media (min-width: 768px) {
@@ -155,6 +184,7 @@
   .address-card.selected .address-badge { background: var(--primary); color: #fff; }
   .pin-note { font-size: 0.72rem; font-weight: 700; color: #2563eb; margin-top: 6px; display: none; }
   .pincode-section { background: #f7fafa; border: 1px solid #d5d9d9; border-radius: 8px; padding: 12px; margin: 15px 0; }
+  .delivery-service-note { margin: 0 0 8px; font-size: 0.78rem; font-weight: 800; color: #007600; line-height: 1.35; }
   .pincode-flex { display: flex; gap: 8px; }
   .pincode-flex input { flex: 1; min-width: 0; padding: 10px; border: 1px solid #adb1b1; border-radius: 6px; outline: none; font-size: 0.9rem; font-weight: 600;}
   .pincode-flex button { background: #e7e9ec; border: 1px solid #adb1b1; padding: 0 15px; border-radius: 6px; font-weight: 700; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
@@ -163,58 +193,8 @@
   .checkout-btn { width: 100%; margin-top: 12px; padding: 14px; border-radius: 25px; background: var(--yellow); border: 1px solid var(--yellow-b); font-size: 1rem; font-weight: 700; cursor: pointer; }
   .checkout-btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .cart-main { background: var(--white); border-radius: 8px; padding: 15px; }
-  .site-footer {
-      margin-top: 40px;
-      padding: 28px 20px;
-      background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
-      border-top: 1px solid #dbe7ff;
-      text-align: center;
-    }
-    .site-footer .footer-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    .site-footer .footer-nav {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 14px 18px;
-      margin-bottom: 12px;
-    }
-    .site-footer .footer-nav a {
-      color: #2563eb;
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 700;
-      letter-spacing: 0.1px;
-    }
-    .site-footer .footer-nav a:hover {
-      color: #1d4ed8;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-    .site-footer .footer-contact {
-      margin: 0 0 6px 0;
-      color: #64748b;
-      font-size: 0.86rem;
-      line-height: 1.5;
-    }
-    .site-footer .footer-contact a {
-      color: #2563eb;
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .site-footer .footer-contact a:hover {
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-    .site-footer .footer-copy {
-      margin: 4px 0 0 0;
-      color: #64748b;
-      font-size: 0.82rem;
-    }
 
-  /* --- Footer (Unified) --- */
+    /* --- Footer (Unified) --- */
   .site-footer {
     margin-top: 40px;
     padding: 44px 5% 24px;
@@ -483,6 +463,35 @@
       background: #0f1a2e !important;
       border-color: #1f2a44 !important;
     }
+    body.dark-theme .address-title {
+      color: #94a3b8 !important;
+    }
+    body.dark-theme .address-select {
+      background: #111b2e !important;
+      border-color: #2a3a57 !important;
+      color: #eaf2ff !important;
+    }
+    body.dark-theme .address-select .addr-caret {
+      color: #cbd5e1 !important;
+    }
+    body.dark-theme .address-details {
+      color: #dbe7ff !important;
+    }
+    body.dark-theme .address-badge {
+      background: #334155 !important;
+      color: #e2e8f0 !important;
+    }
+    body.dark-theme .address-card.selected .address-badge {
+      background: #2563eb !important;
+      color: #ffffff !important;
+    }
+    body.dark-theme .address-card.selected {
+      background: #15243c !important;
+      border-color: #3b82f6 !important;
+    }
+    body.dark-theme .address-radio {
+      accent-color: #60a5fa;
+    }
     body.dark-theme h1,
     body.dark-theme h2,
     body.dark-theme h3,
@@ -532,6 +541,71 @@
     body.dark-theme [style*="color: #0f172a"],
     body.dark-theme [style*="color:#0f172a"] {
       color: #eaf2ff !important;
+    }
+
+    /* --- Cart Dark Theme Fix --- */
+    body.dark-theme .cart-title {
+      border-bottom-color: #1f2a44 !important;
+    }
+    body.dark-theme .cart-selection-bar {
+      background: #111b2e !important;
+      border-color: #2a3a57 !important;
+    }
+    body.dark-theme .select-all-btn {
+      color: #93c5fd !important;
+    }
+    body.dark-theme .delete-selected-btn {
+      background: #311724 !important;
+      border-color: #7f1d1d !important;
+      color: #fecdd3 !important;
+    }
+    body.dark-theme .delete-selected-btn:hover {
+      background: #3f1d2d !important;
+    }
+    body.dark-theme .cart-item {
+      border-bottom-color: #2a3a57 !important;
+      background: #0f1a2e !important;
+    }
+    body.dark-theme .cart-item.is-selected {
+      background: #15243c !important;
+    }
+    body.dark-theme .cart-img {
+      background: #111b2e !important;
+      border-color: #2a3a57 !important;
+    }
+    body.dark-theme .item-name {
+      color: #eaf2ff !important;
+    }
+    body.dark-theme .item-name:hover {
+      color: #93c5fd !important;
+    }
+    body.dark-theme .item-price {
+      color: #f8fafc !important;
+    }
+    body.dark-theme .qty-ctrl {
+      background: #111b2e !important;
+      border-color: #2a3a57 !important;
+    }
+    body.dark-theme .qty-ctrl button {
+      color: #dbeafe !important;
+    }
+    body.dark-theme .qty-ctrl span {
+      background: #0f1a2e !important;
+      border-inline-color: #2a3a57 !important;
+      color: #e2e8f0 !important;
+    }
+    body.dark-theme .link-action,
+    body.dark-theme .back-link {
+      color: #93c5fd !important;
+    }
+    body.dark-theme .checkout-btn {
+      background: #facc15 !important;
+      border-color: #eab308 !important;
+      color: #1f2937 !important;
+    }
+    body.dark-theme .checkout-btn:disabled {
+      opacity: 0.45 !important;
+      color: #374151 !important;
     }
   </style>
   </head>
@@ -591,6 +665,14 @@
       </nav>
     </div>
   </header>
+  <div class="announcement-bar">
+    <div class="marquee-track">
+      <div class="marquee-content">
+        <span class="marquee-text">30-minute Express delivery is available in Ambernath from 11:00 AM to 11:00 PM.</span>
+        <span class="marquee-text">After 11:00 PM, you can place orders and delivery will start once the store opens.</span>
+      </div>
+    </div>
+  </div>
 
   <div class="page" id="cart-main-page">
   <aside class="summary-card" id="summary-section">
@@ -647,6 +729,10 @@
 
   <script>
   const supa = supabase.createClient("https://uhkheprfbxxwuojswyht.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es");
+  const DELIVERY_OFF_ANNOUNCEMENT = "Currently, we are not accepting 30-minute express delivery orders. However, you can still place your order, and it will be delivered according to the estimated delivery time (ETA) shown on the cart page.  ";
+  const DELIVERY_ON_ANNOUNCEMENTS = [
+    "30-minute express delivery is available in Ambernath between 11:00 AM and 11:00 PM.",
+  ];
   async function blockAdminFromCustomerSite() {
   const { data: { user } } = await supa.auth.getUser();
   if (!user) return null;
@@ -697,6 +783,29 @@
   let suggestionsState = { key: '', mode: '', items: [] };
   let suggestionReqId = 0;
   let currentDeliveryZone = null;
+  let isThirtyMinsDeliveryEnabled = true;
+  const express30MinPincodes = new Set(["421005", "421004", "421505", "421506", "421502"]);
+
+  function getNearbyPincodeDeliveryText() {
+  if (isThirtyMinsDeliveryEnabled) return getExpressDeliveryText();
+  const hour = new Date().getHours();
+  if (hour >= 21) return "Next day delivery";
+  return "Same day delivery";
+  }
+
+  function refreshNearbyPincodeEtaText() {
+  if (!pincodeVerified || currentDeliveryZone !== 1 || !lastVerifiedPincode) return;
+  if (!express30MinPincodes.has(lastVerifiedPincode)) return;
+  const etaEl = document.getElementById('est-days-text');
+  if (etaEl) etaEl.innerText = getNearbyPincodeDeliveryText();
+  }
+
+  function getExpressDeliveryText() {
+  const hour = new Date().getHours();
+  if (hour >= 23) return "Tomorrow 11:00 AM-12:30 PM";
+  if (hour < 11) return "Today 11:00 AM-12:30 PM";
+  return "30-minute Express delivery available in your area.";
+  }
   const deliveryRates = { 1: { base: 33, add: 31 }, 2: { base: 36, add: 33 }, 3: { base: 50, add: 44 }, 4: { base: 58, add: 50 }, 5: { base: 70, add: 59 } };
   let selectedCartKeys = new Set(JSON.parse(localStorage.getItem('hc-cart-selected') || '[]'));
   const normalizeId = (value) => (value ?? "").toString().trim();
@@ -907,9 +1016,8 @@ async function applyPincode(pinStr, opts = {}) {
   if (showAlerts) alert("Pincode not found");
   } else {
   const state = data[0].PostOffice[0].State.toUpperCase();
-  const pinNum = parseInt(pinStr);
   let zone = 4; let days = "7-8 Days";
-  if (pinNum >= 421501 && pinNum <= 421505) { zone = 1; days = (new Date().getHours() < 17) ? "Same Day Delivery" : "Next Day Delivery"; } 
+  if (express30MinPincodes.has(pinStr)) { zone = 1; days = getNearbyPincodeDeliveryText(); } 
   else if (state === "MAHARASHTRA") { zone = 2; days = "3-4 Days"; } 
   else if (["WEST BENGAL", "KARNATAKA", "TAMIL NADU", "DELHI", "TELANGANA"].includes(state)) { zone = 3; days = "5-6 Days"; }
   else if (["KERALA", "JAMMU & KASHMIR", "ASSAM", "MANIPUR", "ARUNACHAL PRADESH", "MEGHALAYA", "MIZORAM", "NAGALAND", "SIKKIM", "TRIPURA"].includes(state)) { zone = 5; days = "9-10 Days"; }
@@ -1332,7 +1440,75 @@ function addSuggestionByIndex(idx) {
   if (dropdown) dropdown.classList.toggle('open');
   });
 
-  window.onload = () => { syncSelectedKeys({ selectAllIfEmpty: true }); renderUI(); checkUserSession(); };
+  function setAnnouncementMessages(messages = []) {
+  const content = document.querySelector('.announcement-bar .marquee-content');
+  if (!content) return;
+  const finalMessages = (messages || []).filter(Boolean);
+  if (!finalMessages.length) return;
+  content.innerHTML = finalMessages.map((msg) => `<span class="marquee-text">${msg}</span>`).join('');
+  }
+
+  async function syncDeliveryAnnouncement() {
+  try {
+  const { data, error } = await supa
+  .from("app_settings")
+  .select("thirty_mins_delivery_enabled")
+  .eq("id", 1)
+  .maybeSingle();
+
+  if (error) throw error;
+  const isEnabled = data?.thirty_mins_delivery_enabled !== false;
+  isThirtyMinsDeliveryEnabled = isEnabled;
+  setAnnouncementMessages(
+  isEnabled
+  ? DELIVERY_ON_ANNOUNCEMENTS
+  : [DELIVERY_OFF_ANNOUNCEMENT, DELIVERY_OFF_ANNOUNCEMENT]
+  );
+  } catch (_err) {
+  isThirtyMinsDeliveryEnabled = true;
+  setAnnouncementMessages(DELIVERY_ON_ANNOUNCEMENTS);
+  }
+  refreshNearbyPincodeEtaText();
+  initAnnouncementMarquee();
+  }
+
+  function initAnnouncementMarquee() {
+  const bar = document.querySelector('.announcement-bar');
+  const track = document.querySelector('.marquee-track');
+  if (!bar || !track) return;
+  const content = track.querySelector('.marquee-content');
+  if (!content) return;
+
+  track.querySelectorAll('.marquee-content.clone').forEach((node) => node.remove());
+
+  const gapPx = parseFloat(getComputedStyle(track).gap || 0);
+  const barWidth = bar.offsetWidth || 0;
+  const contentWidth = content.scrollWidth || 0;
+  if (!barWidth || !contentWidth) return;
+
+  const neededCopies = Math.max(2, Math.ceil((barWidth * 2) / (contentWidth + gapPx)));
+  for (let i = 1; i < neededCopies; i += 1) {
+  const clone = content.cloneNode(true);
+  clone.classList.add('clone');
+  clone.setAttribute('aria-hidden', 'true');
+  track.appendChild(clone);
+  }
+
+  const distance = contentWidth + gapPx;
+  track.style.setProperty('--marquee-distance', `${distance}px`);
+  const durationSeconds = Math.max(15, distance / 40);
+  track.style.setProperty('--marquee-duration', `${durationSeconds}s`);
+  }
+
+  let marqueeResizeTimer = null;
+  window.addEventListener('resize', () => {
+  if (marqueeResizeTimer) window.clearTimeout(marqueeResizeTimer);
+  marqueeResizeTimer = window.setTimeout(() => {
+  initAnnouncementMarquee();
+  }, 150);
+  });
+
+  window.onload = () => { syncSelectedKeys({ selectAllIfEmpty: true }); renderUI(); checkUserSession(); syncDeliveryAnnouncement(); };
   window.onclick = (e) => { if (!e.target.closest('.profile-section')) document.getElementById('profile-dropdown').classList.remove('active'); };
   document.addEventListener('click', (e) => {
   const dropdown = document.getElementById('address-dropdown');
@@ -1388,18 +1564,3 @@ function addSuggestionByIndex(idx) {
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
