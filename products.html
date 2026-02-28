@@ -264,54 +264,6 @@ box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 .add-to-cart-full-btn:hover { background: #1d4ed8; }
 .add-to-cart-full-btn:disabled { background: #cbd5e1; cursor: not-allowed; box-shadow: none; }
 
-/* --- Interactive Viewer Overlay --- */
-.image-viewer-overlay {
-position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95); z-index: 5000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(10px);
-}
-.image-viewer-overlay.show { display: flex !important; }
-.viewer-content { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; touch-action: none; }
-.viewer-content img { max-width: 90%; max-height: 80vh; border-radius: 10px; object-fit: contain; transition: transform 0.4s; cursor: zoom-in; }
-.viewer-content img.zoomed { transform: scale(2.5); cursor: zoom-out; }
-
-.viewer-controls { position: absolute; top: 20px; right: 20px; display: flex; gap: 15px; z-index: 5001; }
-.control-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-.control-btn:hover { background: var(--primary); }
-
-/* --- Detail View --- */
-.detail-view-container { max-width: 1200px; margin: 20px auto; padding: 0 5%; }
-.back-nav { display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 20px; font-weight: 700; color: var(--grey); }
-.main-image-view { background: white; border-radius: 20px; padding: 20px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; height: 350px; cursor: zoom-in; position: relative; user-select: none; }
-.main-image-view img { max-width: 100%; max-height: 100%; object-fit: contain; }
-.gallery-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; border-radius: 50%; border: 1px solid #dbeafe; background: rgba(255,255,255,0.95); color: #1e3a8a; display: none; align-items: center; justify-content: center; cursor: pointer; z-index: 2; box-shadow: 0 6px 20px rgba(2, 6, 23, 0.12); }
-.gallery-arrow:hover { background: #eff6ff; }
-.gallery-arrow.left { left: 10px; }
-.gallery-arrow.right { right: 10px; }
-.thumbnail-row { display: flex; gap: 10px; overflow-x: auto; padding: 5px; }
-.thumb { flex-shrink: 0; width: 70px; height: 70px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; padding: 5px; background: white; }
-.thumb.active { border-color: var(--primary); }
-.thumb img { width: 100%; height: 100%; object-fit: contain; }
-
-.rich-description { color: #334155; font-size: 0.95rem; line-height: 1.7; white-space: pre-wrap; }
-.btn-whatsapp { background: #22c55e; color: white; padding: 18px; border-radius: 15px; font-weight: 800; text-decoration: none; border: none; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1rem; cursor: pointer; }
-.reviews-section { margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 20px; }
-.detail-rating-summary { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
-.detail-rating-summary .count { font-size: 0.9rem; color: #64748b; font-weight: 700; }
-.review-list { display: grid; gap: 10px; margin-bottom: 18px; }
-.review-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; }
-.review-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
-.reviewer-name { font-size: 0.86rem; font-weight: 800; color: #0f172a; }
-.review-date { font-size: 0.76rem; color: #64748b; font-weight: 700; }
-.review-text { font-size: 0.9rem; color: #334155; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
-.review-form-wrap { background: #f8fbff; border: 1px solid #dbeafe; border-radius: 12px; padding: 14px; }
-.review-note { font-size: 0.82rem; color: #64748b; margin-bottom: 10px; font-weight: 700; }
-.review-note.blocked { color: #b45309; }
-.review-stars-input { display: flex; gap: 6px; margin-bottom: 10px; }
-.review-star-btn { width: 34px; height: 34px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; color: #cbd5e1; cursor: pointer; font-size: 1rem; }
-.review-star-btn.active { color: #f59e0b; border-color: #fbbf24; background: #fffbeb; }
-.review-star-btn:disabled { cursor: not-allowed; opacity: 0.6; }
-.review-textarea { width: 100%; min-height: 95px; border-radius: 10px; border: 1.5px solid #e2e8f0; padding: 10px 12px; font-family: inherit; resize: vertical; outline: none; font-size: 0.9rem; }
-.review-textarea:disabled { background: #f1f5f9; cursor: not-allowed; }
-
 /* --- App Generic UI --- */
 .filter-overlay {
 position: fixed;
@@ -376,8 +328,6 @@ pointer-events: auto;
 @media (min-width: 769px) {
 .product-list { grid-template-columns: repeat(3, 1fr); }
 .product-card { height: auto; min-height: 420px; }
-.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
-.gallery-arrow { display: inline-flex; }
 }
 @media (min-width: 1024px) { 
 .product-list { grid-template-columns: repeat(4, 1fr); } 
@@ -522,8 +472,6 @@ pointer-events: auto;
     body.dark-theme .payment-method,
     body.dark-theme .address-card,
     body.dark-theme .product-card,
-    body.dark-theme .review-item,
-    body.dark-theme .review-form-wrap,
     body.dark-theme .order-card,
     body.dark-theme .info-card {
       background: #0f1a2e !important;
@@ -622,8 +570,6 @@ pointer-events: auto;
     body.dark-theme .topbar-wrap,
     body.dark-theme .icon-btn,
     body.dark-theme .sticky-actions,
-    body.dark-theme .main-image-view,
-    body.dark-theme .thumb,
     body.dark-theme .img-box {
       background: #111b2e !important;
       border-color: #2a3a57 !important;
@@ -788,16 +734,6 @@ pointer-events: auto;
 </div>
 </header>
 
-<div id="image-viewer" class="image-viewer-overlay">
-<div class="viewer-controls">
-<button class="control-btn" id="zoom-toggle" onclick="toggleZoom()"><i data-lucide="zoom-in"></i></button>
-<button class="control-btn" onclick="closeImageViewer()"><i data-lucide="x"></i></button>
-</div>
-<div class="viewer-content">
-<img id="viewer-img" src="" alt="Full size preview" onclick="toggleZoom()">
-</div>
-</div>
-
 <main id="catalog-section">
 <div class="category-bar" id="category-bar-list"></div>
 
@@ -849,13 +785,6 @@ pointer-events: auto;
 </div>
 <button class="apply-btn" onclick="applyFilters()" style="margin-top:auto; background:var(--primary); color:white; padding:16px; border-radius:12px; border:none; font-weight:800; cursor:pointer;">Show Results</button>
 </div>
-
-<main id="detail-section" class="hidden">
-<div class="detail-view-container">
-<div class="back-nav" onclick="showCatalog()"><i data-lucide="arrow-left"></i> Back</div>
-<div id="detail-grid-container"></div>
-</div>
-</main>
 
 <div id="toast">Added to cart!</div>
 
@@ -917,8 +846,6 @@ let pageSize = 10;
 let searchTerm = '';
 let lastTotalPages = 1;
 let productReviewMap = {};
-let currentProductReviews = [];
-let selectedReviewRating = 5;
 
 function setPageSize() {
 pageSize = window.innerWidth >= 1024 ? 12 : 10;
@@ -989,7 +916,7 @@ window.location.reload();
 
 /* --- CATALOG LOGIC --- */
 function normalizeImageUrl(rawUrl) {
-const url = (rawUrl || "").trim();
+const url = (typeof rawUrl === 'string' ? rawUrl : String(rawUrl || "")).trim();
 if (!url) return "";
 
 // Google Drive share links -> direct image links
@@ -1017,15 +944,24 @@ const { data, error } = await _supabase.from("products").select("*").order('name
 if (!error) {
 allProducts = data.map(p => ({
 ...p,
-images: (p.images || []).map(img => normalizeImageUrl(img))
+images: (() => {
+const raw = Array.isArray(p.images) ? p.images : (typeof p.images === 'string' ? [p.images] : []);
+return raw.map(img => normalizeImageUrl(img)).filter(Boolean);
+})()
 }));
+try {
+localStorage.setItem('hc-products-cache', JSON.stringify(allProducts));
+} catch (_) {}
 await loadReviewSummary();
 
 const urlParams = new URLSearchParams(window.location.search);
 const productId = urlParams.get('id');
 const brandParam = urlParams.get('brand');
 const categoryParam = urlParams.get('category');
-if (productId) openProductPage(productId);
+if (productId) {
+window.location.href = `product-details.html?id=${encodeURIComponent(productId)}`;
+return;
+}
 
 generateBrandChips();
 generateMainCategoryButtons();
@@ -1039,15 +975,6 @@ updateCatalog();
 }
 lucide.createIcons();
 setupCardCarousels();
-}
-
-function escapeReviewHtml(value = "") {
-return value
-.replace(/&/g, "&amp;")
-.replace(/</g, "&lt;")
-.replace(/>/g, "&gt;")
-.replace(/"/g, "&quot;")
-.replace(/'/g, "&#39;");
 }
 
 function renderStars(rating) {
@@ -1091,175 +1018,6 @@ avg: aggregate[k].sum / aggregate[k].count,
 count: aggregate[k].count
 };
 });
-}
-
-async function canUserReviewProduct(productId) {
-if (!currentUser) {
-return { allowed: false, showComposer: false, reason: "Please sign in to rate this product." };
-}
-
-const { data, error } = await _supabase
-.from('order_items')
-.select('order_id,orders!inner(user_id,status)')
-.eq('product_id', String(productId))
-.eq('orders.user_id', currentUser.id)
-.limit(20);
-
-if (error) {
-console.warn("Ordered-check failed:", error);
-return { allowed: false, showComposer: false, reason: "Could not verify your order history. Try again." };
-}
-
-const hasDeliveredPurchase = (data || []).some((row) => {
-const s = String(row?.orders?.status || "").trim().toLowerCase();
-return s === "delivered";
-});
-
-if (!hasDeliveredPurchase) {
-return { allowed: false, showComposer: false, reason: "Only customers with delivered orders can review this product." };
-}
-
-const alreadyReviewed = currentProductReviews.some((r) => String(r.user_id) === String(currentUser.id));
-if (alreadyReviewed) {
-return { allowed: false, showComposer: true, reason: "You already submitted a review for this product." };
-}
-
-return { allowed: true, showComposer: true, reason: "" };
-}
-
-function renderDetailReviewSummary(productId) {
-const summaryEl = document.getElementById('detail-rating-summary');
-if (!summaryEl) return;
-const info = getProductReviewInfo(productId);
-if (!info.count) {
-summaryEl.innerHTML = `<span class="p-rating no-rating">No ratings yet</span>`;
-return;
-}
-
-summaryEl.innerHTML = `
-<span class="p-rating-stars">${renderStars(info.avg)}</span>
-<span class="count">${info.avg.toFixed(1)} out of 5 (${info.count} reviews)</span>
-`;
-}
-
-function renderReviewList(productId) {
-renderDetailReviewSummary(productId);
-const listEl = document.getElementById('review-list');
-if (!listEl) return;
-
-if (!currentProductReviews.length) {
-listEl.innerHTML = `<div class="review-note">No reviews yet. Be the first verified buyer to review this product.</div>`;
-return;
-}
-
-listEl.innerHTML = currentProductReviews.map((row) => {
-const safeName = escapeReviewHtml((row.reviewer_name || "Verified Buyer").toString());
-const safeReview = escapeReviewHtml((row.review || "").toString());
-const safeDate = row.created_at
-? new Date(row.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-: "";
-return `
-<div class="review-item">
-<div class="review-head">
-<span class="reviewer-name">${safeName}</span>
-<span class="review-date">${safeDate}</span>
-</div>
-<div class="p-rating-stars" style="margin-bottom:6px;">${renderStars(row.rating)}</div>
-${safeReview ? `<p class="review-text">${safeReview}</p>` : ``}
-</div>
-`;
-}).join('');
-}
-
-async function renderReviewComposerState(productId) {
-const noteEl = document.getElementById('review-eligibility-note');
-const starsWrap = document.getElementById('review-stars-input');
-const txtEl = document.getElementById('review-text');
-const submitBtn = document.getElementById('review-submit-btn');
-const formWrap = document.getElementById('review-form-wrap');
-if (!noteEl || !starsWrap || !txtEl || !submitBtn || !formWrap) return;
-
-const eligibility = await canUserReviewProduct(productId);
-formWrap.style.display = eligibility.showComposer ? '' : 'none';
-if (!eligibility.showComposer) return;
-const enabled = eligibility.allowed;
-
-noteEl.textContent = enabled ? "Verified buyer: You can submit one review." : eligibility.reason;
-noteEl.classList.toggle('blocked', !enabled);
-txtEl.disabled = !enabled;
-submitBtn.disabled = !enabled;
-starsWrap.querySelectorAll('.review-star-btn').forEach((btn) => {
-btn.disabled = !enabled;
-});
-setSelectedRating(selectedReviewRating);
-}
-
-async function loadProductReviews(productId) {
-const { data, error } = await _supabase
-.from('product_reviews')
-.select('id,product_id,user_id,rating,review,reviewer_name,created_at')
-.eq('product_id', String(productId))
-.order('created_at', { ascending: false });
-
-if (error) {
-console.warn("Review list load failed:", error);
-currentProductReviews = [];
-} else {
-currentProductReviews = data || [];
-}
-
-renderReviewList(productId);
-await renderReviewComposerState(productId);
-}
-
-function setSelectedRating(rating) {
-selectedReviewRating = Math.max(1, Math.min(5, Number(rating) || 5));
-document.querySelectorAll('#review-stars-input .review-star-btn').forEach((btn) => {
-const val = Number(btn.getAttribute('data-rating') || "0");
-btn.classList.toggle('active', val <= selectedReviewRating);
-});
-}
-
-async function submitReview(productId) {
-if (!currentUser) {
-window.location.href = "login.html";
-return;
-}
-
-const reviewInput = document.getElementById('review-text');
-if (!reviewInput) return;
-const reviewBody = reviewInput.value.trim();
-
-const eligibility = await canUserReviewProduct(productId);
-if (!eligibility.allowed) {
-alert(eligibility.reason);
-await renderReviewComposerState(productId);
-return;
-}
-
-const reviewerName = (document.getElementById('user-display-name')?.innerText || "Verified Buyer").trim();
-const { error } = await _supabase
-.from('product_reviews')
-.insert([{
-product_id: String(productId),
-user_id: currentUser.id,
-rating: selectedReviewRating,
-review: reviewBody || null,
-reviewer_name: reviewerName
-}]);
-
-if (error) {
-console.warn("Review submit failed:", error);
-alert("Could not submit review. Please try again.");
-return;
-}
-
-reviewInput.value = '';
-setSelectedRating(5);
-await loadReviewSummary();
-updateCatalog();
-await loadProductReviews(productId);
-showToast("Review submitted");
 }
 
 // ?? NEW CATEGORY FILTER LOGIC
@@ -1551,160 +1309,13 @@ setupCardCarousels();
 }
 
 function openProductPage(productId) {
-const product = allProducts.find(p => p.id == productId);
-document.getElementById('catalog-section').classList.add('hidden');
-document.getElementById('detail-section').classList.remove('hidden');
-
-const curPrice = Number(product.price);
-const mrp = Number(product.mrp || Math.round(curPrice * 1.25));
-const disc = Math.round(((mrp - curPrice) / mrp) * 100);
-const stockVal = parseInt(product.stock) || 0;
-const galleryImages = (product.images && product.images.length ? product.images : ['logo.png']);
-
-const detailContainer = document.getElementById('detail-grid-container');
-detailContainer.innerHTML = `
-     <div class="detail-grid">
-       <div class="gallery-container">
-         <div class="main-image-view" id="detail-main-image-view">
-           <button type="button" class="gallery-arrow left" id="detail-prev-image" aria-label="Previous image"><i data-lucide="chevron-left"></i></button>
-           <img id="dp-image" src="${galleryImages[0]}" alt="Product">
-           <button type="button" class="gallery-arrow right" id="detail-next-image" aria-label="Next image"><i data-lucide="chevron-right"></i></button>
-         </div>
-         <div id="thumb-row" class="thumbnail-row">
-             ${galleryImages.map((img, i) => `
-                 <button type="button" class="thumb ${i===0?'active':''}" data-index="${i}" aria-label="View image ${i + 1}">
-                     <img src="${img}" alt="${product.name}">
-                 </button>
-             `).join('')}
-         </div>
-       </div>
-       <div class="info-panel">
-         <span class="p-category">${product.category}</span>
-         <h2 style="font-size:1.8rem; font-weight:800; margin-bottom:10px;">${product.name}</h2>
-         <div style="margin: 15px 0;">
-           <span style="color:#cc0c39; font-size:1.8rem;">-${disc}%</span>
-           <span style="font-size:1.8rem; font-weight:700; margin-left:10px;">&#8377;${curPrice.toLocaleString('en-IN')}</span>
-           <div style="color:#565959; font-size:0.85rem; margin-top:5px;">M.R.P.: <span style="text-decoration:line-through">&#8377;${mrp.toLocaleString('en-IN')}</span></div>
-         </div>
-         <div style="display:flex; flex-direction:column; gap:12px; margin-top:25px;">
-           <button class="add-to-cart-full-btn" style="padding:18px;" onclick="window.addToCart('${product.id}')" ${stockVal <= 0 ? 'disabled' : ''}>
-             ${stockVal <= 0 ? 'Sold Out' : 'Add to Cart'}
-           </button>
-           <button class="btn-whatsapp" onclick="event.stopPropagation(); buyNow('${product.id}')" ${stockVal <= 0 ? 'disabled' : ''}>
-             <i data-lucide="shopping-bag"></i> Buy Now
-           </button>
-         </div>
-         <div class="features-section" style="margin-top:30px; border-top:1px solid #e2e8f0; padding-top:20px;">
-           <h3 class="section-title">Features & Details</h3>
-           <p class="rich-description">${product.description || "Premium quality protection and comfort for daily hygiene."}</p>
-         </div>
-         <div class="reviews-section">
-           <h3 class="section-title">Ratings & Reviews</h3>
-           <div id="detail-rating-summary" class="detail-rating-summary"></div>
-           <div id="review-list" class="review-list"></div>
-           <div id="review-form-wrap" class="review-form-wrap">
-             <h4 style="font-size:0.95rem; font-weight:800; margin-bottom:8px;">Write a Rating / Review</h4>
-             <div id="review-eligibility-note" class="review-note">Checking eligibility...</div>
-             <div id="review-stars-input" class="review-stars-input">
-               <button type="button" class="review-star-btn" data-rating="1" onclick="setSelectedRating(1)">&#9733;</button>
-               <button type="button" class="review-star-btn" data-rating="2" onclick="setSelectedRating(2)">&#9733;</button>
-               <button type="button" class="review-star-btn" data-rating="3" onclick="setSelectedRating(3)">&#9733;</button>
-               <button type="button" class="review-star-btn" data-rating="4" onclick="setSelectedRating(4)">&#9733;</button>
-               <button type="button" class="review-star-btn active" data-rating="5" onclick="setSelectedRating(5)">&#9733;</button>
-             </div>
-             <textarea id="review-text" class="review-textarea" maxlength="500" placeholder="Share your experience with this product (optional)"></textarea>
-             <button id="review-submit-btn" class="add-to-cart-full-btn" style="margin-top:10px;" onclick="submitReview('${product.id}')">Submit Review</button>
-           </div>
-         </div>
-       </div>
-     </div>
-   `;
-window.scrollTo(0,0);
-lucide.createIcons();
-setupDetailGallery(product, galleryImages);
-setupCardCarousels();
-setSelectedRating(5);
-loadProductReviews(product.id);
+const selected = allProducts.find(p => String(p.id) === String(productId));
+if (selected) {
+try {
+localStorage.setItem('hc-selected-product', JSON.stringify(selected));
+} catch (_) {}
 }
-
-function setupDetailGallery(product, images) {
-const mainView = document.getElementById('detail-main-image-view');
-const imgEl = document.getElementById('dp-image');
-const prevBtn = document.getElementById('detail-prev-image');
-const nextBtn = document.getElementById('detail-next-image');
-const thumbs = Array.from(document.querySelectorAll('#thumb-row .thumb'));
-if (!mainView || !imgEl || !images.length) return;
-
-let currentIndex = 0;
-let startX = 0;
-let moved = false;
-
-const setImage = (i) => {
-currentIndex = (i + images.length) % images.length;
-imgEl.src = images[currentIndex];
-imgEl.alt = `${product.name} image ${currentIndex + 1}`;
-thumbs.forEach((thumb, idx) => thumb.classList.toggle('active', idx === currentIndex));
-};
-
-if (images.length <= 1) {
-if (prevBtn) prevBtn.style.display = 'none';
-if (nextBtn) nextBtn.style.display = 'none';
-}
-
-if (prevBtn) {
-prevBtn.addEventListener('click', (e) => {
-e.stopPropagation();
-setImage(currentIndex - 1);
-});
-}
-if (nextBtn) {
-nextBtn.addEventListener('click', (e) => {
-e.stopPropagation();
-setImage(currentIndex + 1);
-});
-}
-
-thumbs.forEach((thumb) => {
-thumb.addEventListener('click', (e) => {
-e.stopPropagation();
-const idx = parseInt(thumb.getAttribute('data-index'), 10);
-if (!Number.isNaN(idx)) setImage(idx);
-});
-});
-
-mainView.addEventListener('touchstart', (e) => {
-startX = e.touches[0].clientX;
-moved = false;
-}, { passive: true });
-
-mainView.addEventListener('touchmove', (e) => {
-const dx = e.touches[0].clientX - startX;
-if (Math.abs(dx) > 10) moved = true;
-}, { passive: true });
-
-mainView.addEventListener('touchend', (e) => {
-const dx = e.changedTouches[0].clientX - startX;
-if (Math.abs(dx) > 40) {
-setImage(currentIndex + (dx < 0 ? 1 : -1));
-moved = true;
-}
-}, { passive: true });
-
-mainView.addEventListener('click', (e) => {
-if (e.target.closest('.gallery-arrow')) return;
-if (moved) {
-moved = false;
-return;
-}
-openImageViewer(images[currentIndex]);
-});
-
-setImage(0);
-}
-
-function showCatalog() {
-document.getElementById('catalog-section').classList.remove('hidden');
-document.getElementById('detail-section').classList.add('hidden');
+window.location.href = `product-details.html?id=${encodeURIComponent(productId)}`;
 }
 
 window.addToCart = function(productId) {
@@ -1776,13 +1387,6 @@ searchTerm = term.trim();
 currentPage = 1;
 updateCatalog();
 }
-
-function openImageViewer(url) {
-document.getElementById('viewer-img').src = url;
-document.getElementById('image-viewer').classList.add('show');
-}
-function closeImageViewer() { document.getElementById('image-viewer').classList.remove('show'); }
-function toggleZoom() { document.getElementById('viewer-img').classList.toggle('zoomed'); }
 
 window.onclick = (e) => {
 if (!e.target.closest('.profile-section')) {
