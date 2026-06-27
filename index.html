@@ -1287,18 +1287,47 @@ window.location.href = 'index.html';
     const container = document.getElementById('reviews-container');
     const loader = document.getElementById('reviews-loader');
     try {
-      const { data, error } = await _supabase.from('user_submissions').select('*').eq('type', 'feedback').order('created_at', { ascending: false }).limit(8);
+      const { data, error } = await _supabase
+        .from('user_submissions')
+        .select('name,message,rating,is_verified,created_at')
+        .eq('type', 'feedback')
+        .order('created_at', { ascending: false })
+        .limit(8);
       if (error) throw error;
       if (data && data.length > 0) {
         if(loader) loader.remove();
         container.innerHTML = data.map(review => {
+          const name = escapeHtml(review.name || 'Customer');
+          const message = escapeHtml(review.message || 'Shared their experience with us.');
+          const rating = Math.max(0, Math.min(5, Number(review.rating) || 0));
+          const verifiedBadge = review.is_verified
+            ? `<div style="color: #10b981; font-size: 0.7rem; font-weight: 600;"><i data-lucide="check-circle-2" style="width: 10px; height: 10px; vertical-align: middle;"></i> Verified User</div>`
+            : '';
           let stars = '';
-          for(let i=1; i<=5; i++) { stars += `<span style="color: ${i <= review.rating ? '#fbbf24' : '#e2e8f0'}; font-size: 1rem;">?</span>`; }
-          return `<div class="testimonial-card"><div><div style="margin-bottom: 10px;">${stars}</div><p style="color: #475569; font-style: italic; margin-bottom: 15px; line-height: 1.5; font-size: 0.9rem;">"${review.message}"</p></div><div style="display: flex; align-items: center; gap: 10px; border-top: 1px solid #f8fafc; padding-top: 12px;"><div style="width: 38px; height: 38px; background: var(--soft-blue); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem;">${review.name.charAt(0).toUpperCase()}</div><div><h4 style="font-size: 0.85rem; font-weight: 700; color: var(--dark); margin: 0;">${review.name}</h4><div style="color: #10b981; font-size: 0.7rem; font-weight: 600;"><i data-lucide="check-circle-2" style="width: 10px; height: 10px; vertical-align: middle;"></i> Verified User</div></div></div></div>`;
+          for(let i=1; i<=5; i++) { stars += `<span style="color: ${i <= rating ? '#fbbf24' : '#e2e8f0'}; font-size: 1rem;">&#9733;</span>`; }
+          return `<div class="testimonial-card"><div><div style="margin-bottom: 10px;">${stars}</div><p style="color: #475569; font-style: italic; margin-bottom: 15px; line-height: 1.5; font-size: 0.9rem;">"${message}"</p></div><div style="display: flex; align-items: center; gap: 10px; border-top: 1px solid #f8fafc; padding-top: 12px;"><div style="width: 38px; height: 38px; background: var(--soft-blue); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem;">${name.charAt(0).toUpperCase()}</div><div><h4 style="font-size: 0.85rem; font-weight: 700; color: var(--dark); margin: 0;">${name}</h4>${verifiedBadge}</div></div></div>`;
         }).join('');
         lucide.createIcons();
       } else { if(loader) loader.innerText = "No feedback yet."; }
     } catch (err) { console.error(err); if(loader) loader.innerText = "Error loading reviews."; }
+  }
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (char) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    }[char]));
+  }
+
+  function isVerifiedFeedbackUser(user) {
+    if (!user) return false;
+    const provider = (user.app_metadata?.provider || '').toLowerCase();
+    const providers = (user.app_metadata?.providers || []).map((item) => String(item).toLowerCase());
+    const usedGoogle = provider === 'google' || providers.includes('google');
+    return usedGoogle || Boolean(user.email_confirmed_at);
   }
 
   document.querySelectorAll('.num-only').forEach(inp => {
@@ -1321,8 +1350,23 @@ window.location.href = 'index.html';
     if(userRating == 0) return alert("Select a rating!");
     const btn = document.getElementById('fb-btn');
     btn.innerText = "Sending..."; btn.disabled = true;
-    const { error } = await _supabase.from('user_submissions').insert([{ type: 'feedback', name: document.getElementById('fb-name').value, mobile: document.getElementById('fb-mobile').value, rating: parseInt(userRating), message: document.getElementById('fb-exp').value }]);
-    if(!error) { alert("Feedback submitted!"); e.target.reset(); userRating = 0; fetchReviews(); }
+    const { data: { user } } = await _supabase.auth.getUser();
+    const { error } = await _supabase.from('user_submissions').insert([{
+      type: 'feedback',
+      name: document.getElementById('fb-name').value,
+      mobile: document.getElementById('fb-mobile').value,
+      rating: parseInt(userRating),
+      message: document.getElementById('fb-exp').value,
+      user_id: user?.id || null,
+      is_verified: isVerifiedFeedbackUser(user)
+    }]);
+    if(!error) {
+      alert("Feedback submitted!");
+      e.target.reset();
+      userRating = 0;
+      document.querySelectorAll('.star-item').forEach(s => s.classList.remove('active'));
+      fetchReviews();
+    }
     else alert("Error: " + error.message);
     btn.innerText = "Submit Feedback"; btn.disabled = false;
   });
