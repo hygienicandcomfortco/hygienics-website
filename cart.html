@@ -1,0 +1,1611 @@
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Your Cart | Hygienic & Comfort Co. - Review Your Order</title>
+  <meta name="description" content="View your shopping cart at Hygienic & Comfort Co. Review your selected baby and adult hygiene products before secure checkout and WhatsApp ordering.">
+  <link rel="canonical" href="https://hygienicandcomfortco.shop/cart.html" />
+
+  <link rel="icon" type="image/png" href="logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+  :root {--yellow:#FFD814;--yellow-b:#FCD200;--blue:#007185;--dark:#111;--bg:#f3f3f3;--white:#fff;--grey:#565959;--primary: #2563eb; --soft-blue: #eef4ff; --radius: 12px;}
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif; -webkit-tap-highlight-color: transparent;}
+  body{background:var(--bg);color:var(--dark); overflow-x: hidden;}
+
+  /* --- Fixed Professional Header --- */
+  .main-header { 
+    background: var(--white); 
+    padding: 12px 5%; 
+    border-bottom: 1px solid #f1f5f9; 
+    position: sticky; 
+    top: 0; 
+    z-index: 1000; 
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    backdrop-filter: blur(10px);
+  }
+
+  .header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    gap: 15px;
+  }
+
+  .brand-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+  .header-logo { height: 40px; width: auto; display: block; flex-shrink: 0; }
+
+  .brand-text { text-align: left; }
+  .brand-text h1 { font-size: 1rem; font-weight: 800; color: var(--dark); margin: 0; line-height: 1.2; }
+  .brand-text p { font-size: 0.65rem; color: var(--grey); font-weight: 600; margin: 0; display: none; }
+
+  .nav-links { 
+    display: flex; 
+    gap: 15px; 
+    align-items: center; 
+    width: 100%;
+    justify-content: center;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 10px;
+    flex-wrap: wrap;
+  }
+  .nav-links a { text-decoration: none; color: #475569; font-weight: 700; font-size: 0.85rem; transition: 0.2s; position: relative; white-space: nowrap; }
+  .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+  .nav-links a.active::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 100%; height: 2px; background: var(--primary); border-radius: 2px; }
+  .announcement-bar {
+    background: var(--soft-blue);
+    color: var(--primary);
+    padding: 10px 0;
+    font-weight: 700;
+    font-size: 0.8rem;
+    overflow: hidden;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    --marquee-gap: 4rem;
+  }
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    gap: var(--marquee-gap);
+    animation: marquee-scroll var(--marquee-duration, 25s) linear infinite;
+    will-change: transform;
+  }
+  .marquee-content {
+    display: flex;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+  .marquee-text { padding-right: 4rem; }
+  @keyframes marquee-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(-1 * var(--marquee-distance, 50%))); }
+  }
+
+  /* --- Desktop Layout Adjustments --- */
+  @media (min-width: 768px) {
+    .header-container { flex-direction: row; justify-content: space-between; padding: 5px 0; }
+    .brand-wrapper { display: contents; }
+    .logo-area { order: 1; }
+    .brand-text p { display: block; }
+    .nav-links { 
+      width: auto; 
+      border-top: none; 
+      padding-top: 0; 
+      gap: 25px; 
+      margin-left: auto;
+      order: 2;
+    }
+    .profile-section { order: 3; margin-left: 12px; }
+    .header-logo { height: 50px; }
+    .nav-links a { font-size: 0.95rem; }
+  }
+  /* --- Profile & Auth UI Styles --- */
+  .profile-section { position: relative; margin-left: 10px; z-index: 1002; }
+  .profile-btn { 
+  background: var(--soft-blue); 
+  color: var(--primary); 
+  width: 38px; height: 38px; 
+  border-radius: 50%; 
+  display: flex; align-items: center; justify-content: center; 
+  cursor: pointer; border: 2px solid transparent; 
+  transition: 0.3s;
+  }
+  .dropdown-menu {
+  position: absolute;
+  top: 50px; right: 0;
+  background: white;
+  width: 280px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  border: 1px solid #f1f5f9;
+  display: none;
+  flex-direction: column;
+  padding: 10px;
+  z-index: 1001;
+  }
+  .dropdown-menu.active { display: flex; }
+  .dropdown-header { padding: 10px; border-bottom: 1px solid #f1f5f9; margin-bottom: 5px; }
+  .dropdown-header h4 { font-size: 0.9rem; font-weight: 800; }
+  .dropdown-header p { font-size: 0.75rem; color: var(--grey); }
+  .dropdown-item {
+  padding: 12px;
+  text-decoration: none;
+  color: var(--dark);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: 0.2s;
+  cursor: pointer;
+  font-size: 0.85rem;
+  }
+  .dropdown-item:hover { background: var(--soft-blue); color: var(--primary); }
+  .item-info b { font-size: 0.9rem; display: block; }
+  .item-info span { font-size: 0.75rem; color: var(--grey); }
+
+  /* --- Page Layout --- */
+  .page { width: min(96vw, 1400px); margin: 10px auto; padding: 0 10px; display: flex; flex-direction: column; gap: 12px; }
+  .summary-card { background: var(--white); padding: 20px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+  .sum-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
+  .sum-total { font-weight: 800; font-size: 1.25rem; color: #b12704; margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px; }
+  .shipping-goal { margin-bottom: 20px; }
+  .goal-text { font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; color: #444; }
+  .progress-bg { background: #e0e0e0; height: 8px; border-radius: 10px; overflow: hidden; }
+  .progress-fill { background: #007600; height: 100%; width: 0%; transition: 0.5s ease; }
+  .address-section { background: #f7fafa; border: 1px solid #d5d9d9; border-radius: 8px; padding: 12px; margin: 15px 0; }
+  .address-title { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: #565959; margin-bottom: 8px; letter-spacing: 0.4px; }
+  .address-dropdown { position: relative; }
+  .address-select { width: 100%; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; font-weight: 700; font-size: 0.85rem; color: #111; }
+  .address-select .addr-caret { transition: transform 0.2s ease; }
+  .address-dropdown.open .address-select .addr-caret { transform: rotate(180deg); }
+  .address-list { display: flex; flex-direction: column; gap: 8px; }
+  .address-dropdown .address-list { display: none; margin-top: 8px; }
+  .address-dropdown.open .address-list { display: flex; }
+  .address-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; display: flex; gap: 8px; cursor: pointer; transition: 0.2s; }
+  .address-card.selected { border-color: var(--primary); background: #eff6ff; }
+  .address-radio { margin-top: 2px; }
+  .address-details { font-size: 0.8rem; color: #111; line-height: 1.3; }
+  .address-badge { font-size: 0.6rem; font-weight: 800; background: #e2e8f0; padding: 3px 6px; border-radius: 5px; text-transform: uppercase; margin-bottom: 4px; display: inline-block; }
+  .address-card.selected .address-badge { background: var(--primary); color: #fff; }
+  .pin-note { font-size: 0.72rem; font-weight: 700; color: #2563eb; margin-top: 6px; display: none; }
+  .pincode-section { background: #f7fafa; border: 1px solid #d5d9d9; border-radius: 8px; padding: 12px; margin: 15px 0; }
+  .delivery-service-note { margin: 0 0 8px; font-size: 0.78rem; font-weight: 800; color: #007600; line-height: 1.35; }
+  .pincode-flex { display: flex; gap: 8px; }
+  .pincode-flex input { flex: 1; min-width: 0; padding: 10px; border: 1px solid #adb1b1; border-radius: 6px; outline: none; font-size: 0.9rem; font-weight: 600;}
+  .pincode-flex button { background: #e7e9ec; border: 1px solid #adb1b1; padding: 0 15px; border-radius: 6px; font-weight: 700; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+  .delivery-estimate-box { margin-top: 10px; padding: 8px; background: #fff; border-radius: 6px; font-size: 0.8rem; color: #007600; font-weight: 700; display: none; align-items: center; gap: 6px; }
+  .pincode-error { color: #B12704; font-size: 0.75rem; font-weight: 700; margin-top: 8px; display: none; }
+  .checkout-btn { width: 100%; margin-top: 12px; padding: 14px; border-radius: 25px; background: var(--yellow); border: 1px solid var(--yellow-b); font-size: 1rem; font-weight: 700; cursor: pointer; }
+  .checkout-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .cart-main { background: var(--white); border-radius: 8px; padding: 15px; }
+
+    /* --- Footer (Unified) --- */
+  .site-footer {
+    margin-top: 40px;
+    padding: 44px 5% 24px;
+    background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+    border-top: 1px solid #dbe7ff;
+  }
+  .site-footer .footer-inner { max-width: 1200px; margin: 0 auto; }
+  .site-footer .footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    align-items: start;
+    text-align: left;
+  }
+  .site-footer .footer-section h4 {
+    font-size: 0.95rem;
+    color: var(--dark);
+    margin: 0 0 10px 0;
+    font-weight: 800;
+  }
+  .site-footer .footer-links { display: grid; gap: 8px; }
+  .site-footer .footer-links a {
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+  .site-footer .footer-links a:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .site-footer .footer-block {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 18px 18px;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
+  }
+  .site-footer .footer-contact {
+    margin: 0 0 8px 0;
+    color: #64748b;
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+  .site-footer .footer-contact a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 700;
+  }
+  .site-footer .footer-contact a:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .site-footer .footer-divider {
+    height: 1px;
+    background: #dbe7ff;
+    margin: 28px 0 14px;
+  }
+  .site-footer .footer-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    text-align: center;
+    color: #64748b;
+    font-size: 0.82rem;
+  }
+  .site-footer .footer-bottom a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 700;
+  }
+  .site-footer .footer-bottom a:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  @media (min-width: 768px) {
+    .site-footer .footer-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+      text-align: left;
+    }
+    .site-footer .footer-bottom {
+      flex-direction: row;
+      justify-content: center;
+      text-align: center;
+      gap: 18px;
+    }
+  }
+  .cart-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+  .cart-selection-bar { display: grid; grid-template-columns: 1fr; gap: 10px; margin: 0 0 10px; padding: 12px 14px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc; }
+  .cart-selection-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; }
+  .cart-selection-actions { display: flex; justify-content: flex-end; }
+  .select-all-btn { border: none; background: transparent; color: var(--primary); font-size: 0.88rem; font-weight: 800; cursor: pointer; padding: 0; }
+  .selection-count { font-size: 0.82rem; color: #475569; font-weight: 700; white-space: nowrap; }
+  .delete-selected-btn { border: 1px solid #fecaca; background: #fff1f2; color: #be123c; font-size: 0.8rem; font-weight: 800; border-radius: 8px; padding: 7px 12px; cursor: pointer; }
+  .delete-selected-btn:hover { background: #ffe4e6; }
+  .cart-item { display: flex; gap: 12px; padding: 15px 0; border-bottom: 1px solid #eee; border-radius: 8px; }
+  .cart-item.is-selected { background: #f8fbff; }
+  .cart-item-select { display: flex; align-items: flex-start; padding-top: 4px; }
+  .cart-item-select input { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
+  .cart-img-link { display: block; flex-shrink: 0; }
+  .cart-img { width: 100px; height: 100px; object-fit: contain; background: #fff; border: 1px solid #f0f0f0; border-radius: 4px; }
+  .suggestions-wrap { margin-top: 14px; border-top: 1px solid #eee; padding-top: 14px; }
+  .suggestions-title { font-size: 1rem; font-weight: 800; margin-bottom: 10px; }
+  .suggestions-list { display: flex; gap: 12px; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; padding-bottom: 6px; -webkit-overflow-scrolling: touch; }
+  .suggestions-list::-webkit-scrollbar { height: 8px; }
+  .suggestions-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+  .suggestion-card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px; background: #fff; display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; align-items: center; gap: 10px; min-width: 320px; max-width: 320px; flex: 0 0 320px; scroll-snap-align: start; }
+  .suggestion-img { width: 56px; height: 56px; object-fit: contain; border: 1px solid #f1f5f9; border-radius: 8px; background: #fff; }
+  .suggestion-info { flex: 1; min-width: 0; }
+  .suggestion-name { display: -webkit-box; line-clamp: 3; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 0.82rem; font-weight: 700; color: #0f172a; text-decoration: none; line-height: 1.25; }
+  .suggestion-price { font-size: 0.85rem; font-weight: 800; color: #0f172a; margin-top: 4px; }
+  .suggestion-add { border: 1px solid #d1d5db; background: #f8fafc; border-radius: 7px; padding: 7px 10px; font-size: 0.75rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  @media(max-width: 600px) { .suggestion-card { min-width: 290px; max-width: 290px; flex-basis: 290px; } }
+  @media(min-width: 861px) {
+  .suggestions-list { gap: 12px; padding: 2px 2px 10px; scroll-padding-left: 2px; align-items: stretch; }
+  .suggestion-card { min-width: clamp(280px, 28vw, 350px); max-width: clamp(280px, 28vw, 350px); flex-basis: clamp(280px, 28vw, 350px); min-height: 106px; }
+  .suggestion-info { display: flex; flex-direction: column; justify-content: center; padding-right: 8px; }
+  .suggestion-name { line-clamp: 2; -webkit-line-clamp: 2; font-size: 0.9rem; }
+  .suggestion-price { margin-top: 4px; font-size: 0.92rem; }
+  .suggestion-add { align-self: center; }
+  }
+  .item-content { flex: 1; min-width: 0; }
+  .name-price-flex { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 8px; }
+  .item-name { min-width: 0; font-weight: 700; font-size: 0.95rem; color: #007185; line-height: 1.2; text-decoration: none; display: -webkit-box; line-clamp: 2; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .item-price { white-space: nowrap; justify-self: end; font-size: 1.1rem; font-weight: 800; color: #0F1111; }
+  .action-row { margin-top: 12px; display: flex; gap: 15px; flex-wrap: wrap; align-items: center; }
+  .qty-ctrl { display: flex; background: #F0F2F2; border: 1px solid #D5D9D9; border-radius: 8px; overflow: hidden; }
+  .qty-ctrl button { padding: 4px 12px; border: none; background: none; cursor: pointer; font-size: 1.1rem; font-weight: bold; color: #555; }
+  .qty-ctrl span { padding: 4px 12px; border-inline: 1px solid #D5D9D9; font-weight: 700; font-size: 0.9rem; background: #fff; }
+  .link-action { cursor: pointer; font-size: 0.8rem; color: var(--blue); }
+  .back-link { color: var(--blue); font-weight: 700; font-size: 0.8rem; text-decoration: none; white-space: nowrap; margin-right: 5px; }
+  .back-link { color: var(--blue); font-weight: 700; font-size: 0.85rem; text-decoration: none; white-space: nowrap; }
+
+  @media(min-width: 860px) {
+  .page { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 360px); gap: 20px; margin-top: 20px; }
+  .summary-card { order: 2; position: sticky; top: 90px; height: fit-content; }
+  .cart-main { order: 1; padding: 25px; }
+  header img { height: 40px; }
+  header h1 { font-size: 1.2rem; }
+  .cart-img { width: 150px; height: 150px; }
+  }
+  @media(max-width: 859px) { .summary-card { order: 1; } .cart-main { order: 2; } }
+  @media(max-width: 600px) {
+  .cart-selection-bar { padding: 11px 12px; gap: 8px; }
+  .cart-selection-top { gap: 8px; }
+  .selection-count { font-size: 0.78rem; }
+  .cart-selection-actions { justify-content: stretch; }
+  .delete-selected-btn { width: 100%; text-align: center; padding: 9px 12px; }
+  .name-price-flex {
+  grid-template-columns: 1fr;
+  gap: 4px;
+  }
+  .item-price {
+  justify-self: start;
+  font-size: 1rem;
+  }
+  .action-row { display: block; }
+  .qty-ctrl { display: inline-flex; }
+  .action-row .link-action {
+  display: inline-block;
+  margin-top: 8px;
+  margin-right: 14px;
+  white-space: nowrap;
+  }
+  .action-row .link-action:last-child { margin-right: 0; }
+  .pincode-flex { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+  }
+  
+    /* --- Dark Theme --- */
+    body.dark-theme {
+      background: #0b1220 !important;
+      color: #e2e8f0 !important;
+    }
+    body.dark-theme .main-header {
+      background: rgba(8, 14, 27, 0.92) !important;
+      border-bottom-color: #1e293b !important;
+    }
+    body.dark-theme .nav-links { border-top-color: #1e293b !important; }
+    body.dark-theme .nav-links a { color: #cbd5e1 !important; }
+    body.dark-theme .nav-links a:hover,
+    body.dark-theme .nav-links a.active { color: #60a5fa !important; }
+    body.dark-theme .profile-btn { background: #15243c !important; color: #60a5fa !important; }
+    body.dark-theme .dropdown-menu {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+      box-shadow: 0 15px 40px rgba(2, 6, 23, 0.55) !important;
+    }
+    body.dark-theme .dropdown-header { border-bottom-color: #1e293b !important; }
+    body.dark-theme .dropdown-item { color: #e2e8f0 !important; }
+    body.dark-theme .dropdown-item:hover { background: #15243c !important; color: #60a5fa !important; }
+    body.dark-theme .dropdown-item i,
+    body.dark-theme .item-info span { color: #94a3b8 !important; }
+    body.dark-theme .item-info b { color: #e2e8f0 !important; }
+    body.dark-theme .site-footer {
+      background: linear-gradient(180deg, #0f172a 0%, #0b1220 100%) !important;
+      border-top-color: #1f2a44 !important;
+    }
+    body.dark-theme .site-footer .footer-block {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+      box-shadow: 0 10px 24px rgba(2, 6, 23, 0.38) !important;
+    }
+    body.dark-theme .site-footer .footer-contact,
+    body.dark-theme .site-footer .footer-bottom { color: #94a3b8 !important; }
+    body.dark-theme .site-footer .footer-divider { background: #1f2a44 !important; }
+    body.dark-theme .card,
+    body.dark-theme .about-card,
+    body.dark-theme .form-card,
+    body.dark-theme .checkout-container,
+    body.dark-theme .order-summary,
+    body.dark-theme .payment-method,
+    body.dark-theme .address-card,
+    body.dark-theme .product-card,
+    body.dark-theme .review-item,
+    body.dark-theme .review-form-wrap,
+    body.dark-theme .order-card,
+    body.dark-theme .info-card {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+      color: #e2e8f0 !important;
+    }
+    body.dark-theme input,
+    body.dark-theme textarea,
+    body.dark-theme select {
+      background: #111b2e !important;
+      color: #e2e8f0 !important;
+      border-color: #2a3a57 !important;
+    }
+    body.dark-theme .search-section-bar,
+    body.dark-theme .announcement-bar,
+    body.dark-theme .form-section,
+    body.dark-theme .reviews-section,
+    body.dark-theme .trust-bar {
+      background: #0f172a !important;
+      border-color: #1e293b !important;
+    }
+    body.dark-theme .suggestion-box {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+    }
+    body.dark-theme .suggestion-item:hover { background: #15243c !important; }
+  
+    /* --- Dark Mode Readability Fix --- */
+    body.dark-theme .menu-item {
+      color: #dbe7ff !important;
+    }
+    body.dark-theme .menu-item i {
+      color: #9fb3cc !important;
+    }
+    body.dark-theme .menu-item:hover,
+    body.dark-theme .menu-item.active {
+      background: #15243c !important;
+      color: #60a5fa !important;
+    }
+    body.dark-theme .sidebar,
+    body.dark-theme .mobile-sidebar,
+    body.dark-theme .user-profile-brief,
+    body.dark-theme .summary-card,
+    body.dark-theme .cart-main,
+    body.dark-theme .address-section,
+    body.dark-theme .pincode-section {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+    }
+    body.dark-theme .address-title {
+      color: #94a3b8 !important;
+    }
+    body.dark-theme .address-select {
+      background: #111b2e !important;
+      border-color: #2a3a57 !important;
+      color: #eaf2ff !important;
+    }
+    body.dark-theme .address-select .addr-caret {
+      color: #cbd5e1 !important;
+    }
+    body.dark-theme .address-details {
+      color: #dbe7ff !important;
+    }
+    body.dark-theme .address-badge {
+      background: #334155 !important;
+      color: #e2e8f0 !important;
+    }
+    body.dark-theme .address-card.selected .address-badge {
+      background: #2563eb !important;
+      color: #ffffff !important;
+    }
+    body.dark-theme .address-card.selected {
+      background: #15243c !important;
+      border-color: #3b82f6 !important;
+    }
+    body.dark-theme .address-radio {
+      accent-color: #60a5fa;
+    }
+    body.dark-theme h1,
+    body.dark-theme h2,
+    body.dark-theme h3,
+    body.dark-theme h4,
+    body.dark-theme h5,
+    body.dark-theme h6,
+    body.dark-theme .page-title,
+    body.dark-theme .card-head,
+    body.dark-theme .meta-item p,
+    body.dark-theme .meta-value,
+    body.dark-theme .items-text,
+    body.dark-theme .item-name,
+    body.dark-theme .reviewer-name,
+    body.dark-theme .p-name,
+    body.dark-theme .p-main-price,
+    body.dark-theme .sum-total {
+      color: #eaf2ff !important;
+    }
+    body.dark-theme .dropdown-header p,
+    body.dark-theme .item-info span,
+    body.dark-theme .user-profile-brief p,
+    body.dark-theme .meta-item label,
+    body.dark-theme .meta-label,
+    body.dark-theme .address-info,
+    body.dark-theme .selection-count,
+    body.dark-theme .item-qty,
+    body.dark-theme .item-unit,
+    body.dark-theme .p-mrp-line,
+    body.dark-theme .review-date,
+    body.dark-theme p[style*="color: var(--grey)"] {
+      color: #cbd5e1 !important;
+    }
+  
+    /* --- Dark Theme Inline Color Guard --- */
+    body.dark-theme [style*="color: #475569"],
+    body.dark-theme [style*="color:#475569"],
+    body.dark-theme [style*="color: #565959"],
+    body.dark-theme [style*="color:#565959"],
+    body.dark-theme [style*="color: #334155"],
+    body.dark-theme [style*="color:#334155"],
+    body.dark-theme [style*="color: #64748b"],
+    body.dark-theme [style*="color:#64748b"] {
+      color: #cbd5e1 !important;
+    }
+    body.dark-theme [style*="color: #1e293b"],
+    body.dark-theme [style*="color:#1e293b"],
+    body.dark-theme [style*="color: #0f172a"],
+    body.dark-theme [style*="color:#0f172a"] {
+      color: #eaf2ff !important;
+    }
+
+    /* --- Cart Dark Theme Fix --- */
+    body.dark-theme .cart-title {
+      border-bottom-color: #1f2a44 !important;
+    }
+    body.dark-theme .cart-selection-bar {
+      background: #111827 !important;
+      border-color: #334155 !important;
+    }
+    body.dark-theme .select-all-btn {
+      color: #93c5fd !important;
+    }
+    body.dark-theme .delete-selected-btn {
+      background: #311724 !important;
+      border-color: #7f1d1d !important;
+      color: #fecdd3 !important;
+    }
+    body.dark-theme .delete-selected-btn:hover {
+      background: #3f1d2d !important;
+    }
+    body.dark-theme .cart-item {
+      border: 1px solid transparent !important;
+      border-bottom-color: #334155 !important;
+      background: #0f172a !important;
+      color: #e5edf8 !important;
+      padding: 15px 12px !important;
+    }
+    body.dark-theme .cart-item.is-selected {
+      background: #172338 !important;
+      border-color: #3b82f6 !important;
+      box-shadow: inset 3px 0 0 #60a5fa !important;
+    }
+    body.dark-theme .cart-img {
+      background: #111b2e !important;
+      border-color: #2a3a57 !important;
+    }
+    body.dark-theme .item-name {
+      color: #eaf2ff !important;
+    }
+    body.dark-theme .item-name:hover {
+      color: #93c5fd !important;
+    }
+    body.dark-theme .item-price {
+      color: #ffffff !important;
+    }
+    body.dark-theme .sum-row,
+    body.dark-theme .goal-text,
+    body.dark-theme .delivery-service-note,
+    body.dark-theme .pincode-error {
+      color: #dbe7ff !important;
+    }
+    body.dark-theme .progress-bg {
+      background: #e5e7eb !important;
+    }
+    body.dark-theme .qty-ctrl {
+      background: #111b2e !important;
+      border-color: #2a3a57 !important;
+    }
+    body.dark-theme .qty-ctrl button {
+      color: #dbeafe !important;
+    }
+    body.dark-theme .qty-ctrl span {
+      background: #0f1a2e !important;
+      border-inline-color: #2a3a57 !important;
+      color: #e2e8f0 !important;
+    }
+    body.dark-theme .link-action,
+    body.dark-theme .back-link {
+      color: #93c5fd !important;
+    }
+    body.dark-theme .suggestions-wrap {
+      border-top-color: #334155 !important;
+    }
+    body.dark-theme .suggestion-card {
+      background: #111827 !important;
+      border-color: #334155 !important;
+    }
+    body.dark-theme .suggestion-img {
+      background: #ffffff !important;
+      border-color: #475569 !important;
+    }
+    body.dark-theme .suggestion-name,
+    body.dark-theme .suggestion-price {
+      color: #eaf2ff !important;
+    }
+    body.dark-theme .suggestion-add,
+    body.dark-theme .pincode-flex button {
+      background: #e5e7eb !important;
+      border-color: #cbd5e1 !important;
+      color: #111827 !important;
+    }
+    body.dark-theme .pincode-flex input {
+      background: #111827 !important;
+      border-color: #334155 !important;
+      color: #eaf2ff !important;
+    }
+    body.dark-theme .pincode-flex input::placeholder {
+      color: #94a3b8 !important;
+    }
+    body.dark-theme .checkout-btn {
+      background: #facc15 !important;
+      border-color: #eab308 !important;
+      color: #111827 !important;
+    }
+    body.dark-theme .checkout-btn:disabled {
+      background: #8a7611 !important;
+      border-color: #8a7611 !important;
+      color: #2b2408 !important;
+      opacity: 1 !important;
+    }
+  </style>
+  </head>
+
+  <body>
+  <header class="main-header" id="main-header-nav">
+    <div class="header-container">
+      <div class="brand-wrapper">
+        <a href="index.html" class="logo-area">
+          <img src="logo.png" alt="Logo" class="header-logo">
+          <div class="brand-text">
+            <h1>Hygienic & Comfort Co.</h1>
+            <p>Care, Comfort & Hygiene for Every Age</p>
+          </div>
+        </a>
+
+        <div class="profile-section">
+          <div class="profile-btn" id="profile-btn"><i data-lucide="user"></i></div>
+          <div class="dropdown-menu" id="profile-dropdown">
+            <div class="dropdown-header">
+              <h4 id="user-display-name">Welcome Guest</h4>
+              <p id="user-display-sub">Manage your account</p>
+            </div>
+            <div id="guest-items">
+              <a href="login.html" class="dropdown-item">
+                <i data-lucide="log-in"></i> 
+                <div class="item-info"><b>Sign In</b><span>Access orders</span></div>
+              </a>
+              <a href="settings.html" class="dropdown-item">
+                <i data-lucide="settings"></i>
+                <div class="item-info"><b>Settings</b><span>Theme preferences</span></div>
+              </a>
+            </div>
+            <div id="auth-items" style="display:none">
+              <a href="profile.html" class="dropdown-item">
+                <i data-lucide="user"></i> 
+                <div class="item-info"><b>My Profile</b><span>Account settings</span></div>
+              </a>
+              <a href="settings.html" class="dropdown-item">
+                <i data-lucide="settings"></i>
+                <div class="item-info"><b>Settings</b><span>Theme preferences</span></div>
+              </a>
+              <div class="dropdown-item" onclick="handleLogout()">
+                <i data-lucide="log-out"></i> 
+                <div class="item-info"><b>Logout</b><span>End session</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="products.html">Products</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+  <div class="announcement-bar">
+    <div class="marquee-track">
+      <div class="marquee-content">
+        <span class="marquee-text">30-minute Express delivery is available in Ambernath from 11:00 AM to 11:00 PM.</span>
+        <span class="marquee-text">After 11:00 PM, you can place orders and delivery will start once the store opens.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="cart-main-page">
+  <aside class="summary-card" id="summary-section">
+  <div class="shipping-goal">
+  <div class="goal-text" id="goal-message">Add more for FREE delivery</div>
+  <div class="progress-bg"><div class="progress-fill" id="goal-bar"></div></div>
+  </div>
+  <div class="sum-row"><span>Items Subtotal</span><b id="sub-total">&#8377;0</b></div>
+  <div class="sum-row"><span>Delivery Fee</span><b id="delivery-fee">&#8377;0</b></div>
+  <div class="sum-row sum-total"><span>Total</span><b id="grand-total">&#8377;0</b></div>
+
+  <div class="address-section" id="address-section" style="display:none;">
+  <div class="address-title">Saved Address</div>
+  <div class="address-dropdown" id="address-dropdown">
+  <button type="button" class="address-select" id="address-select">
+  <span id="selected-address-text">Select address</span>
+  <i data-lucide="chevron-down" class="addr-caret" style="width: 16px;"></i>
+  </button>
+  <div class="address-list" id="address-list"></div>
+  </div>
+  </div>
+
+  <div class="pincode-section">
+  <label class="pincode-label" for="cart-pincode">Shipping Pincode</label>
+  <div class="pincode-flex">
+  <input type="text" id="cart-pincode" maxlength="6" placeholder="Enter 6-digit Pincode">
+  <button type="button" id="apply-pin-btn" onclick="calculateDelivery()">Apply</button>
+  </div>
+  <div id="pincode-error-msg" class="pincode-error">Please write a valid 6-digit Indian Pincode</div>
+  <div id="pin-note" class="pin-note">Pincode confirmed from selected address.</div>
+  <div id="delivery-info-box" class="delivery-estimate-box">
+  <i data-lucide="truck" style="width: 16px;"></i><span id="est-days-text">Calculated!</span>
+  </div>
+  </div>
+  </aside>
+
+  <section class="cart-main">
+  <h2 class="cart-title">Shopping Cart</h2>
+  <div id="cart-selection-controls"></div>
+  <div id="cart-list"></div>
+  <div class="site-footer">
+  <button type="button" class="checkout-btn" id="proceed-btn" disabled onclick="checkAuthAndProceed()">Proceed to Buy</button>
+  </div>
+  <div id="suggestions-section" class="suggestions-wrap" style="display:none;">
+  <h3 id="suggestions-title" class="suggestions-title">Recommended Products</h3>
+  <div id="suggestions-list" class="suggestions-list"></div>
+  </div>
+  <div id="saved-section" style="display:none; margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px;">
+  <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;">Saved for later</h3>
+  <div id="saved-list"></div>
+  </div>
+  </section>
+  </div>
+
+  <script>
+  const supa = supabase.createClient("https://uhkheprfbxxwuojswyht.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es");
+  const DELIVERY_OFF_ANNOUNCEMENT = "Currently, we are not accepting 30-minute express delivery orders. However, you can still place your order, and it will be delivered according to the estimated delivery time (ETA) shown on the cart page.  ";
+  const DELIVERY_ON_ANNOUNCEMENTS = [
+    "30-minute express delivery is available in Ambernath between 11:00 AM and 11:00 PM.",
+  ];
+  async function blockAdminFromCustomerSite() {
+  const { data: { user } } = await supa.auth.getUser();
+  if (!user) return null;
+
+  const { data: profile, error: profileError } = await supa
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .maybeSingle();
+  if (profileError && profileError.code !== 'PGRST116') {
+    console.warn("Role lookup failed:", profileError);
+  }
+
+  let role = (profile?.role || "").toLowerCase();
+  if (!role) {
+    const { data: userRole } = await supa
+      .from('user_roles')
+      .select('role')
+      .eq('id', user.id)
+      .maybeSingle();
+    role = (userRole?.role || "").toLowerCase();
+  }
+
+  if (role === 'admin' || role === 'staff') {
+    await supa.auth.signOut();
+    alert("Admin accounts must login from Admin Panel.");
+    window.location.href = "login.html";
+    throw new Error("Admin blocked from customer site");
+  }
+
+  return profile || null;
+  }
+
+  (async () => {
+  await blockAdminFromCustomerSite();
+  })();
+
+  let cart = JSON.parse(localStorage.getItem('hc-cart')||'[]');
+  let saved = JSON.parse(localStorage.getItem('hc-saved')||'[]');
+  let currentDeliveryFee = 0;
+  let pincodeVerified = false;
+  let currentUser = null;
+  let selectedAddressPin = "";
+  let selectedAddressId = null;
+  let lastVerifiedPincode = "";
+  let freeDeliveryTarget = 999;
+  let addressesCache = [];
+  let suggestionsState = { key: '', mode: '', items: [] };
+  let suggestionReqId = 0;
+  let currentDeliveryZone = null;
+  let isThirtyMinsDeliveryEnabled = true;
+  const express30MinPincodes = new Set(["421005", "421004", "421505", "421506", "421502"]);
+
+  function getNearbyPincodeDeliveryText() {
+  if (isThirtyMinsDeliveryEnabled) return getExpressDeliveryText();
+  const hour = new Date().getHours();
+  if (hour >= 21) return "Next day delivery";
+  return "Same day delivery";
+  }
+
+  function refreshNearbyPincodeEtaText() {
+  if (!pincodeVerified || currentDeliveryZone !== 1 || !lastVerifiedPincode) return;
+  if (!express30MinPincodes.has(lastVerifiedPincode)) return;
+  const etaEl = document.getElementById('est-days-text');
+  if (etaEl) etaEl.innerText = getNearbyPincodeDeliveryText();
+  }
+
+  function getExpressDeliveryText() {
+  const hour = new Date().getHours();
+  if (hour >= 23) return "Tomorrow 11:00 AM-12:30 PM";
+  if (hour < 11) return "Today 11:00 AM-12:30 PM";
+  return "30-minute Express delivery available in your area.";
+  }
+  const deliveryRates = { 1: { base: 33, add: 31 }, 2: { base: 36, add: 33 }, 3: { base: 50, add: 44 }, 4: { base: 58, add: 50 }, 5: { base: 70, add: 59 } };
+  let selectedCartKeys = new Set(JSON.parse(localStorage.getItem('hc-cart-selected') || '[]'));
+  const normalizeId = (value) => (value ?? "").toString().trim();
+
+  function getCartItemKey(item, index) {
+  const id = normalizeId(item?.id);
+  return id || `idx-${index}`;
+  }
+
+  function persistSelectedKeys() {
+  if (!selectedCartKeys.size) localStorage.removeItem('hc-cart-selected');
+  else localStorage.setItem('hc-cart-selected', JSON.stringify(Array.from(selectedCartKeys)));
+  }
+
+  function syncSelectedKeys(opts = {}) {
+  const { selectAllIfEmpty = false } = opts;
+  const validKeys = cart.map((item, index) => getCartItemKey(item, index));
+  const validSet = new Set(validKeys);
+  selectedCartKeys.forEach((key) => { if (!validSet.has(key)) selectedCartKeys.delete(key); });
+  if (selectAllIfEmpty && cart.length && !selectedCartKeys.size) validKeys.forEach((key) => selectedCartKeys.add(key));
+  persistSelectedKeys();
+  }
+
+  function getSelectedCartItems() {
+  return cart.filter((item, index) => selectedCartKeys.has(getCartItemKey(item, index)));
+  }
+
+  function isAllCartSelected() {
+  return cart.length > 0 && getSelectedCartItems().length === cart.length;
+  }
+
+  function recalculateDeliveryFee() {
+  if (!pincodeVerified || !currentDeliveryZone || !deliveryRates[currentDeliveryZone]) return;
+  const zRate = deliveryRates[currentDeliveryZone];
+  const selectedItems = getSelectedCartItems();
+  const weightGrams = selectedItems.reduce((s, i) => s + (i.qty || 1), 0) * 500;
+  let fee = zRate.base;
+  if (weightGrams > 500) fee += (Math.ceil((weightGrams - 500) / 500) * zRate.add);
+  const subtotal = selectedItems.reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
+  if (subtotal >= freeDeliveryTarget || !selectedItems.length) fee = 0;
+  currentDeliveryFee = fee;
+  const feeEl = document.getElementById('delivery-fee');
+  if (feeEl) feeEl.innerText = `\u20B9${fee}`;
+  }
+
+  function buildCartSummary(cartItems) {
+  const items = cartItems.map(p => `${p.name} x${p.qty || 1}`);
+  const totalQty = cartItems.reduce((s, i) => s + (i.qty || 1), 0);
+  let preview = "";
+  if (items.length === 1) preview = items[0];
+  else if (items.length === 2) preview = items.join(', ');
+  else preview = `${items.slice(0, 2).join(', ')} +${items.length - 2} more`;
+  const displayName = `Cart (${totalQty} item${totalQty > 1 ? 's' : ''}): ${preview}`;
+  return { displayName, itemsText: items.join(', ') };
+  }
+
+  async function checkUserSession() {
+  const { data: { user } } = await supa.auth.getUser();
+  currentUser = user;
+  const guestItems = document.getElementById('guest-items');
+  const authItems = document.getElementById('auth-items');
+  const userDisplay = document.getElementById('user-display-name');
+  const userSub = document.getElementById('user-display-sub');
+
+  if (user) {
+  let latestName = "";
+  try {
+  const { data: profile } = await supa
+    .from('customers')
+    .select('customer_name')
+    .eq('user_id', user.id)
+    .maybeSingle();
+  latestName = (profile?.customer_name || "").toString().trim();
+  } catch (e) {
+  console.warn("Could not fetch latest profile name:", e);
+  }
+  const metaName = (user.user_metadata?.full_name || user.user_metadata?.name || "").toString().trim();
+  const fallbackName = (user.email ? user.email.split('@')[0] : (user.phone || "User"));
+  const displayName = latestName || metaName || fallbackName || "User";
+  guestItems.style.display = 'none';
+  authItems.style.display = 'block';
+  userDisplay.innerText = displayName;
+  userSub.innerText = user.email || user.phone || "Active Account";
+  } else {
+  guestItems.style.display = 'block';
+  authItems.style.display = 'none';
+  userDisplay.innerText = "Welcome Guest";
+  userSub.innerText = "Manage your account";
+  }
+  lucide.createIcons();
+  loadSavedAddresses();
+  }
+
+  async function handleLogout() {
+  if (!confirm('Are you sure you want to log out?')) return; 
+  await supa.auth.signOut(); 
+  localStorage.removeItem('checkout-item');
+  location.reload(); 
+  }
+
+  function checkAuthAndProceed() {
+  const selectedItems = getSelectedCartItems();
+  if (!selectedItems.length) { alert("Please select at least one product to proceed."); return; }
+  const remainingItems = cart.filter((item, index) => !selectedCartKeys.has(getCartItemKey(item, index)));
+  if (!currentUser) { 
+  // ?? Store current cart total and intent before redirecting to login.html
+  const subtotal = selectedItems.reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
+  const summary = buildCartSummary(selectedItems);
+  const selectedAddressLabel = document.getElementById('selected-address-text')?.innerText?.trim() || "";
+  localStorage.setItem('checkout-item', JSON.stringify({
+  id: "CART_ORDER",
+  name: summary.displayName,
+  itemsText: summary.itemsText,
+  price: subtotal + currentDeliveryFee,
+  cartItems: selectedItems,
+  remainingCartItems: remainingItems,
+  isFromCart: true,
+  selectedAddressId: selectedAddressId || null,
+  selectedAddressText: selectedAddressLabel,
+  selectedAddressPin: selectedAddressPin || ""
+  }));
+  window.location.href = "login.html"; 
+  } 
+  else { 
+  handleProceedToBuy(); 
+  }
+  }
+
+  async function handleProceedToBuy() {
+  const selectedItems = getSelectedCartItems();
+  if (!selectedItems.length) { alert("Please select at least one product to proceed."); return; }
+  const remainingItems = cart.filter((item, index) => !selectedCartKeys.has(getCartItemKey(item, index)));
+  const subtotal = selectedItems.reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
+  const summary = buildCartSummary(selectedItems);
+  const selectedAddressLabel = document.getElementById('selected-address-text')?.innerText?.trim() || "";
+  localStorage.setItem('checkout-item', JSON.stringify({
+  id: "CART_ORDER",
+  name: summary.displayName,
+  itemsText: summary.itemsText,
+  price: subtotal + currentDeliveryFee,
+  cartItems: selectedItems,
+  remainingCartItems: remainingItems,
+  isFromCart: true,
+  selectedAddressId: selectedAddressId || null,
+  selectedAddressText: selectedAddressLabel,
+  selectedAddressPin: selectedAddressPin || ""
+  }));
+  window.location.href = "checkout.html";
+  }
+
+  /* --- CART ENGINE --- */
+  document.getElementById('cart-pincode').addEventListener('input', function(e) { this.value = this.value.replace(/[^0-9]/g, ''); });
+
+  async function calculateDelivery() {
+  const pinStr = document.getElementById('cart-pincode').value;
+  await applyPincode(pinStr, { showAlerts: true, fromAddress: false });
+  }
+
+  function updateProceedState() {
+  const btn = document.getElementById('proceed-btn');
+  btn.disabled = !getSelectedCartItems().length || !pincodeVerified;
+  }
+
+  function updateFreeDeliveryGoal(subtotal) {
+  const goalMsg = document.getElementById('goal-message');
+  const goalBar = document.getElementById('goal-bar');
+  if (!goalMsg || !goalBar) return;
+
+  const target = Math.max(1, Number(freeDeliveryTarget) || 999);
+  const remaining = Math.max(0, target - subtotal);
+  const progress = Math.min(100, Math.round((subtotal / target) * 100));
+  goalBar.style.width = `${progress}%`;
+
+  if (remaining > 0) {
+  goalMsg.innerText = `Shop more \u20B9${remaining.toLocaleString('en-IN')} and get FREE delivery`;
+  } else {
+  goalMsg.innerText = `You unlocked FREE delivery`;
+  }
+  }
+
+async function applyPincode(pinStr, opts = {}) {
+  const { showAlerts = true, fromAddress = false } = opts;
+  const btn = document.getElementById('apply-pin-btn');
+  const pinError = document.getElementById('pincode-error-msg');
+  const note = document.getElementById('pin-note');
+  pinError.style.display = 'none';
+
+  if (pinStr.length !== 6 || pinStr.startsWith('0')) {
+  pincodeVerified = false;
+  currentDeliveryZone = null;
+  currentDeliveryFee = 0;
+  document.getElementById('delivery-fee').innerText = `\u20B90`;
+  updateProceedState();
+  if (showAlerts) alert("Enter valid 6-digit Pincode");
+  return;
+  }
+
+  btn.disabled = true; btn.innerText = "...";
+  try {
+  const res = await fetch(`https://api.postalpincode.in/pincode/${pinStr}`);
+  const data = await res.json();
+  if (data[0].Status !== "Success") {
+  pincodeVerified = false;
+  freeDeliveryTarget = 999;
+  currentDeliveryZone = null;
+  currentDeliveryFee = 0;
+  document.getElementById('delivery-fee').innerText = `\u20B90`;
+  if (showAlerts) alert("Pincode not found");
+  } else {
+  const state = data[0].PostOffice[0].State.toUpperCase();
+  let zone = 4; let days = "7-8 Days";
+  if (express30MinPincodes.has(pinStr)) { zone = 1; days = getNearbyPincodeDeliveryText(); } 
+  else if (state === "MAHARASHTRA") { zone = 2; days = "3-4 Days"; } 
+  else if (["WEST BENGAL", "KARNATAKA", "TAMIL NADU", "DELHI", "TELANGANA"].includes(state)) { zone = 3; days = "5-6 Days"; }
+  else if (["KERALA", "JAMMU & KASHMIR", "ASSAM", "MANIPUR", "ARUNACHAL PRADESH", "MEGHALAYA", "MIZORAM", "NAGALAND", "SIKKIM", "TRIPURA"].includes(state)) { zone = 5; days = "9-10 Days"; }
+
+  freeDeliveryTarget = zone === 1 ? 499 : 999;
+  currentDeliveryZone = zone;
+  pincodeVerified = true;
+  lastVerifiedPincode = pinStr;
+  recalculateDeliveryFee();
+  document.getElementById('est-days-text').innerText = days;
+  document.getElementById('delivery-info-box').style.display = 'flex';
+  note.style.display = fromAddress ? 'block' : 'none';
+  renderUI();
+  }
+  } catch (e) { 
+  if (showAlerts) alert("Pincode check failed."); 
+  pincodeVerified = false;
+  currentDeliveryZone = null;
+  currentDeliveryFee = 0;
+  document.getElementById('delivery-fee').innerText = `\u20B90`;
+  } finally { 
+  btn.disabled = false; 
+  btn.innerText = "Apply"; 
+  updateProceedState();
+  }
+  }
+
+  async function loadSavedAddresses() {
+  const section = document.getElementById('address-section');
+  const dropdown = document.getElementById('address-dropdown');
+  const list = document.getElementById('address-list');
+  const selectedText = document.getElementById('selected-address-text');
+  section.style.display = 'none';
+  list.innerHTML = "";
+
+  if (!currentUser) return;
+  const { data: addresses } = await supa.from('customer_addresses').select('*').eq('user_id', currentUser.id);
+  const safeAddresses = (addresses || []).filter(addr => normalizeId(addr.user_id) === normalizeId(currentUser.id));
+  if (!safeAddresses.length) return;
+  addressesCache = safeAddresses;
+  const defaultIndex = safeAddresses.findIndex(addr => Boolean(addr.is_default || addr.default || addr.is_primary));
+  const selectedIndex = defaultIndex >= 0 ? defaultIndex : 0;
+
+  section.style.display = 'block';
+  selectedText.innerText = "Select address";
+
+  safeAddresses.forEach((addr, index) => {
+  const fullAddr = `${addr.full_address}, ${addr.city}, ${addr.state} - ${addr.pincode}`;
+  const isDefault = Boolean(addr.is_default || addr.default || addr.is_primary);
+  const badgeText = isDefault ? "Default" : (addr.address_type || addr.type || "Address");
+
+  const card = document.createElement('div');
+  card.className = `address-card ${index === selectedIndex ? 'selected' : ''}`;
+  card.innerHTML = `
+            <input class="address-radio" type="radio" name="addr-choice" ${index === selectedIndex ? 'checked' : ''}>
+            <div class="address-details">
+                <span class="address-badge">${badgeText}</span>
+                <div>${addr.full_name || ""} ${fullAddr}</div>
+            </div>
+        `;
+  card.onclick = () => selectAddress(addr, card);
+  list.appendChild(card);
+
+  if (index === selectedIndex) {
+  selectAddress(addr, card);
+  }
+  });
+
+  const manualCard = document.createElement('div');
+  manualCard.className = "address-card";
+  manualCard.innerHTML = `
+        <input class="address-radio" type="radio" name="addr-choice">
+        <div class="address-details" style="color: var(--primary); font-weight: 800;">Use a different pincode</div>
+    `;
+  manualCard.onclick = () => clearSelectedAddress(manualCard);
+  list.appendChild(manualCard);
+
+  if (dropdown) dropdown.classList.remove('open');
+  lucide.createIcons();
+  }
+
+  function selectAddress(addr, card, skipRecalc = false) {
+  document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  const radio = card.querySelector('input[type="radio"]');
+  if (radio) radio.checked = true;
+
+  selectedAddressPin = (addr.pincode || "").toString().trim();
+  selectedAddressId = addr.id || null;
+  const pinInput = document.getElementById('cart-pincode');
+  pinInput.value = selectedAddressPin;
+  const selectedText = document.getElementById('selected-address-text');
+  const label = `${addr.full_name || ""} ${addr.full_address}, ${addr.city}, ${addr.state} - ${addr.pincode}`;
+  if (selectedText) selectedText.innerText = label.trim();
+
+  if (selectedAddressPin.length === 6 && !skipRecalc) {
+  applyPincode(selectedAddressPin, { showAlerts: false, fromAddress: true });
+  } else {
+  document.getElementById('pin-note').style.display = selectedAddressPin.length === 6 ? 'block' : 'none';
+  }
+
+  const dropdown = document.getElementById('address-dropdown');
+  if (dropdown) dropdown.classList.remove('open');
+  }
+
+  function clearSelectedAddress(card) {
+  document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  const radio = card.querySelector('input[type="radio"]');
+  if (radio) radio.checked = true;
+  selectedAddressPin = "";
+  selectedAddressId = null;
+  lastVerifiedPincode = "";
+  pincodeVerified = false;
+  currentDeliveryZone = null;
+  currentDeliveryFee = 0;
+  freeDeliveryTarget = 999;
+  document.getElementById('delivery-fee').innerText = `\u20B90`;
+  document.getElementById('pin-note').style.display = 'none';
+  renderUI();
+  updateProceedState();
+  const selectedText = document.getElementById('selected-address-text');
+  if (selectedText) selectedText.innerText = "Use a different pincode";
+  const dropdown = document.getElementById('address-dropdown');
+  if (dropdown) dropdown.classList.remove('open');
+  }
+
+function renderUI() {
+  const proceedBtn = document.getElementById('proceed-btn');
+  const cartList = document.getElementById('cart-list');
+  const controls = document.getElementById('cart-selection-controls');
+  const suggestionSection = document.getElementById('suggestions-section');
+  syncSelectedKeys({ selectAllIfEmpty: false });
+  if(!cart.length && !saved.length) { cartList.innerHTML = `<p style="text-align:center;padding:40px;">Your cart is empty.</p>`; controls.innerHTML = ''; document.getElementById('summary-section').style.display = 'none'; if (suggestionSection) suggestionSection.style.display = 'none'; proceedBtn.style.display = 'none'; return; }
+  document.getElementById('summary-section').style.display = cart.length ? 'block' : 'none';
+  proceedBtn.style.display = cart.length ? 'block' : 'none';
+  const selectedCount = getSelectedCartItems().length;
+  controls.innerHTML = cart.length ? `<div class="cart-selection-bar">
+    <div class="cart-selection-top">
+      <button type="button" class="select-all-btn" onclick="toggleSelectAll()">${isAllCartSelected() ? 'Deselect all' : 'Select all'}</button>
+      <span class="selection-count">${selectedCount} of ${cart.length} selected</span>
+    </div>
+    ${selectedCount ? '<div class="cart-selection-actions"><button type="button" class="delete-selected-btn" onclick="deleteSelectedItems()">Delete selected</button></div>' : ''}
+  </div>` : '';
+  cartList.innerHTML = cart.map((p, i) => {
+  const qty = p.qty || 1;
+  const prodLink = `products.html?id=${p.id}`;
+  const itemKey = getCartItemKey(p, i);
+  const isSelected = selectedCartKeys.has(itemKey);
+  return `<div class="cart-item ${isSelected ? 'is-selected' : ''}">
+      <label class="cart-item-select" for="cart-item-select-${i}">
+        <input id="cart-item-select-${i}" name="cart-item-select" type="checkbox" ${isSelected ? 'checked' : ''} onchange="toggleItemSelection(${i}, this.checked)" aria-label="Select ${p.name}">
+      </label>
+      <a href="${prodLink}" class="cart-img-link">
+        <img class="cart-img" src="${p.images?.[0]||'logo.png'}" alt="${p.name}">
+      </a>
+      <div class="item-content">
+        <div class="name-price-flex">
+          <a href="${prodLink}" class="item-name">${p.name}</a>
+          <span class="item-price">\u20B9${(p.price * qty).toLocaleString()}</span>
+        </div>
+        <div class="action-row">
+          <div class="qty-ctrl"><button onclick="changeQty(${i},-1)">-</button><span>${qty}</span><button onclick="changeQty(${i},1)">+</button></div>
+          <span class="link-action" onclick="deleteItem(${i})">Delete</span>
+          <span class="link-action" onclick="saveItem(${i})">Save</span>
+          <span class="link-action" onclick="shareItem(${i})">Share</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  const subtotal = getSelectedCartItems().reduce((t, x) => t + (x.price * (x.qty || 1)), 0);
+  if (pincodeVerified && currentDeliveryZone) recalculateDeliveryFee();
+  document.getElementById('sub-total').innerText = `\u20B9${subtotal.toLocaleString()}`;
+  document.getElementById('grand-total').innerText = `\u20B9${(subtotal + currentDeliveryFee).toLocaleString()}`;
+  updateFreeDeliveryGoal(subtotal);
+  renderSuggestions();
+  renderSaved();
+  lucide.createIcons();
+  updateProceedState();
+  }
+
+  function getSuggestionContext() {
+  if (!cart.length) return null;
+  const cartText = cart.map(item => `${item.name || ''} ${item.category || ''} ${item.main_category || ''}`.toLowerCase());
+  const hasBabyDiaper = cartText.some(t => /(baby|infant|newborn|kids)/.test(t) && /(diaper|nappy|pants|pant)/.test(t));
+  const hasAdultDiaper = cartText.some(t => /(adult|unisex|senior|incontinence)/.test(t) && /(diaper|brief|pants|pant)/.test(t));
+  const hasSanitary = cartText.some(t => /(sanitary|pad|pads|menstrual|period)/.test(t));
+  const title = (hasBabyDiaper && hasAdultDiaper)
+    ? 'Recommended: Wipes & Essentials'
+    : (hasBabyDiaper ? 'Recommended: Baby Wipes & Care' : (hasAdultDiaper ? 'Recommended: Adult Care Essentials' : (hasSanitary ? 'Recommended: Hygiene Essentials' : 'Recommended Add-ons')));
+  const key = [
+    hasBabyDiaper ? 'baby' : '',
+    hasAdultDiaper ? 'adult' : '',
+    hasSanitary ? 'sanitary' : ''
+  ].filter(Boolean).join('|') || 'general';
+  return { key, title, hasBabyDiaper, hasAdultDiaper, hasSanitary };
+  }
+
+  function drawSuggestions(titleText, products) {
+  const section = document.getElementById('suggestions-section');
+  const list = document.getElementById('suggestions-list');
+  const title = document.getElementById('suggestions-title');
+  if (!section || !list || !title) return;
+  if (!products.length) {
+  section.style.display = 'none';
+  list.innerHTML = '';
+  return;
+  }
+
+  title.innerText = titleText || 'Recommended Products';
+  list.innerHTML = products.map((p, i) => {
+  const prodLink = `products.html?id=${p.id}`;
+  const price = Number(p.price || 0).toLocaleString('en-IN');
+  return `<div class="suggestion-card">
+      <a href="${prodLink}"><img class="suggestion-img" src="${p.images?.[0] || 'logo.png'}" alt="${p.name}"></a>
+      <div class="suggestion-info">
+        <a href="${prodLink}" class="suggestion-name">${p.name}</a>
+        <div class="suggestion-price">\u20B9${price}</div>
+      </div>
+      <button type="button" class="suggestion-add" onclick="addSuggestionByIndex(${i})">Add</button>
+    </div>`;
+  }).join('');
+  section.style.display = 'block';
+  }
+
+  function scoreSuggestion(p, ctx) {
+  const text = `${p.name || ''} ${p.category || ''} ${p.main_category || ''}`.toLowerCase();
+  let score = 0;
+  const isWipes = /(wet ?wipe|wipes?)/.test(text);
+  const isUnderpad = /(under ?pad|bed ?pad|bed protector|chux|sheet|protector)/.test(text);
+  const isCare = /(rash|cream|powder|lotion|ointment)/.test(text);
+  const isHygiene = /(glove|cleansing|disposal|disposer|bag|liner|panty liner|sanitary)/.test(text);
+  const isDiaper = /(diaper|brief|pants|pant|nappy)/.test(text);
+
+  if (isWipes) score += (ctx.hasBabyDiaper || ctx.hasAdultDiaper) ? 5 : 2;
+  if (ctx.hasBabyDiaper && /(baby|infant|newborn|kids)/.test(text)) score += 3;
+  if (ctx.hasAdultDiaper && /(adult|senior|unisex|incontinence)/.test(text)) score += 3;
+  if (isUnderpad) score += ctx.hasAdultDiaper ? 4 : 2;
+  if (isCare) score += ctx.hasBabyDiaper ? 3 : 1;
+  if (isHygiene) score += 2;
+  if (isDiaper) score -= 4;
+  return { score, isWipes, isUnderpad, isCare, isHygiene };
+  }
+
+  function getBucket(meta) {
+  if (meta.isWipes) return 'wipes';
+  if (meta.isUnderpad) return 'underpad';
+  if (meta.isCare) return 'care';
+  if (meta.isHygiene) return 'hygiene';
+  return 'other';
+  }
+
+  async function renderSuggestions() {
+  const ctx = getSuggestionContext();
+  const section = document.getElementById('suggestions-section');
+  const list = document.getElementById('suggestions-list');
+  if (!section || !list || !ctx || !cart.length) {
+  if (section) section.style.display = 'none';
+  if (list) list.innerHTML = '';
+  suggestionsState = { key: '', mode: '', items: [] };
+  return;
+  }
+
+  const cartIds = new Set(cart.map(item => String(item.id)));
+  const key = `${ctx.key}|${Array.from(cartIds).sort().join(',')}`;
+  if (suggestionsState.key === key && suggestionsState.items.length) {
+  drawSuggestions(ctx.title, suggestionsState.items);
+  return;
+  }
+
+  const reqId = ++suggestionReqId;
+  let query = supa.from('products').select('id,name,price,images,category,main_category').limit(60);
+  query = query.or('name.ilike.%wipe%,name.ilike.%wipes%,name.ilike.%wet wipe%,name.ilike.%underpad%,name.ilike.%under pad%,name.ilike.%bed pad%,name.ilike.%bed protector%,name.ilike.%chux%,name.ilike.%glove%,name.ilike.%cleansing%,name.ilike.%cream%,name.ilike.%rash%,name.ilike.%powder%,name.ilike.%lotion%,name.ilike.%liner%,name.ilike.%panty liner%,name.ilike.%sanitary%,name.ilike.%disposal%,name.ilike.%disposer%,category.ilike.%wipes%,category.ilike.%underpad%,category.ilike.%sanitary%,main_category.ilike.%wipes%,main_category.ilike.%underpad%,main_category.ilike.%sanitary%');
+
+  const { data } = await query;
+  if (reqId !== suggestionReqId) return;
+
+  const ranked = (data || [])
+  .filter(p => !cartIds.has(String(p.id)))
+  .map(p => {
+  const meta = scoreSuggestion(p, ctx);
+  return { ...p, _score: meta.score, _bucket: getBucket(meta) };
+  })
+  .filter(p => p._score > 0)
+  .sort((a, b) => b._score - a._score || Number(a.price || 0) - Number(b.price || 0));
+
+  const buckets = { wipes: [], underpad: [], care: [], hygiene: [], other: [] };
+  ranked.forEach((p) => { if (buckets[p._bucket]) buckets[p._bucket].push(p); else buckets.other.push(p); });
+
+  const picked = [];
+  const take = (bucket, count = 1) => {
+  while (count > 0 && buckets[bucket].length) {
+  picked.push(buckets[bucket].shift());
+  count -= 1;
+  }
+  };
+
+  if (ctx.hasBabyDiaper || ctx.hasAdultDiaper) take('wipes', 2);
+  if (ctx.hasAdultDiaper) take('underpad', 1);
+  if (ctx.hasBabyDiaper) take('care', 1);
+  if (ctx.hasSanitary) take('hygiene', 1);
+
+  const fillPool = ranked.filter(p => !picked.includes(p));
+  while (picked.length < 6 && fillPool.length) picked.push(fillPool.shift());
+
+  const products = picked.slice(0, 6).map(({ _score, _bucket, ...rest }) => rest);
+  suggestionsState = { key, mode: ctx.key, items: products };
+  drawSuggestions(ctx.title, products);
+  }
+
+function addSuggestionByIndex(idx) {
+  const item = suggestionsState.items[idx];
+  if (!item) return;
+  const existing = cart.find(p => String(p.id) === String(item.id));
+  if (existing) existing.qty = (existing.qty || 1) + 1;
+  else cart.push({ ...item, qty: 1 });
+  syncSelectedKeys({ selectAllIfEmpty: true });
+  localStorage.setItem('hc-cart', JSON.stringify(cart));
+  if (pincodeVerified && currentDeliveryZone) recalculateDeliveryFee();
+  renderUI();
+  }
+
+  async function changeQty(idx, delta) {
+  const newQty = (cart[idx].qty || 1) + delta;
+  if(newQty < 1) return;
+  const { data } = await supa.from('products').select('stock').eq('id', cart[idx].id).single();
+  if (newQty > (data.stock || 0)) return alert(`Limited stock available.`);
+  cart[idx].qty = newQty;
+  localStorage.setItem('hc-cart', JSON.stringify(cart));
+  if (pincodeVerified && currentDeliveryZone) recalculateDeliveryFee();
+  renderUI();
+  }
+
+  function toggleItemSelection(index, checked) {
+  const key = getCartItemKey(cart[index], index);
+  if (checked) selectedCartKeys.add(key);
+  else selectedCartKeys.delete(key);
+  persistSelectedKeys();
+  if (pincodeVerified && currentDeliveryZone) recalculateDeliveryFee();
+  renderUI();
+  }
+
+  function toggleSelectAll() {
+  if (isAllCartSelected()) selectedCartKeys.clear();
+  else cart.forEach((item, index) => selectedCartKeys.add(getCartItemKey(item, index)));
+  persistSelectedKeys();
+  if (pincodeVerified && currentDeliveryZone) recalculateDeliveryFee();
+  renderUI();
+  }
+
+  function deleteSelectedItems() {
+  const selected = getSelectedCartItems();
+  if (!selected.length) return;
+  if (!confirm(`Delete ${selected.length} selected item${selected.length > 1 ? 's' : ''} from cart?`)) return;
+  cart = cart.filter((item, index) => !selectedCartKeys.has(getCartItemKey(item, index)));
+  selectedCartKeys.clear();
+  updateStorage();
+  }
+
+  function updateStorage() {
+  syncSelectedKeys({ selectAllIfEmpty: false });
+  localStorage.setItem('hc-cart', JSON.stringify(cart));
+  localStorage.setItem('hc-saved', JSON.stringify(saved));
+  renderUI();
+  }
+  function deleteItem(i) { selectedCartKeys.delete(getCartItemKey(cart[i], i)); cart.splice(i, 1); updateStorage(); }
+  function saveItem(i) { selectedCartKeys.delete(getCartItemKey(cart[i], i)); saved.push(cart.splice(i, 1)[0]); updateStorage(); }
+  function moveToCart(i) { cart.push(saved.splice(i, 1)[0]); syncSelectedKeys({ selectAllIfEmpty: true }); updateStorage(); }
+  function deleteSaved(i) { saved.splice(i, 1); updateStorage(); }
+
+  function renderSaved() {
+  const list = document.getElementById('saved-list');
+  if(!saved.length) { document.getElementById('saved-section').style.display = 'none'; return; }
+  document.getElementById('saved-section').style.display = 'block';
+  list.innerHTML = saved.map((p, i) => {
+  const prodLink = `products.html?id=${p.id}`;
+  return `<div class="cart-item" style="opacity:0.8;">
+            <a href="${prodLink}" class="cart-img-link"><img class="cart-img" src="${p.images?.[0]||'logo.png'}" style="width:60px;height:60px;"></a>
+            <div class="item-content">
+                <a href="${prodLink}" class="item-name" style="font-size:0.85rem;">${p.name}</a>
+                <div class="action-row">
+                    <span class="link-action" onclick="moveToCart(${i})">Move to Cart</span>
+                    <span class="link-action" onclick="deleteSaved(${i})">Remove</span>
+                </div>
+            </div>
+        </div>`
+  }).join('');
+  }
+
+  async function shareItem(i) {
+  const item = cart[i];
+  if (!item) return;
+  const url = `products.html?id=${item.id}`;
+  const text = `Check this out: ${item.name} - \u20B9${Number(item.price).toLocaleString('en-IN')}`;
+  try {
+  if (navigator.share) {
+  await navigator.share({ title: item.name, text, url });
+  } else if (navigator.clipboard) {
+  await navigator.clipboard.writeText(`${text} ${url}`);
+  alert("Link copied!");
+  } else {
+  const temp = document.createElement('input');
+  temp.value = `${text} ${url}`;
+  document.body.appendChild(temp);
+  temp.select();
+  document.execCommand('copy');
+  document.body.removeChild(temp);
+  alert("Link copied!");
+  }
+  } catch (e) {
+  console.error("Share failed:", e);
+  }
+  }
+
+  document.getElementById('profile-btn').addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('profile-dropdown').classList.toggle('active'); });
+
+  document.getElementById('address-select')?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  const dropdown = document.getElementById('address-dropdown');
+  if (dropdown) dropdown.classList.toggle('open');
+  });
+
+  function setAnnouncementMessages(messages = []) {
+  const content = document.querySelector('.announcement-bar .marquee-content');
+  if (!content) return;
+  const finalMessages = (messages || []).filter(Boolean);
+  if (!finalMessages.length) return;
+  content.innerHTML = finalMessages.map((msg) => `<span class="marquee-text">${msg}</span>`).join('');
+  }
+
+  async function syncDeliveryAnnouncement() {
+  try {
+  const { data, error } = await supa
+  .from("app_settings")
+  .select("thirty_mins_delivery_enabled")
+  .eq("id", 1)
+  .maybeSingle();
+
+  if (error) throw error;
+  const isEnabled = data?.thirty_mins_delivery_enabled !== false;
+  isThirtyMinsDeliveryEnabled = isEnabled;
+  setAnnouncementMessages(
+  isEnabled
+  ? DELIVERY_ON_ANNOUNCEMENTS
+  : [DELIVERY_OFF_ANNOUNCEMENT, DELIVERY_OFF_ANNOUNCEMENT]
+  );
+  } catch (_err) {
+  isThirtyMinsDeliveryEnabled = true;
+  setAnnouncementMessages(DELIVERY_ON_ANNOUNCEMENTS);
+  }
+  refreshNearbyPincodeEtaText();
+  initAnnouncementMarquee();
+  }
+
+  function initAnnouncementMarquee() {
+  const bar = document.querySelector('.announcement-bar');
+  const track = document.querySelector('.marquee-track');
+  if (!bar || !track) return;
+  const content = track.querySelector('.marquee-content');
+  if (!content) return;
+
+  track.querySelectorAll('.marquee-content.clone').forEach((node) => node.remove());
+
+  const gapPx = parseFloat(getComputedStyle(track).gap || 0);
+  const barWidth = bar.offsetWidth || 0;
+  const contentWidth = content.scrollWidth || 0;
+  if (!barWidth || !contentWidth) return;
+
+  const neededCopies = Math.max(2, Math.ceil((barWidth * 2) / (contentWidth + gapPx)));
+  for (let i = 1; i < neededCopies; i += 1) {
+  const clone = content.cloneNode(true);
+  clone.classList.add('clone');
+  clone.setAttribute('aria-hidden', 'true');
+  track.appendChild(clone);
+  }
+
+  const distance = contentWidth + gapPx;
+  track.style.setProperty('--marquee-distance', `${distance}px`);
+  const durationSeconds = Math.max(15, distance / 40);
+  track.style.setProperty('--marquee-duration', `${durationSeconds}s`);
+  }
+
+  let marqueeResizeTimer = null;
+  window.addEventListener('resize', () => {
+  if (marqueeResizeTimer) window.clearTimeout(marqueeResizeTimer);
+  marqueeResizeTimer = window.setTimeout(() => {
+  initAnnouncementMarquee();
+  }, 150);
+  });
+
+  window.onload = () => { syncSelectedKeys({ selectAllIfEmpty: true }); renderUI(); checkUserSession(); syncDeliveryAnnouncement(); };
+  window.onclick = (e) => { if (!e.target.closest('.profile-section')) document.getElementById('profile-dropdown').classList.remove('active'); };
+  document.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('address-dropdown');
+  if (dropdown && !e.target.closest('#address-dropdown')) dropdown.classList.remove('open');
+  });
+  </script>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-section footer-block">
+        <h4>Policies</h4>
+        <nav class="footer-links" aria-label="Policies">
+          <a href="privacy-policy.html">Privacy Policy</a>
+          <a href="terms-and-conditions.html">Terms &amp; Conditions</a>
+          <a href="return-and-refund-policy.html">Return &amp; Refund Policy</a>          <a href="payment-policy.html">Payment Policy</a>
+        </nav>
+      </div>
+      <div class="footer-section footer-block">
+        <h4>Contact</h4>
+        <p class="footer-contact">Phone: <a href="tel:+919307760665">+91 9307760665</a></p>
+        <p class="footer-contact">WhatsApp: <a href="https://wa.me/919307760665" target="_blank" rel="noopener">Chat Support</a></p>
+        <p class="footer-contact">Email: <a href="mailto:hygienicsandcomfort@gmail.com">hygienicsandcomfort@gmail.com</a></p>
+        <p class="footer-contact">Location: Ambernath, Maharashtra</p>
+      </div>
+    </div>
+
+    <div class="footer-divider" role="presentation"></div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 Hygienic &amp; Comfort Co. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function initThemeFromSettings() {
+    const THEME_STORAGE_KEY = 'hc-theme';
+    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    const mediaQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+    const hasStoredTheme = storedTheme === 'dark' || storedTheme === 'light';
+    const applyTheme = (isDark) => document.body.classList.toggle('dark-theme', isDark);
+
+    applyTheme(hasStoredTheme ? storedTheme === 'dark' : !!(mediaQuery && mediaQuery.matches));
+
+    if (!hasStoredTheme && mediaQuery) {
+      if (typeof mediaQuery.addEventListener === 'function') {
+        mediaQuery.addEventListener('change', (e) => applyTheme(e.matches));
+      } else if (typeof mediaQuery.addListener === 'function') {
+        mediaQuery.addListener((e) => applyTheme(e.matches));
+      }
+    }
+  })();
+</script>
+</body>
+</html>

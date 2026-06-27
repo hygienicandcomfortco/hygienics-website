@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Products | Hygienic & Comfort Co. - Quality Baby & Adult Care</title>
+<meta name="description" content="Browse our catalog of premium hygiene products including Healvite baby diapers, adult diapers, and comfort care essentials. Shop for quality you can trust.">
+<link rel="canonical" href="https://hygienicandcomfortco.shop/products.html" />
+
+<link rel="icon" type="image/png" href="logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+:root {
+--primary: #2563eb;
+--soft-blue: #eef4ff;
+--dark: #1e293b;
+--grey: #64748b;
+--white: #ffffff;
+--radius: 12px;
+--bg: #f8fafc;
+--amazon-orange: #CC0C39;
+--shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; color: var(--dark); background: var(--bg); line-height: 1.4; overflow-x: hidden; }
+
+/* --- Fixed Professional Header --- */
+.main-header { 
+background: var(--white); 
+padding: 12px 5%; 
+border-bottom: 1px solid #f1f5f9; 
+position: sticky; 
+top: 0; 
+z-index: 1000; 
+box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+backdrop-filter: blur(10px);
+}
+
+.header-container {
+max-width: 1200px;
+margin: 0 auto;
+display: flex;
+flex-direction: column; 
+align-items: center;
+gap: 15px;
+}
+
+.brand-wrapper {
+display: flex;
+align-items: center;
+justify-content: space-between;
+width: 100%;
+}
+
+.logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+.header-logo { height: 40px; width: auto; display: block; flex-shrink: 0; }
+
+.brand-text { text-align: left; }
+.brand-text h1 { font-size: 1rem; font-weight: 800; color: var(--dark); margin: 0; line-height: 1.2; }
+.brand-text p { font-size: 0.65rem; color: var(--grey); font-weight: 600; margin: 0; display: none; }
+
+.nav-links { 
+display: flex; 
+gap: 15px; 
+align-items: center; 
+width: 100%;
+justify-content: center;
+border-top: 1px solid #f1f5f9;
+padding-top: 10px;
+flex-wrap: wrap;
+}
+.nav-links a { text-decoration: none; color: #475569; font-weight: 700; font-size: 0.85rem; transition: 0.2s; position: relative; white-space: nowrap; }
+.nav-links a:hover, .nav-links a.active { color: var(--primary); }
+.nav-links a.active::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 100%; height: 2px; background: var(--primary); border-radius: 2px; }
+
+/* --- Profile UI --- */
+.profile-section { position: relative; }
+.profile-btn { 
+background: var(--soft-blue); 
+color: var(--primary); 
+width: 42px; height: 42px; 
+border-radius: 50%; 
+display: flex; align-items: center; justify-content: center; 
+cursor: pointer; border: 2px solid transparent; 
+transition: 0.3s;
+}
+.profile-btn:hover { border-color: var(--primary); }
+
+.dropdown-menu {
+position: absolute;
+top: 55px; right: 0;
+background: white;
+width: 320px;
+border-radius: 20px;
+box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+border: 1px solid #f1f5f9;
+display: none;
+flex-direction: column;
+padding: 15px;
+z-index: 1001;
+}
+.dropdown-menu.active { display: flex !important; }
+
+.dropdown-header { margin-bottom: 12px; padding: 10px; border-bottom: 1px solid #f1f5f9; }
+.dropdown-header h4 { font-size: 1.1rem; font-weight: 800; color: var(--dark); margin: 0; }
+.dropdown-header p { font-size: 0.85rem; color: var(--grey); margin: 5px 0 0 0; }
+
+.dropdown-item {
+padding: 12px;
+text-decoration: none;
+color: var(--dark);
+border-radius: 12px;
+display: flex;
+align-items: center;
+gap: 15px;
+transition: 0.2s;
+cursor: pointer;
+}
+.dropdown-item:hover { background: var(--soft-blue); color: var(--primary); }
+.dropdown-item i { width: 18px; color: var(--primary); }
+.item-info b { font-size: 0.95rem; font-weight: 700; display: block; }
+.item-info span { font-size: 0.8rem; color: var(--grey); }
+.logout-btn-item { color: #ef4444 !important; }
+#auth-items {
+display: flex;
+flex-direction: column;
+gap: 6px;
+}
+#guest-items {
+display: flex;
+flex-direction: column;
+gap: 6px;
+}
+
+/* --- Desktop Layout Adjustments --- */
+@media (min-width: 768px) {
+.header-container { flex-direction: row; justify-content: space-between; padding: 5px 0; }
+.brand-wrapper { display: contents; }
+.logo-area { order: 1; }
+.brand-text h1 { font-size: 1.1rem; }
+.brand-text p { display: block; }
+.nav-links { 
+width: auto; 
+border-top: none; 
+padding-top: 0; 
+gap: 25px; 
+margin-left: auto;
+order: 2;
+}
+.profile-section { order: 3; margin-left: 12px; }
+.header-logo { height: 50px; }
+.nav-links a { font-size: 0.95rem; }
+}
+
+/* --- Category Filter Bar --- */
+.category-bar {
+max-width: 1200px;
+margin: 20px auto 0;
+padding: 0 4%;
+display: flex;
+gap: 10px;
+overflow-x: auto;
+scrollbar-width: none;
+}
+.category-bar::-webkit-scrollbar { display: none; }
+
+.cat-btn {
+padding: 10px 20px;
+background: white;
+border: 1.5px solid #e2e8f0;
+border-radius: 50px;
+white-space: nowrap;
+font-size: 0.85rem;
+font-weight: 700;
+color: var(--grey);
+cursor: pointer;
+transition: 0.2s;
+}
+.cat-btn.active {
+background: var(--primary);
+color: white;
+border-color: var(--primary);
+}
+
+/* --- Catalog Controls --- */
+.controls-container { max-width: 1200px; margin: 15px auto; padding: 0 4%; display: flex; gap: 10px; align-items: center; }
+.search-wrapper { position: relative; flex: 1; }
+.search-input { width: 100%; padding: 14px 14px 14px 45px; border-radius: 15px; border: 1.5px solid #e2e8f0; outline: none; font-size: 0.95rem; background: white; }
+.search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 20px; color: var(--grey); }
+.filter-trigger-btn { background: var(--white); border: 1.5px solid #e2e8f0; padding: 14px 20px; border-radius: 15px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--dark); transition: 0.2s; }
+
+/* --- Product Grid --- */
+.product-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 10px 4%; max-width: 1200px; margin: 0 auto 100px; }
+
+/* --- Pagination --- */
+.pagination-bar { max-width: 1200px; margin: 5px auto 80px; padding: 0 4%; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: center; }
+.page-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.page-numbers { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.page-btn, .page-num { background: white; border: 1.5px solid #e2e8f0; color: var(--dark); padding: 10px 14px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 0.85rem; transition: 0.2s; }
+.page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.page-num.active { background: var(--primary); color: white; border-color: var(--primary); }
+.page-ellipsis { padding: 0 6px; color: var(--grey); font-weight: 700; }
+.page-jump { display: flex; align-items: center; gap: 8px; }
+.page-jump label { font-size: 0.8rem; color: var(--grey); font-weight: 700; }
+.page-jump input { width: 70px; padding: 9px 10px; border-radius: 10px; border: 1.5px solid #e2e8f0; outline: none; font-weight: 700; }
+
+.product-card { 
+background: var(--white); 
+border-radius: 20px; 
+overflow: hidden; 
+border: 1px solid #f1f5f9; 
+display: flex; 
+flex-direction: column; 
+height: auto;
+min-height: 440px; 
+transition: 0.3s; 
+cursor: pointer; 
+position: relative; 
+}
+.product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+.product-card.out-of-stock { filter: grayscale(0.3); }
+.stock-warning { color: var(--amazon-orange); font-size: 0.7rem; font-weight: 800; margin-top: 4px; text-transform: uppercase; }
+
+.img-box { width: 100%; height: 220px; padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #fff; gap: 6px; overflow: hidden; }
+.img-box img { max-width: 100%; max-height: 100%; object-fit: contain; pointer-events: none; } 
+
+.card-carousel { position: relative; width: 100%; flex: 1 1 auto; min-height: 0; }
+.card-slide { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+.card-slide.active { opacity: 1; pointer-events: auto; }
+.card-slide img { max-width: 100%; max-height: 100%; object-fit: contain; pointer-events: none; }
+.card-dots { position: static; display: flex; gap: 6px; justify-content: center; align-items: center; height: 12px; }
+.card-dot { width: 7px; height: 7px; border-radius: 50%; border: none; background: rgba(0,0,0,0.2); cursor: pointer; padding: 0; }
+.card-dot.active { background: var(--primary); }
+
+
+.details { padding: 12px 15px; flex-grow: 1; display: flex; flex-direction: column; border-top: 1px solid #f8fafc; }
+.p-category { font-size: 0.65rem; text-transform: uppercase; font-weight: 800; color: var(--primary); margin-bottom: 3px; }
+.p-name { font-weight: 700; font-size: 0.85rem; margin-bottom: 8px; color: var(--dark); line-height: 1.3; display: -webkit-box; line-clamp: 2; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.6em; }
+.p-rating { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; min-height: 18px; }
+.p-rating-stars { display: inline-flex; gap: 1px; line-height: 1; }
+.p-rating-stars .star { color: #cbd5e1; font-size: 0.82rem; }
+.p-rating-stars .star.filled { color: #f59e0b; }
+.p-rating-meta { font-size: 0.75rem; color: #475569; font-weight: 700; }
+.p-rating.no-rating { font-size: 0.75rem; color: #94a3b8; font-weight: 700; }
+
+.p-discount-tag { color: var(--amazon-orange); font-size: 1.1rem; font-weight: 400; margin-right: 4px; }
+.p-main-price { font-size: 1.2rem; font-weight: 800; color: #0F1111; }
+.p-mrp-line { font-size: 0.75rem; color: #565959; margin-top: 2px; }
+.p-mrp-val { text-decoration: line-through; }
+.p-per-piece { font-size: 0.75rem; color: #565959; margin-top: 2px; font-weight: 500; }
+
+.price-row { margin-top: auto; padding: 0 15px 15px; }
+
+.add-to-cart-full-btn { 
+width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 12px; 
+cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; font-size: 0.85rem; transition: 0.2s; 
+box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+.add-to-cart-full-btn:hover { background: #1d4ed8; }
+.add-to-cart-full-btn:disabled { background: #cbd5e1; cursor: not-allowed; box-shadow: none; }
+
+/* --- App Generic UI --- */
+.filter-overlay {
+position: fixed;
+inset: 0;
+background: rgba(0,0,0,0.5);
+z-index: 2000;
+opacity: 0;
+visibility: hidden;
+pointer-events: none;
+transition: 0.3s;
+backdrop-filter: blur(4px);
+}
+
+.filter-overlay.show {
+opacity: 1;
+visibility: visible;
+pointer-events: auto;
+}
+
+.filter-drawer {
+position: fixed;
+right: -320px;
+top: 0;
+height: 100%;
+width: 320px;
+background: white;
+z-index: 2001;
+transition: 0.3s;
+padding: 30px;
+display: flex;
+flex-direction: column;
+pointer-events: none;
+}
+
+.filter-drawer.open {
+right: 0;
+pointer-events: auto;
+}
+
+.chip { padding: 8px 16px; border-radius: 10px; border: 1.5px solid #e2e8f0; font-size: 0.85rem; font-weight: 600; cursor: pointer; margin: 4px; display: inline-block; }
+.chip.selected { background: var(--primary); color: white; border-color: var(--primary); }
+
+.cart-badge { position: absolute; top: 0; right: 0; background: #ef4444; color: white; font-size: 0.75rem; min-width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid white; font-weight: 800; }
+.cart-icon-wrapper { position: fixed; bottom: 25px; right: 25px; background: var(--primary); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 900; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3); text-decoration: none; }
+
+#toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--dark); color: white; padding: 14px 28px; border-radius: 50px; font-weight: 600; font-size: 0.9rem; opacity: 0; visibility: hidden; transition: 0.3s; z-index: 3000; }
+#toast.show { opacity: 1; visibility: visible; }
+.hidden { display: none !important; }
+
+
+@media (max-width: 640px) {
+.product-list { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 8px 4%; margin-bottom: 90px; }
+.product-card { border-radius: 16px; min-height: 360px; }
+.img-box { height: 180px; padding: 10px; }
+.details { padding: 10px 12px; }
+.p-name { font-size: 0.8rem; height: 2.4em; }
+.p-main-price { font-size: 1.05rem; }
+.price-row { padding: 0 12px 12px; }
+.add-to-cart-full-btn { padding: 10px; font-size: 0.8rem; border-radius: 10px; }
+}
+
+@media (min-width: 769px) {
+.product-list { grid-template-columns: repeat(3, 1fr); }
+.product-card { height: auto; min-height: 420px; }
+}
+@media (min-width: 1024px) { 
+.product-list { grid-template-columns: repeat(4, 1fr); } 
+}
+
+
+    /* --- Footer (Unified) --- */
+    .site-footer {
+      margin-top: 40px;
+      padding: 44px 5% 24px;
+      background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+      border-top: 1px solid #dbe7ff;
+    }
+    .site-footer .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .site-footer .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      align-items: start;
+      text-align: left;
+    }
+    .site-footer .footer-section h4 {
+      font-size: 0.95rem;
+      color: var(--dark);
+      margin: 0 0 10px 0;
+      font-weight: 800;
+    }
+    .site-footer .footer-links { display: grid; gap: 8px; }
+    .site-footer .footer-links a {
+      color: #2563eb;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+    .site-footer .footer-links a:hover {
+      color: #1d4ed8;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .site-footer .footer-block {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 18px 18px;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
+    }
+    .site-footer .footer-contact {
+      margin: 0 0 8px 0;
+      color: #64748b;
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+    .site-footer .footer-contact a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .site-footer .footer-contact a:hover {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .site-footer .footer-divider {
+      height: 1px;
+      background: #dbe7ff;
+      margin: 28px 0 14px;
+    }
+    .site-footer .footer-bottom {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      text-align: center;
+      color: #64748b;
+      font-size: 0.82rem;
+    }
+    .site-footer .footer-bottom a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .site-footer .footer-bottom a:hover {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    @media (min-width: 768px) {
+      .site-footer .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        align-items: start;
+        text-align: left;
+      }
+      .site-footer .footer-bottom {
+        flex-direction: row;
+        justify-content: center;
+        text-align: center;
+        gap: 18px;
+      }
+    }
+  
+    /* --- Dark Theme --- */
+    body.dark-theme {
+      background: #0b1220 !important;
+      color: #e2e8f0 !important;
+    }
+    body.dark-theme .main-header {
+      background: rgba(8, 14, 27, 0.92) !important;
+      border-bottom-color: #1e293b !important;
+    }
+    body.dark-theme .nav-links { border-top-color: #1e293b !important; }
+    body.dark-theme .nav-links a { color: #cbd5e1 !important; }
+    body.dark-theme .nav-links a:hover,
+    body.dark-theme .nav-links a.active { color: #60a5fa !important; }
+    body.dark-theme .profile-btn { background: #15243c !important; color: #60a5fa !important; }
+    body.dark-theme .dropdown-menu {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+      box-shadow: 0 15px 40px rgba(2, 6, 23, 0.55) !important;
+    }
+    body.dark-theme .dropdown-header { border-bottom-color: #1e293b !important; }
+    body.dark-theme .dropdown-item { color: #e2e8f0 !important; }
+    body.dark-theme .dropdown-item:hover { background: #15243c !important; color: #60a5fa !important; }
+    body.dark-theme .dropdown-item i,
+    body.dark-theme .item-info span { color: #94a3b8 !important; }
+    body.dark-theme .item-info b { color: #e2e8f0 !important; }
+    body.dark-theme .site-footer {
+      background: linear-gradient(180deg, #0f172a 0%, #0b1220 100%) !important;
+      border-top-color: #1f2a44 !important;
+    }
+    body.dark-theme .site-footer .footer-block {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+      box-shadow: 0 10px 24px rgba(2, 6, 23, 0.38) !important;
+    }
+    body.dark-theme .site-footer .footer-contact,
+    body.dark-theme .site-footer .footer-bottom { color: #94a3b8 !important; }
+    body.dark-theme .site-footer .footer-divider { background: #1f2a44 !important; }
+    body.dark-theme .card,
+    body.dark-theme .about-card,
+    body.dark-theme .form-card,
+    body.dark-theme .checkout-container,
+    body.dark-theme .order-summary,
+    body.dark-theme .payment-method,
+    body.dark-theme .address-card,
+    body.dark-theme .product-card,
+    body.dark-theme .order-card,
+    body.dark-theme .info-card {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+      color: #e2e8f0 !important;
+    }
+    body.dark-theme input,
+    body.dark-theme textarea,
+    body.dark-theme select {
+      background: #111b2e !important;
+      color: #e2e8f0 !important;
+      border-color: #2a3a57 !important;
+    }
+    body.dark-theme .search-section-bar,
+    body.dark-theme .announcement-bar,
+    body.dark-theme .form-section,
+    body.dark-theme .reviews-section,
+    body.dark-theme .trust-bar {
+      background: #0f172a !important;
+      border-color: #1e293b !important;
+    }
+    body.dark-theme .suggestion-box {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+    }
+    body.dark-theme .suggestion-item:hover { background: #15243c !important; }
+  
+    /* --- Dark Mode Readability Fix --- */
+    body.dark-theme .menu-item {
+      color: #dbe7ff !important;
+    }
+    body.dark-theme .menu-item i {
+      color: #9fb3cc !important;
+    }
+    body.dark-theme .menu-item:hover,
+    body.dark-theme .menu-item.active {
+      background: #15243c !important;
+      color: #60a5fa !important;
+    }
+    body.dark-theme .sidebar,
+    body.dark-theme .mobile-sidebar,
+    body.dark-theme .user-profile-brief,
+    body.dark-theme .summary-card,
+    body.dark-theme .cart-main,
+    body.dark-theme .address-section,
+    body.dark-theme .pincode-section {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+    }
+    body.dark-theme h1,
+    body.dark-theme h2,
+    body.dark-theme h3,
+    body.dark-theme h4,
+    body.dark-theme h5,
+    body.dark-theme h6,
+    body.dark-theme .page-title,
+    body.dark-theme .card-head,
+    body.dark-theme .meta-item p,
+    body.dark-theme .meta-value,
+    body.dark-theme .items-text,
+    body.dark-theme .item-name,
+    body.dark-theme .reviewer-name,
+    body.dark-theme .p-name,
+    body.dark-theme .p-main-price,
+    body.dark-theme .sum-total {
+      color: #eaf2ff !important;
+    }
+    body.dark-theme .dropdown-header p,
+    body.dark-theme .item-info span,
+    body.dark-theme .user-profile-brief p,
+    body.dark-theme .meta-item label,
+    body.dark-theme .meta-label,
+    body.dark-theme .address-info,
+    body.dark-theme .selection-count,
+    body.dark-theme .item-qty,
+    body.dark-theme .item-unit,
+    body.dark-theme .p-mrp-line,
+    body.dark-theme .review-date,
+    body.dark-theme p[style*="color: var(--grey)"] {
+      color: #cbd5e1 !important;
+    }
+  
+    /* --- Dark Theme Contrast Fixes --- */
+    body.dark-theme .nav-header {
+      background: rgba(8, 14, 27, 0.92) !important;
+      border-bottom-color: #1e293b !important;
+    }
+    body.dark-theme .contact-card,
+    body.dark-theme .form-panel,
+    body.dark-theme .order-header,
+    body.dark-theme .item-row,
+    body.dark-theme .item-thumb,
+    body.dark-theme .item-img,
+    body.dark-theme .detail-line,
+    body.dark-theme .status-card,
+    body.dark-theme .topbar-wrap,
+    body.dark-theme .icon-btn,
+    body.dark-theme .sticky-actions,
+    body.dark-theme .img-box {
+      background: #111b2e !important;
+      border-color: #2a3a57 !important;
+    }
+    body.dark-theme .map-box,
+    body.dark-theme iframe {
+      border-color: #2a3a57 !important;
+    }
+    body.dark-theme .contact-item h4,
+    body.dark-theme .contact-item p,
+    body.dark-theme .contact-item a,
+    body.dark-theme .subtitle,
+    body.dark-theme .rich-description,
+    body.dark-theme .review-text,
+    body.dark-theme .detail-line .k,
+    body.dark-theme .detail-line .v,
+    body.dark-theme .bill-row,
+    body.dark-theme .order-headline p,
+    body.dark-theme .meta-item label,
+    body.dark-theme .meta-label,
+    body.dark-theme [style*="color:#565959"] {
+      color: #cbd5e1 !important;
+    }
+    body.dark-theme .bill-total strong,
+    body.dark-theme .price-now,
+    body.dark-theme .status-row h2 {
+      color: #eaf2ff !important;
+    }
+    body.dark-theme .invoice-btn,
+    body.dark-theme .summary-btn,
+    body.dark-theme .link-btn,
+    body.dark-theme .icon-btn {
+      background: #15243c !important;
+      color: #93c5fd !important;
+      border-color: #2a3a57 !important;
+    }
+    body.dark-theme .icon-btn i,
+    body.dark-theme .invoice-btn i,
+    body.dark-theme .summary-btn i {
+      color: #93c5fd !important;
+    }
+    body.dark-theme .sticky-actions {
+      background: linear-gradient(to top, rgba(11, 18, 32, 0.98), rgba(11, 18, 32, 0.9)) !important;
+      border-top-color: #1f2a44 !important;
+    }
+    body.dark-theme .filter-overlay {
+      background: rgba(2, 6, 23, 0.72) !important;
+    }
+    body.dark-theme .filter-drawer {
+      background: #0f1a2e !important;
+      border-left: 1px solid #1f2a44 !important;
+    }
+    body.dark-theme #filter-drawer h3,
+    body.dark-theme #filter-drawer h4,
+    body.dark-theme #filter-drawer i[data-lucide="x"] {
+      color: #eaf2ff !important;
+    }
+    body.dark-theme .chip {
+      background: #111b2e !important;
+      border-color: #2a3a57 !important;
+      color: #cbd5e1 !important;
+    }
+    body.dark-theme .chip:hover {
+      background: #15243c !important;
+      color: #dbe7ff !important;
+    }
+    body.dark-theme .chip.selected {
+      background: #2563eb !important;
+      border-color: #2563eb !important;
+      color: #ffffff !important;
+    }
+    body.dark-theme .apply-btn {
+      background: #2563eb !important;
+      color: #ffffff !important;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.35) !important;
+    }
+    body.dark-theme .status-icon.status-new { background: #1f2a44 !important; color: #cbd5e1 !important; }
+    body.dark-theme .status-icon.status-packed { background: #3b2f12 !important; color: #fcd34d !important; }
+    body.dark-theme .status-icon.status-shipped { background: #102a4c !important; color: #93c5fd !important; }
+    body.dark-theme .status-icon.status-delivered { background: #123527 !important; color: #86efac !important; }
+  
+    /* --- Dark Theme Inline Color Guard --- */
+    body.dark-theme [style*="color: #475569"],
+    body.dark-theme [style*="color:#475569"],
+    body.dark-theme [style*="color: #565959"],
+    body.dark-theme [style*="color:#565959"],
+    body.dark-theme [style*="color: #334155"],
+    body.dark-theme [style*="color:#334155"],
+    body.dark-theme [style*="color: #64748b"],
+    body.dark-theme [style*="color:#64748b"] {
+      color: #cbd5e1 !important;
+    }
+    body.dark-theme [style*="color: #1e293b"],
+    body.dark-theme [style*="color:#1e293b"],
+    body.dark-theme [style*="color: #0f172a"],
+    body.dark-theme [style*="color:#0f172a"] {
+      color: #eaf2ff !important;
+    }
+  </style>
+</head>
+<body>
+
+<header class="main-header" id="main-header-nav">
+<div class="header-container">
+<div class="brand-wrapper">
+<a href="index.html" class="logo-area">
+<img src="logo.png" alt="Logo" class="header-logo">
+<div class="brand-text">
+<h1>Hygienic & Comfort Co.</h1>
+<p>Care, Comfort & Hygiene for Every Age</p>
+</div>
+</a>
+
+<div class="profile-section">
+<div class="profile-btn" id="profile-btn">
+<i data-lucide="user"></i>
+</div>
+
+<div class="dropdown-menu" id="profile-dropdown">
+<div class="dropdown-header">
+              <h4 id="user-display-name">Guest User</h4>
+<p id="user-display-sub">Manage your account</p>
+</div>
+<div id="guest-items">
+<a href="login.html" class="dropdown-item">
+<i data-lucide="log-in"></i>
+<div class="item-info"><b>Sign In</b><span>Access orders</span></div>
+</a>
+<a href="settings.html" class="dropdown-item">
+<i data-lucide="settings"></i>
+<div class="item-info"><b>Settings</b><span>Theme preferences</span></div>
+</a>
+</div>
+<div id="auth-items" style="display:none">
+<a href="profile.html" class="dropdown-item">
+<i data-lucide="user-check"></i>
+<div class="item-info"><b>My Profile</b><span>Settings</span></div>
+</a>
+<a href="orders.html" class="dropdown-item">
+<i data-lucide="package"></i>
+<div class="item-info"><b>My Orders</b><span>Purchase history</span></div>
+</a>
+            <a href="settings.html" class="dropdown-item">
+              <i data-lucide="settings"></i>
+              <div class="item-info"><b>Settings</b><span>Theme preferences</span></div>
+            </a>
+<div class="dropdown-item logout-btn-item" onclick="handleLogout()" style="cursor:pointer">
+<i data-lucide="log-out"></i>
+<div class="item-info"><b>Logout</b><span>End session</span></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<nav class="nav-links">
+<a href="index.html">Home</a>
+<a href="products.html" class="active">Products</a>
+<a href="about.html">About</a>
+<a href="contact.html">Contact</a>
+</nav>
+</div>
+</header>
+
+<main id="catalog-section">
+<div class="category-bar" id="category-bar-list"></div>
+
+<div class="controls-container">
+<div class="search-wrapper">
+<i data-lucide="search" class="search-icon"></i>
+<input type="text" id="search-input" class="search-input" placeholder="Search brands or products..." oninput="handleSearch()">
+</div>
+<button class="filter-trigger-btn" onclick="toggleFilter(true)">
+<i data-lucide="sliders-horizontal"></i>
+<span>Filters</span>
+</button>
+</div>
+<div id="product-list" class="product-list"></div>
+<div class="pagination-bar" id="pagination-bar">
+<div class="page-controls">
+<button class="page-btn" id="prev-page" onclick="changePage(-1)">Prev</button>
+<div class="page-numbers" id="page-numbers"></div>
+<button class="page-btn" id="next-page" onclick="changePage(1)">Next</button>
+</div>
+<div class="page-jump">
+<label for="page-input">Page</label>
+<input type="number" id="page-input" min="1" value="1" onkeydown="handlePageInput(event)">
+<button class="page-btn" onclick="goToPageFromInput()">Go</button>
+</div>
+</div>
+</main>
+
+<div class="filter-overlay" id="filter-overlay" onclick="toggleFilter(false)"></div>
+<div class="filter-drawer" id="filter-drawer">
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
+<h3 style="font-weight:800">Filters</h3>
+<i data-lucide="x" style="cursor:pointer" onclick="toggleFilter(false)"></i>
+</div>
+<div class="filter-section">
+<h4 style="font-size:0.8rem; text-transform:uppercase; color:var(--grey); margin-bottom:12px;">Brands</h4>
+<div id="brand-filters" class="filter-options"></div>
+</div>
+<div class="filter-section" style="margin-top:20px">
+<h4 style="font-size:0.8rem; text-transform:uppercase; color:var(--grey); margin-bottom:12px;">Sizes</h4>
+<div id="size-filters" class="filter-options">
+<div class="chip" onclick="selectSize('New Born')">New Born</div>
+<div class="chip" onclick="selectSize('Small')">Small</div>
+<div class="chip" onclick="selectSize('Medium')">Medium</div>
+<div class="chip" onclick="selectSize('Large')">Large</div>
+<div class="chip" onclick="selectSize('XL')">XL</div>
+<div class="chip" onclick="selectSize('XXL')">XXL</div>
+</div>
+</div>
+<button class="apply-btn" onclick="applyFilters()" style="margin-top:auto; background:var(--primary); color:white; padding:16px; border-radius:12px; border:none; font-weight:800; cursor:pointer;">Show Results</button>
+</div>
+
+<div id="toast">Added to cart!</div>
+
+<a href="cart.html" class="cart-icon-wrapper">
+<i data-lucide="shopping-basket"></i>
+<span class="cart-badge" id="cart-badge-count">0</span>
+</a>
+
+<script>
+const SUPABASE_URL = "https://uhkheprfbxxwuojswyht.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es";
+const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+async function blockAdminFromCustomerSite() {
+const { data: { user } } = await _supabase.auth.getUser();
+if (!user) return null;
+
+const { data: profile, error: profileError } = await _supabase
+.from('profiles')
+.select('role')
+.eq('id', user.id)
+.maybeSingle();
+
+if (profileError && profileError.code !== 'PGRST116') {
+console.warn("Role lookup failed:", profileError);
+}
+
+let role = (profile?.role || "").toLowerCase();
+if (!role) {
+const { data: userRole } = await _supabase
+.from('user_roles')
+.select('role')
+.eq('id', user.id)
+.maybeSingle();
+role = (userRole?.role || "").toLowerCase();
+}
+
+if (role === 'admin' || role === 'staff') {
+await _supabase.auth.signOut();
+alert("Admin accounts must login from Admin Panel.");
+window.location.href = "login.html";
+throw new Error("Admin blocked from customer site");
+}
+
+return profile || null;
+}
+
+(async () => {
+await blockAdminFromCustomerSite();
+})();
+
+let allProducts = [];
+let cart = JSON.parse(localStorage.getItem('hc-cart')) || [];
+let activeBrand = 'All';
+let activeSize = 'All';
+let activeCategory = 'All';
+let currentUser = null;
+let currentPage = 1;
+let pageSize = 10;
+let searchTerm = '';
+let lastTotalPages = 1;
+let productReviewMap = {};
+
+function setPageSize() {
+pageSize = window.innerWidth >= 1024 ? 12 : 10;
+}
+
+function handleResize() {
+const prev = pageSize;
+setPageSize();
+if (prev != pageSize) {
+currentPage = 1;
+updateCatalog();
+}
+}
+
+
+/* --- AUTH LOGIC --- */
+async function checkUserSession() {
+const { data: { user } } = await _supabase.auth.getUser();
+currentUser = user;
+const guestItems = document.getElementById('guest-items');
+const authItems = document.getElementById('auth-items');
+const userDisplay = document.getElementById('user-display-name');
+const userSub = document.getElementById('user-display-sub');
+
+if (user) {
+let latestName = "";
+try {
+const { data: profile } = await _supabase
+  .from('customers')
+  .select('customer_name')
+  .eq('user_id', user.id)
+  .maybeSingle();
+latestName = (profile?.customer_name || "").toString().trim();
+} catch (e) {
+console.warn("Could not fetch latest profile name:", e);
+}
+
+const metaName = (user.user_metadata?.full_name || user.user_metadata?.name || "").toString().trim();
+const fallbackName = (user.email ? user.email.split('@')[0] : (user.phone || "User"));
+const displayName = latestName || metaName || fallbackName || "User";
+
+guestItems.style.display = 'none';
+authItems.style.display = 'flex';
+userDisplay.innerText = displayName;
+userSub.innerText = user.email || user.phone || "User Account";
+} else {
+guestItems.style.display = 'flex';
+authItems.style.display = 'none';
+userDisplay.innerText = "Guest User";
+userSub.innerText = "Manage your account";
+}
+lucide.createIcons();
+setupCardCarousels();
+}
+
+// Handle Profile Dropdown Toggle
+document.getElementById('profile-btn').addEventListener('click', (e) => {
+e.stopPropagation();
+document.getElementById('profile-dropdown').classList.toggle('active');
+});
+
+async function handleLogout() {
+    if (!confirm('Are you sure you want to log out?')) return;
+await _supabase.auth.signOut();
+localStorage.removeItem('checkout-item');
+window.location.reload();
+}
+
+/* --- CATALOG LOGIC --- */
+function normalizeImageUrl(rawUrl) {
+const url = (typeof rawUrl === 'string' ? rawUrl : String(rawUrl || "")).trim();
+if (!url) return "";
+
+// Google Drive share links -> direct image links
+// Examples:
+// https://drive.google.com/file/d/FILE_ID/view?usp=sharing
+// https://drive.google.com/open?id=FILE_ID
+// https://drive.google.com/uc?id=FILE_ID
+const idMatch =
+url.match(/\/file\/d\/([^/]+)/) ||
+url.match(/[?&]id=([^&]+)/);
+if (idMatch && idMatch[1]) {
+// Use thumbnail endpoint to avoid hotlink blocks on some Drive files
+return `https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=w800`;
+}
+
+return url;
+}
+
+async function init() {
+setPageSize();
+window.addEventListener('resize', handleResize);
+updateCartBadge();
+await checkUserSession();
+const { data, error } = await _supabase.from("products").select("*").order('name');
+if (!error) {
+allProducts = data.map(p => ({
+...p,
+images: (() => {
+const raw = Array.isArray(p.images) ? p.images : (typeof p.images === 'string' ? [p.images] : []);
+return raw.map(img => normalizeImageUrl(img)).filter(Boolean);
+})()
+}));
+try {
+localStorage.setItem('hc-products-cache', JSON.stringify(allProducts));
+} catch (_) {}
+await loadReviewSummary();
+
+const urlParams = new URLSearchParams(window.location.search);
+const productId = urlParams.get('id');
+const brandParam = urlParams.get('brand');
+const categoryParam = urlParams.get('category');
+if (productId) {
+window.location.href = `product-details.html?id=${encodeURIComponent(productId)}`;
+return;
+}
+
+generateBrandChips();
+generateMainCategoryButtons();
+applyCategoryFromUrl(categoryParam);
+if (brandParam) {
+searchTerm = brandParam;
+const input = document.getElementById('search-input');
+if (input) input.value = brandParam;
+}
+updateCatalog();
+}
+lucide.createIcons();
+setupCardCarousels();
+}
+
+function renderStars(rating) {
+const safeRating = Math.max(0, Math.min(5, Math.round(Number(rating) || 0)));
+let html = '';
+for (let i = 1; i <= 5; i++) {
+html += `<span class="star ${i <= safeRating ? 'filled' : ''}">&#9733;</span>`;
+}
+return html;
+}
+
+function getProductReviewInfo(productId) {
+return productReviewMap[String(productId)] || { avg: 0, count: 0 };
+}
+
+async function loadReviewSummary() {
+const { data, error } = await _supabase
+.from('product_reviews')
+.select('product_id,rating');
+
+if (error) {
+console.warn("Review summary load failed:", error);
+productReviewMap = {};
+return;
+}
+
+const aggregate = {};
+(data || []).forEach((row) => {
+const key = String(row.product_id || '');
+const rating = Number(row.rating) || 0;
+if (!key || rating <= 0) return;
+if (!aggregate[key]) aggregate[key] = { sum: 0, count: 0 };
+aggregate[key].sum += rating;
+aggregate[key].count += 1;
+});
+
+productReviewMap = {};
+Object.keys(aggregate).forEach((k) => {
+productReviewMap[k] = {
+avg: aggregate[k].sum / aggregate[k].count,
+count: aggregate[k].count
+};
+});
+}
+
+// ?? NEW CATEGORY FILTER LOGIC
+function filterByCategory(cat, btn) {
+activeCategory = cat;
+currentPage = 1;
+document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+btn.classList.add('active');
+updateCatalog();
+}
+
+function applyCategoryFromUrl(categoryName) {
+if (!categoryName) return;
+const buttons = Array.from(document.querySelectorAll('#category-bar-list .cat-btn'));
+const match = buttons.find(btn => btn.innerText.trim().toLowerCase() === categoryName.trim().toLowerCase());
+if (match) filterByCategory(match.innerText.trim(), match);
+}
+
+
+
+function toggleFilter(show) {
+const overlay = document.getElementById('filter-overlay');
+const drawer = document.getElementById('filter-drawer');
+if(show) {
+overlay.style.display = 'flex';
+setTimeout(() => { overlay.classList.add('show'); drawer.classList.add('open'); }, 10);
+} else {
+overlay.classList.remove('show'); drawer.classList.remove('open');
+setTimeout(() => overlay.style.display = 'none', 300);
+}
+}
+
+function generateMainCategoryButtons() {
+const mainCats = [...new Set(allProducts.map(p => p.main_category).filter(Boolean))];
+const bar = document.getElementById('category-bar-list');
+if (!bar) return;
+
+const allBtn = `<button class="cat-btn active" onclick="filterByCategory('All', this)">All Products</button>`;
+const catBtns = mainCats.map(cat => (
+`<button class="cat-btn" onclick="filterByCategory('${cat}', this)">${cat}</button>`
+)).join('');
+
+bar.innerHTML = allBtn + catBtns;
+}
+
+function generateBrandChips() {
+const container = document.getElementById('brand-filters');
+const brands = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
+container.innerHTML = `<div class="chip ${activeBrand === 'All' ? 'selected' : ''}" onclick="selectBrand('All')">All</div>`;
+brands.forEach(brand => {
+container.innerHTML += `<div class="chip ${activeBrand === brand ? 'selected' : ''}" onclick="selectBrand('${brand}')">${brand}</div>`;
+});
+}
+
+function selectBrand(brand) { activeBrand = brand; generateBrandChips(); currentPage = 1; }
+
+function selectSize(size) {
+const chips = document.querySelectorAll('#size-filters .chip');
+chips.forEach(c => {
+if(c.innerText === size) {
+c.classList.toggle('selected');
+activeSize = c.classList.contains('selected') ? size : 'All';
+} else { c.classList.remove('selected'); }
+});
+currentPage = 1;
+}
+
+function applyFilters() {
+updateCatalog();
+toggleFilter(false);
+}
+
+
+function getFilteredProducts() {
+let filtered = allProducts;
+if (activeCategory !== 'All') filtered = filtered.filter(p => p.main_category === activeCategory);
+if (activeBrand !== 'All') filtered = filtered.filter(p => p.category === activeBrand);
+if (activeSize !== 'All') filtered = filtered.filter(p => (p.name || '').toLowerCase().includes(activeSize.toLowerCase()));
+if (searchTerm) {
+const term = searchTerm.toLowerCase();
+filtered = filtered.filter(p => (p.name || '').toLowerCase().includes(term) || (p.category || '').toLowerCase().includes(term));
+}
+return filtered;
+}
+
+function updateCatalog() {
+const list = getFilteredProducts();
+renderPaged(list);
+}
+
+function renderPaged(list) {
+const totalPages = Math.max(1, Math.ceil(list.length / pageSize));
+if (currentPage > totalPages) currentPage = totalPages;
+if (currentPage < 1) currentPage = 1;
+const start = (currentPage - 1) * pageSize;
+const pageItems = list.slice(start, start + pageSize);
+renderGrid(pageItems);
+renderPagination(list.length, totalPages);
+}
+
+function renderPagination(totalItems, totalPages) {
+lastTotalPages = totalPages;
+const prevBtn = document.getElementById('prev-page');
+const nextBtn = document.getElementById('next-page');
+const numbers = document.getElementById('page-numbers');
+const input = document.getElementById('page-input');
+if (prevBtn) prevBtn.disabled = currentPage <= 1;
+if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
+if (input) {
+input.max = totalPages;
+input.value = currentPage;
+}
+
+const pages = buildPageNumbers(totalPages);
+if (numbers) {
+numbers.innerHTML = pages.map(p => {
+if (p === '...') return `<span class="page-ellipsis">...</span>`;
+return `<button class="page-num ${p === currentPage ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
+}).join('');
+}
+}
+
+function buildPageNumbers(totalPages) {
+const pages = [];
+if (totalPages <= 7) {
+for (let i = 1; i <= totalPages; i++) pages.push(i);
+return pages;
+}
+pages.push(1);
+const start = Math.max(2, currentPage - 2);
+const end = Math.min(totalPages - 1, currentPage + 2);
+if (start > 2) pages.push('...');
+for (let i = start; i <= end; i++) pages.push(i);
+if (end < totalPages - 1) pages.push('...');
+pages.push(totalPages);
+return pages;
+}
+
+function changePage(delta) {
+currentPage += delta;
+updateCatalog();
+window.scrollTo(0, 0);
+}
+
+function goToPage(page) {
+currentPage = page;
+updateCatalog();
+window.scrollTo(0, 0);
+}
+
+function handlePageInput(e) {
+if (e.key === 'Enter') goToPageFromInput();
+}
+
+function goToPageFromInput() {
+const input = document.getElementById('page-input');
+if (!input) return;
+let val = parseInt(input.value, 10);
+if (Number.isNaN(val)) return;
+if (val < 1) val = 1;
+if (val > lastTotalPages) val = lastTotalPages;
+currentPage = val;
+updateCatalog();
+window.scrollTo(0, 0);
+}
+
+
+
+function markNoOpen(card) {
+card.dataset.noOpen = '1';
+setTimeout(() => { delete card.dataset.noOpen; }, 200);
+}
+
+function setupCardCarousels() {
+const cards = document.querySelectorAll('.product-card');
+cards.forEach(card => {
+const box = card.querySelector('.img-box[data-card-carousel="1"]');
+const track = card.querySelector('.card-carousel');
+if (!box || !track) return;
+const slides = track.querySelectorAll('.card-slide');
+if (slides[0]) slides[0].classList.add('active');
+let index = 0;
+let startX = 0;
+let moved = false;
+
+const dots = card.querySelectorAll('.card-dot');
+const update = () => {
+slides.forEach((s, i) => s.classList.toggle('active', i === index));
+if (dots.length) {
+dots.forEach(d => d.classList.remove('active'));
+if (dots[index]) dots[index].classList.add('active');
+}
+};
+
+const setIndex = (i) => {
+index = (i + slides.length) % slides.length;
+update();
+};
+
+update();
+if (slides.length <= 1) {
+return;
+}
+if (dots.length) {
+dots.forEach(d => {
+d.addEventListener('click', (e) => {
+e.preventDefault();
+e.stopPropagation();
+markNoOpen(card);
+const i = parseInt(d.getAttribute('data-dot'), 10);
+if (!Number.isNaN(i)) setIndex(i);
+});
+});
+}
+
+box.addEventListener('touchstart', (e) => {
+startX = e.touches[0].clientX;
+moved = false;
+markNoOpen(card);
+}, { passive: true });
+
+box.addEventListener('touchmove', (e) => {
+const dx = e.touches[0].clientX - startX;
+if (Math.abs(dx) > 10) moved = true;
+}, { passive: true });
+
+box.addEventListener('touchend', (e) => {
+const dx = (e.changedTouches[0].clientX - startX);
+if (Math.abs(dx) > 40) {
+setIndex(index + (dx < 0 ? 1 : -1));
+}
+if (moved) {
+markNoOpen(card);
+e.stopPropagation();
+}
+});
+});
+}
+
+function renderGrid(list) {
+const container = document.getElementById("product-list");
+container.innerHTML = list.map((p) => {
+const stockCount = parseInt(p.stock) || 0;
+const isOut = stockCount <= 0;
+const curPrice = Number(p.price);
+const mrp = Number(p.mrp || Math.round(curPrice * 1.25));
+const disc = Math.round(((mrp - curPrice) / mrp) * 100);
+const ratingInfo = getProductReviewInfo(p.id);
+const ratingHtml = ratingInfo.count
+? `<div class="p-rating"><span class="p-rating-stars">${renderStars(ratingInfo.avg)}</span><span class="p-rating-meta">${ratingInfo.avg.toFixed(1)} (${ratingInfo.count})</span></div>`
+: ``;
+
+return `
+         <div class="product-card ${isOut ? 'out-of-stock' : ''}" onclick="if (!this.dataset.noOpen) openProductPage('${p.id}')">
+           <div class="img-box" data-card-carousel="1">
+             <div class="card-carousel">
+               ${(() => {
+                 const imgs = (p.images && p.images.length ? p.images : ['logo.png']);
+                 return imgs.map(img => `<div class="card-slide"><img src="${img}" alt="${p.name}"></div>`).join('');
+               })()}
+             </div>
+             ${(() => {
+               const imgs = (p.images && p.images.length ? p.images : ['logo.png']);
+               return `<div class="card-dots">${imgs.map((_, i) => `<button class="card-dot ${i===0?'active':''}" data-dot="${i}"></button>`).join('')}</div>`;
+             })()}
+           </div>
+           <div class="details">
+             <span class="p-category">${p.category} ${isOut ? '<span style="color:red; font-size:0.6rem;">(Sold Out)</span>' : ''}</span>
+             <div class="p-name">${p.name}</div>
+             ${ratingHtml}
+             <div style="display: flex; align-items: center;">
+               <span class="p-discount-tag">-${disc}%</span>
+               <span class="p-main-price">&#8377;${curPrice.toLocaleString('en-IN')}</span>
+             </div>
+             <div class="p-mrp-line">M.R.P.: <span class="p-mrp-val">&#8377;${mrp.toLocaleString('en-IN')}</span></div>
+             ${(stockCount > 0 && stockCount <= 3) ? `<div class="stock-warning">Only ${stockCount} left!</div>` : ''}
+           </div>
+           <div class="price-row">
+               <button class="add-to-cart-full-btn" onclick="event.stopPropagation(); window.addToCart('${p.id}')" ${isOut ? 'disabled' : ''}>
+                   <i data-lucide="shopping-cart"></i>
+                   <span>${isOut ? 'Sold Out' : 'Add to Cart'}</span>
+               </button>
+           </div>
+         </div>
+       `;
+}).join('');
+lucide.createIcons();
+setupCardCarousels();
+}
+
+function openProductPage(productId) {
+const selected = allProducts.find(p => String(p.id) === String(productId));
+if (selected) {
+try {
+localStorage.setItem('hc-selected-product', JSON.stringify(selected));
+} catch (_) {}
+}
+window.location.href = `product-details.html?id=${encodeURIComponent(productId)}`;
+}
+
+window.addToCart = function(productId) {
+const product = allProducts.find(p => p.id == productId);
+const stockAvailable = parseInt(product.stock) || 0;
+const existingInCart = cart.find(item => item.id == productId);
+const currentQtyInCart = existingInCart ? existingInCart.qty : 0;
+
+if (stockAvailable <= 0 || currentQtyInCart >= stockAvailable) {
+alert("Limit reached (" + stockAvailable + " available).");
+return;
+}
+
+if(existingInCart) { existingInCart.qty += 1; } 
+else { cart.push({ ...product, qty: 1 }); }
+
+localStorage.setItem('hc-cart', JSON.stringify(cart));
+updateCartBadge();
+showToast();
+};
+
+/* ?? REDIRECT GUEST TO LOGIN ON BUY NOW */
+window.buyNow = function(productId) {
+const product = allProducts.find(p => p.id == productId);
+if (!product || parseInt(product.stock) <= 0) {
+alert("Item out of stock.");
+return;
+}
+
+// Redirect guest to login
+if (!currentUser) {
+localStorage.setItem('checkout-item', JSON.stringify({
+id: product.id,
+name: product.name,
+price: Number(product.price),
+qty: 1,
+image: product.images?.[0] || 'logo.png'
+}));
+window.location.href = "login.html";
+return;
+}
+
+localStorage.setItem('checkout-item', JSON.stringify({
+id: product.id,
+name: product.name,
+price: Number(product.price),
+qty: 1,
+image: product.images?.[0] || 'logo.png'
+}));
+window.location.href = "checkout.html";
+}
+
+function updateCartBadge() {
+const totalQty = cart.reduce((sum, item) => sum + (item.qty || 0), 0);
+const badge = document.getElementById('cart-badge-count');
+if(badge) badge.innerText = totalQty;
+}
+
+function showToast(message = "Added to cart!") {
+const t = document.getElementById('toast');
+t.innerText = message;
+t.classList.add('show');
+setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function handleSearch() {
+const term = document.getElementById("search-input").value;
+searchTerm = term.trim();
+currentPage = 1;
+updateCatalog();
+}
+
+window.onclick = (e) => {
+if (!e.target.closest('.profile-section')) {
+const drop = document.getElementById('profile-dropdown');
+if(drop) drop.classList.remove('active');
+}
+};
+
+init();
+</script>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-section footer-block">
+        <h4>Policies</h4>
+        <nav class="footer-links" aria-label="Policies">
+          <a href="privacy-policy.html">Privacy Policy</a>
+          <a href="terms-and-conditions.html">Terms &amp; Conditions</a>
+          <a href="return-and-refund-policy.html">Return &amp; Refund Policy</a>          <a href="payment-policy.html">Payment Policy</a>
+        </nav>
+      </div>
+      <div class="footer-section footer-block">
+        <h4>Contact</h4>
+        <p class="footer-contact">Phone: <a href="tel:+919307760665">+91 9307760665</a></p>
+        <p class="footer-contact">WhatsApp: <a href="https://wa.me/919307760665" target="_blank" rel="noopener">Chat Support</a></p>
+        <p class="footer-contact">Email: <a href="mailto:hygienicsandcomfort@gmail.com">hygienicsandcomfort@gmail.com</a></p>
+        <p class="footer-contact">Location: Ambernath, Maharashtra</p>
+      </div>
+    </div>
+
+    <div class="footer-divider" role="presentation"></div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 Hygienic &amp; Comfort Co. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+<script>
+  (function initThemeFromSettings() {
+    const THEME_STORAGE_KEY = 'hc-theme';
+    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    const mediaQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+    const hasStoredTheme = storedTheme === 'dark' || storedTheme === 'light';
+    const applyTheme = (isDark) => document.body.classList.toggle('dark-theme', isDark);
+
+    applyTheme(hasStoredTheme ? storedTheme === 'dark' : !!(mediaQuery && mediaQuery.matches));
+
+    if (!hasStoredTheme && mediaQuery) {
+      if (typeof mediaQuery.addEventListener === 'function') {
+        mediaQuery.addEventListener('change', (e) => applyTheme(e.matches));
+      } else if (typeof mediaQuery.addListener === 'function') {
+        mediaQuery.addListener((e) => applyTheme(e.matches));
+      }
+    }
+  })();
+</script>
+</body>
+</html>
+
+
+
+

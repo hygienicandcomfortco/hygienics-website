@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Checkout | Hygienic & Comfort Co.</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+:root {
+--primary: #2563eb;
+--dark: #1e293b;
+--grey: #64748b;
+--bg: #f8fafc;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+font-family: 'Plus Jakarta Sans', 'Noto Sans', 'Segoe UI', 'Segoe UI Symbol', sans-serif;
+background: var(--bg);
+color: var(--dark);
+padding: 20px;
+}
+.checkout-container {
+max-width: 600px;
+margin: auto;
+background: white;
+padding: 30px;
+border-radius: 20px;
+box-shadow: 0 10px 15px rgba(0,0,0,0.05);
+}
+h2 { margin-bottom: 20px; font-weight: 800; }
+.order-summary {
+background: #f1f5f9;
+padding: 15px;
+border-radius: 12px;
+margin-bottom: 25px;
+}
+.order-items {
+display: flex;
+flex-direction: column;
+gap: 12px;
+margin-top: 8px;
+}
+.order-item {
+background: #fff;
+border: 1px solid #e2e8f0;
+border-radius: 12px;
+padding: 10px;
+display: flex;
+align-items: flex-start;
+gap: 10px;
+}
+.order-item img {
+width: 56px;
+height: 56px;
+object-fit: cover;
+border-radius: 10px;
+border: 1px solid #e2e8f0;
+background: #fff;
+}
+.order-item-body {
+flex: 1;
+}
+.order-items .item-name {
+line-height: 1.35;
+font-weight: 800;
+font-size: 0.9rem;
+}
+.order-item-meta {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-top: 6px;
+gap: 8px;
+}
+.order-items .item-qty {
+font-size: 0.78rem;
+color: #475569;
+}
+.order-items .item-unit {
+font-size: 0.78rem;
+color: #64748b;
+}
+.order-items .item-total {
+font-size: 0.9rem;
+font-weight: 800;
+color: #0f172a;
+white-space: nowrap;
+}
+.order-totals {
+border-top: 1px dashed #cbd5e1;
+margin-top: 12px;
+padding-top: 10px;
+}
+.order-totals p {
+display: flex;
+justify-content: space-between;
+font-size: 0.85rem;
+margin-top: 4px;
+}
+.order-totals .grand-total {
+font-size: 1.15rem;
+font-weight: 800;
+color: #2563eb;
+margin-top: 8px;
+}
+.form-group { margin-bottom: 15px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+label {
+display: block;
+font-size: 0.8rem;
+font-weight: 800;
+text-transform: uppercase;
+color: var(--grey);
+margin-bottom: 8px;
+}
+input, textarea, select {
+width: 100%;
+padding: 14px;
+border-radius: 12px;
+border: 1.5px solid #e2e8f0;
+font-family: inherit;
+outline: none;
+}
+
+.address-list {
+display: flex;
+flex-direction: column;
+gap: 12px;
+margin-bottom: 20px;
+}
+.address-dropdown { position: relative; margin-bottom: 20px; }
+.address-select {
+width: 100%;
+background: #fff;
+border: 1px solid #e2e8f0;
+border-radius: 12px;
+padding: 12px 14px;
+display: flex;
+align-items: flex-start;
+justify-content: space-between;
+gap: 10px;
+cursor: pointer;
+font-weight: 700;
+font-size: 0.85rem;
+color: var(--dark);
+text-align: left;
+}
+#selected-address-text { flex: 1; line-height: 1.25; }
+.address-select .addr-caret { transition: transform 0.2s ease; }
+.address-dropdown.open .address-select .addr-caret { transform: rotate(180deg); }
+.address-dropdown .address-list { display: none; margin-top: 10px; }
+.address-dropdown.open .address-list { display: flex; }
+.address-card {
+border: 2px solid #e2e8f0;
+padding: 15px;
+border-radius: 12px;
+cursor: pointer;
+position: relative;
+transition: 0.2s;
+}
+.address-card.selected {
+border-color: var(--primary);
+background: #eff6ff;
+}
+.address-card .badge {
+font-size: 0.6rem;
+font-weight: 800;
+background: #e2e8f0;
+padding: 3px 8px;      border-radius: 5px;
+text-transform: uppercase;
+margin-bottom: 5px;
+display: inline-block;
+}
+.address-card.selected .badge { background: var(--primary); color: white; }
+.address-card p { font-size: 0.85rem; line-height: 1.4; color: var(--dark); }
+.address-card .recipient { font-weight: 800; margin-bottom: 2px; display: block;}
+
+.payment-method {
+border: 2px solid #16a34a;
+padding: 15px;
+border-radius: 12px;
+display: flex;
+align-items: center;
+gap: 10px;
+background: #f0fdf4;
+margin-top: 20px;
+}
+.guest-notice {
+background: #fff7ed;
+border: 1px solid #fed7aa;
+border-radius: 12px;
+padding: 12px 14px;
+margin-bottom: 18px;
+font-size: 0.86rem;
+font-weight: 700;
+color: #9a3412;
+display: none;
+}
+.confirm-btn {
+width: 100%;
+background: var(--primary);
+color: white;
+padding: 18px;
+border: none;
+border-radius: 15px;
+font-weight: 800;
+font-size: 1rem;
+cursor: pointer;
+margin-top: 30px;
+}
+.back-link {
+display: block;
+text-align: center;
+margin-top: 15px;
+color: var(--grey);
+text-decoration: none;
+font-weight: 600;
+font-size: 0.9rem;
+}
+.hidden { display: none; }
+
+    /* --- Footer (Unified) --- */
+    .site-footer {
+      margin-top: 40px;
+      padding: 44px 5% 24px;
+      background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+      border-top: 1px solid #dbe7ff;
+    }
+    .site-footer .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .site-footer .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      align-items: start;
+      text-align: left;
+    }
+    .site-footer .footer-section h4 {
+      font-size: 0.95rem;
+      color: var(--dark);
+      margin: 0 0 10px 0;
+      font-weight: 800;
+    }
+    .site-footer .footer-links { display: grid; gap: 8px; }
+    .site-footer .footer-links a {
+      color: #2563eb;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+    .site-footer .footer-links a:hover {
+      color: #1d4ed8;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .site-footer .footer-block {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 18px 18px;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
+    }
+    .site-footer .footer-contact {
+      margin: 0 0 8px 0;
+      color: #64748b;
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+    .site-footer .footer-contact a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .site-footer .footer-contact a:hover {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .site-footer .footer-divider {
+      height: 1px;
+      background: #dbe7ff;
+      margin: 28px 0 14px;
+    }
+    .site-footer .footer-bottom {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      text-align: center;
+      color: #64748b;
+      font-size: 0.82rem;
+    }
+    .site-footer .footer-bottom a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .site-footer .footer-bottom a:hover {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    @media (min-width: 768px) {
+      .site-footer .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        align-items: start;
+        text-align: left;
+      }
+      .site-footer .footer-bottom {
+        flex-direction: row;
+        justify-content: center;
+        text-align: center;
+        gap: 18px;
+      }
+    }
+  
+    /* --- Dark Theme --- */
+    body.dark-theme {
+      background: #0b1220 !important;
+      color: #e2e8f0 !important;
+    }
+    body.dark-theme .main-header {
+      background: rgba(8, 14, 27, 0.92) !important;
+      border-bottom-color: #1e293b !important;
+    }
+    body.dark-theme .nav-links { border-top-color: #1e293b !important; }
+    body.dark-theme .nav-links a { color: #cbd5e1 !important; }
+    body.dark-theme .nav-links a:hover,
+    body.dark-theme .nav-links a.active { color: #60a5fa !important; }
+    body.dark-theme .profile-btn { background: #15243c !important; color: #60a5fa !important; }
+    body.dark-theme .dropdown-menu {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+      box-shadow: 0 15px 40px rgba(2, 6, 23, 0.55) !important;
+    }
+    body.dark-theme .dropdown-header { border-bottom-color: #1e293b !important; }
+    body.dark-theme .dropdown-item { color: #e2e8f0 !important; }
+    body.dark-theme .dropdown-item:hover { background: #15243c !important; color: #60a5fa !important; }
+    body.dark-theme .dropdown-item i,
+    body.dark-theme .item-info span { color: #94a3b8 !important; }
+    body.dark-theme .item-info b { color: #e2e8f0 !important; }
+    body.dark-theme .site-footer {
+      background: linear-gradient(180deg, #0f172a 0%, #0b1220 100%) !important;
+      border-top-color: #1f2a44 !important;
+    }
+    body.dark-theme .site-footer .footer-block {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+      box-shadow: 0 10px 24px rgba(2, 6, 23, 0.38) !important;
+    }
+    body.dark-theme .site-footer .footer-contact,
+    body.dark-theme .site-footer .footer-bottom { color: #94a3b8 !important; }
+    body.dark-theme .site-footer .footer-divider { background: #1f2a44 !important; }
+    body.dark-theme .card,
+    body.dark-theme .about-card,
+    body.dark-theme .form-card,
+    body.dark-theme .checkout-container,
+    body.dark-theme .order-summary,
+    body.dark-theme .payment-method,
+    body.dark-theme .address-card,
+    body.dark-theme .product-card,
+    body.dark-theme .review-item,
+    body.dark-theme .review-form-wrap,
+    body.dark-theme .order-card,
+    body.dark-theme .info-card {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+      color: #e2e8f0 !important;
+    }
+    body.dark-theme input,
+    body.dark-theme textarea,
+    body.dark-theme select {
+      background: #111b2e !important;
+      color: #e2e8f0 !important;
+      border-color: #2a3a57 !important;
+    }
+    body.dark-theme .search-section-bar,
+    body.dark-theme .announcement-bar,
+    body.dark-theme .form-section,
+    body.dark-theme .reviews-section,
+    body.dark-theme .trust-bar {
+      background: #0f172a !important;
+      border-color: #1e293b !important;
+    }
+    body.dark-theme .suggestion-box {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+    }
+    body.dark-theme .suggestion-item:hover { background: #15243c !important; }
+  
+    /* --- Dark Mode Readability Fix --- */
+    body.dark-theme .menu-item {
+      color: #dbe7ff !important;
+    }
+    body.dark-theme .menu-item i {
+      color: #9fb3cc !important;
+    }
+    body.dark-theme .menu-item:hover,
+    body.dark-theme .menu-item.active {
+      background: #15243c !important;
+      color: #60a5fa !important;
+    }
+    body.dark-theme .sidebar,
+    body.dark-theme .mobile-sidebar,
+    body.dark-theme .user-profile-brief,
+    body.dark-theme .summary-card,
+    body.dark-theme .cart-main,
+    body.dark-theme .address-section,
+    body.dark-theme .pincode-section {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+    }
+    body.dark-theme h1,
+    body.dark-theme h2,
+    body.dark-theme h3,
+    body.dark-theme h4,
+    body.dark-theme h5,
+    body.dark-theme h6,
+    body.dark-theme .page-title,
+    body.dark-theme .card-head,
+    body.dark-theme .meta-item p,
+    body.dark-theme .meta-value,
+    body.dark-theme .items-text,
+    body.dark-theme .item-name,
+    body.dark-theme .reviewer-name,
+    body.dark-theme .p-name,
+    body.dark-theme .p-main-price,
+    body.dark-theme .sum-total {
+      color: #eaf2ff !important;
+    }
+    body.dark-theme .dropdown-header p,
+    body.dark-theme .item-info span,
+    body.dark-theme .user-profile-brief p,
+    body.dark-theme .meta-item label,
+    body.dark-theme .meta-label,
+    body.dark-theme .address-info,
+    body.dark-theme .selection-count,
+    body.dark-theme .item-qty,
+    body.dark-theme .item-unit,
+    body.dark-theme .p-mrp-line,
+    body.dark-theme .review-date,
+    body.dark-theme p[style*="color: var(--grey)"] {
+      color: #cbd5e1 !important;
+    }
+  
+    /* --- Dark Theme Inline Color Guard --- */
+    body.dark-theme [style*="color: #475569"],
+    body.dark-theme [style*="color:#475569"],
+    body.dark-theme [style*="color: #565959"],
+    body.dark-theme [style*="color:#565959"],
+    body.dark-theme [style*="color: #334155"],
+    body.dark-theme [style*="color:#334155"],
+    body.dark-theme [style*="color: #64748b"],
+    body.dark-theme [style*="color:#64748b"] {
+      color: #cbd5e1 !important;
+    }
+    body.dark-theme [style*="color: #1e293b"],
+    body.dark-theme [style*="color:#1e293b"],
+    body.dark-theme [style*="color: #0f172a"],
+    body.dark-theme [style*="color:#0f172a"] {
+      color: #eaf2ff !important;
+    }
+
+    /* --- Checkout Dark Theme Fix --- */
+    body.dark-theme .checkout-container {
+      background: #0f1a2e !important;
+      border: 1px solid #1f2a44 !important;
+      box-shadow: 0 14px 36px rgba(2, 6, 23, 0.45) !important;
+    }
+    body.dark-theme .order-summary {
+      background: #111b2e !important;
+      border: 1px solid #2a3a57 !important;
+    }
+    body.dark-theme .order-item {
+      background: #0f172a !important;
+      border-color: #2a3a57 !important;
+    }
+    body.dark-theme .order-item img {
+      background: #111b2e !important;
+      border-color: #2a3a57 !important;
+    }
+    body.dark-theme .order-items .item-name {
+      color: #eaf2ff !important;
+      font-weight: 800 !important;
+    }
+    body.dark-theme .order-items .item-qty,
+    body.dark-theme .order-items .item-unit {
+      color: #cbd5e1 !important;
+    }
+    body.dark-theme .order-items .item-total {
+      color: #f8fafc !important;
+    }
+    body.dark-theme .order-totals {
+      border-top-color: #2a3a57 !important;
+    }
+    body.dark-theme .order-totals p {
+      color: #dbe7ff !important;
+    }
+    body.dark-theme .order-totals .grand-total {
+      color: #60a5fa !important;
+    }
+    body.dark-theme .address-select {
+      background: #111b2e !important;
+      border-color: #2a3a57 !important;
+      color: #e2e8f0 !important;
+    }
+    body.dark-theme .address-card {
+      background: #0f172a !important;
+      border-color: #2a3a57 !important;
+    }
+    body.dark-theme .address-card.selected {
+      background: #15243c !important;
+      border-color: #3b82f6 !important;
+    }
+    body.dark-theme .address-card p,
+    body.dark-theme .address-card .recipient {
+      color: #eaf2ff !important;
+    }
+    body.dark-theme .address-card .badge {
+      background: #cbd5e1 !important;
+      color: #0f172a !important;
+      border: 1px solid #94a3b8 !important;
+    }
+    body.dark-theme .address-card.selected .badge {
+      background: #3b82f6 !important;
+      color: #ffffff !important;
+      border-color: #60a5fa !important;
+    }
+    body.dark-theme #new-address-form {
+      background: #0f172a !important;
+      border-color: #2a3a57 !important;
+    }
+    body.dark-theme .payment-method {
+      background: #10261b !important;
+      border-color: #166534 !important;
+    }
+    body.dark-theme .payment-method p {
+      color: #eaf2ff !important;
+    }
+    body.dark-theme .guest-notice {
+      background: #2a1d12 !important;
+      border-color: #7c2d12 !important;
+      color: #fed7aa !important;
+    }
+    body.dark-theme .confirm-btn {
+      background: #2563eb !important;
+      color: #ffffff !important;
+    }
+    body.dark-theme .back-link {
+      color: #cbd5e1 !important;
+    }
+  </style>
+</head>
+<body>
+
+<div class="checkout-container">
+<h2>Complete Your Order</h2>
+
+<div class="order-summary" id="order-summary"></div>
+<div class="guest-notice" id="guest-notice"></div>
+
+<form id="checkout-form">
+<label for="address-select">Select Delivery Address</label>
+<div class="address-dropdown" id="address-dropdown">
+<button type="button" class="address-select" id="address-select">
+<span id="selected-address-text">Select address</span>
+<i data-lucide="chevron-down" class="addr-caret" style="width: 16px;"></i>
+</button>
+<div class="address-list" id="address-list">
+<p style="font-size: 0.8rem; color: var(--grey);">Loading addresses...</p>
+</div>
+</div>
+
+<div id="new-address-form" class="hidden" style="border: 1px dashed #cbd5e1; padding: 20px; border-radius: 15px; margin-bottom: 20px; background: #fafafa;">
+<p style="font-weight: 800; font-size: 0.85rem; margin-bottom: 15px; color: var(--dark);">ENTER NEW DELIVERY ADDRESS</p>
+<div class="form-group">
+<label for="new-full-name">Full Name</label>
+<input type="text" id="new-full-name" placeholder="Enter recipient name">
+</div>
+
+<div class="form-group">
+<label for="new-mobile">Mobile Number</label>
+<input type="tel" id="new-mobile" maxlength="10" placeholder="10-digit mobile number">
+</div>
+
+<div class="form-row">
+<div class="form-group">
+<label for="new-pincode">Pincode</label>
+<input type="text" id="new-pincode" maxlength="6" placeholder="6 digits">
+</div>
+<div class="form-group">
+<label for="new-city">Town/City</label>
+<input type="text" id="new-city" placeholder="City name">
+</div>
+</div>
+
+<div class="form-group">
+<label for="new-flat">Flat, House no., Building</label>
+<input type="text" id="new-flat" placeholder="Flat/House number">
+</div>
+
+<div class="form-group">
+<label for="new-area">Area, Street, Sector</label>
+<input type="text" id="new-area" placeholder="Area / Street / Sector">
+</div>
+
+<div class="form-row">
+<div class="form-group">
+<label for="new-state">State</label>
+<input type="text" id="new-state" placeholder="State">
+</div>
+<div class="form-group">
+<label for="new-addr-type">Address Type</label>
+<select id="new-addr-type">
+<option value="Home">Home</option>
+<option value="Office">Office</option>
+<option value="Other">Other</option>
+</select>
+</div>
+</div>
+
+<div style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
+<input type="checkbox" id="save-to-profile" style="width: auto;" checked>
+<label for="save-to-profile" style="text-transform: none; margin-bottom: 0; font-weight: 600;">Save this address to my profile</label>
+</div>
+</div>
+
+<div class="form-group">
+<label for="cust-alt-phone">Alternate Mobile (Optional)</label>
+<input type="tel" id="cust-alt-phone" maxlength="10" placeholder="Secondary contact number">
+</div>
+
+<p style="display:block;font-size:0.8rem;font-weight:800;text-transform:uppercase;color:var(--grey);margin-bottom:8px;">Payment Method</p>
+<div class="payment-method">
+<i data-lucide="banknote" style="color: #16a34a"></i>
+<div>
+<p style="font-weight:800; font-size:0.9rem;">Cash on Delivery (COD)</p>
+<p style="font-size:0.75rem; color:var(--grey);">Pay when you receive the product</p>
+</div>
+</div>
+
+<button type="submit" class="confirm-btn" id="confirm-btn">Confirm Order</button>
+</form>
+
+<a href="products.html" class="back-link">Cancel and Go Back</a>
+</div>
+
+<script>
+const SUPABASE_URL = "https://uhkheprfbxxwuojswyht.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es";
+const supa = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const RUPEE = "&#8377;";
+const GUEST_STORAGE_KEY = "hc-guest-user";
+
+function getGuestUser() {
+try {
+const guest = JSON.parse(localStorage.getItem(GUEST_STORAGE_KEY) || "null");
+if (!guest || !guest.name || !/^\d{10}$/.test(String(guest.phone || ""))) return null;
+return {
+name: sanitizeValue(guest.name),
+phone: sanitizeValue(guest.phone)
+};
+} catch (e) {
+return null;
+}
+}
+
+function setGuestCheckoutMode(guest) {
+const notice = document.getElementById('guest-notice');
+const addressDropdown = document.getElementById('address-dropdown');
+const addressLabel = document.querySelector('label[for="address-select"]');
+const saveWrap = document.getElementById('save-to-profile')?.closest('div');
+const selectedText = document.getElementById('selected-address-text');
+
+profileName = guest.name;
+profilePhone = guest.phone;
+isManualMode = true;
+setManualAddressRequired(true);
+
+if (notice) {
+notice.style.display = 'block';
+notice.innerText = `Ordering as guest: ${guest.name} (${guest.phone}). Add your delivery address below.`;
+}
+if (addressDropdown) addressDropdown.classList.add('hidden');
+if (addressLabel) addressLabel.innerText = 'Delivery Address';
+if (selectedText) selectedText.innerText = 'Guest delivery address';
+if (saveWrap) saveWrap.classList.add('hidden');
+document.getElementById('save-to-profile').checked = false;
+document.getElementById('new-address-form').classList.remove('hidden');
+document.getElementById('new-full-name').value = guest.name;
+document.getElementById('new-mobile').value = guest.phone;
+document.getElementById('cust-alt-phone').value = guest.phone;
+}
+
+async function blockAdminFromCustomerSite() {
+  const { data: { user } } = await supa.auth.getUser();
+  if (!user) return null;
+
+  const { data: profile, error: profileError } = await supa
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .maybeSingle();
+  if (profileError && profileError.code !== 'PGRST116') {
+    console.warn("Role lookup failed:", profileError);
+  }
+
+  let role = (profile?.role || "").toLowerCase();
+  if (!role) {
+    const { data: userRole } = await supa
+      .from('user_roles')
+      .select('role')
+      .eq('id', user.id)
+      .maybeSingle();
+    role = (userRole?.role || "").toLowerCase();
+  }
+
+  if (role === 'admin' || role === 'staff') {
+    await supa.auth.signOut();
+    alert("Admin accounts must login from Admin Panel.");
+    window.location.href = "login.html";
+    throw new Error("Admin blocked from customer site");
+  }
+
+  return profile || null;
+}
+
+(async () => {
+  await blockAdminFromCustomerSite();
+})();
+
+async function placeOrder(cartItems, totalAmount, customerName) {
+  const { data: { user } } = await supa.auth.getUser();
+  await blockAdminFromCustomerSite();
+
+  if (!user) {
+    alert("Please login first");
+    return null;
+  }
+
+  const { data: order, error: orderError } = await supa
+    .from("orders")
+    .insert([{
+      user_id: user.id,
+      customer_name: customerName,
+      status: "New",
+      items: cartItems.map(i => i.name).join(", "),
+      total_price: totalAmount
+    }])
+    .select()
+    .single();
+
+  if (orderError) {
+    console.error(orderError);
+    alert("Order failed");
+    return null;
+  }
+
+  const orderId = order.id;
+
+  const orderItemsData = cartItems.map(item => ({
+    order_id: orderId,
+    product_id: item.id,
+    quantity: item.qty || item.quantity || 1,
+    unit_price: item.price
+  }));
+
+  const { error: itemsError } = await supa
+    .from("order_items")
+    .insert(orderItemsData);
+
+  if (itemsError) {
+    console.error(itemsError);
+    alert("Order items failed");
+    return null;
+  }
+
+  alert("Order placed successfully ðŸŽ‰");
+  return orderId;
+}
+
+let selectedAddressText = "";
+let isManualMode = false;
+let profileName = "";
+let profilePhone = "";
+let resolvedCustomerId = null;
+let pincodeLookupSeq = 0;
+
+function setManualAddressRequired(enabled) {
+const ids = [
+'new-full-name',
+'new-mobile',
+'new-pincode',
+'new-city',
+'new-flat',
+'new-area',
+'new-state'
+];
+ids.forEach((id) => {
+const el = document.getElementById(id);
+if (el) el.required = !!enabled;
+});
+}
+
+function escapeHtml(value = "") {
+return value
+.replace(/&/g, "&amp;")
+.replace(/</g, "&lt;")
+.replace(/>/g, "&gt;")
+.replace(/"/g, "&quot;")
+.replace(/'/g, "&#39;");
+}
+
+function sanitizeValue(value) {
+const text = (value ?? "").toString().trim();
+if (!text || text.toLowerCase() === "null" || text.toLowerCase() === "undefined") return "";
+return text;
+}
+
+function normalizeText(value) {
+return sanitizeValue(value).replace(/\s+/g, " ").toLowerCase();
+}
+
+function formatAddress(addr = {}) {
+const base = [addr.full_address, addr.city, addr.state].map(sanitizeValue).filter(Boolean).join(", ");
+const pin = sanitizeValue(addr.pincode);
+if (base && pin) return `${base} - ${pin}`;
+if (base) return base;
+if (pin) return pin;
+return "Address not available";
+}
+
+async function autofillCityStateFromPincode(pinRaw) {
+const pin = sanitizeValue(pinRaw).replace(/\D/g, "");
+const cityEl = document.getElementById('new-city');
+const stateEl = document.getElementById('new-state');
+if (!cityEl || !stateEl) return;
+
+if (!/^\d{6}$/.test(pin)) {
+return;
+}
+
+const currentSeq = ++pincodeLookupSeq;
+try {
+const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+const data = await res.json();
+if (currentSeq !== pincodeLookupSeq) return;
+if (!Array.isArray(data) || data[0]?.Status !== "Success") return;
+
+const postOffices = Array.isArray(data[0]?.PostOffice) ? data[0].PostOffice : [];
+const first = postOffices[0] || {};
+const district = sanitizeValue(first.District);
+const taluk = sanitizeValue(first.Block || first.Name);
+const city = district || taluk;
+const state = sanitizeValue(first.State);
+
+if (city) cityEl.value = city;
+if (state) stateEl.value = state;
+} catch (err) {
+console.warn("Pincode lookup failed:", err);
+}
+}
+
+function getSummaryItems(data) {
+if (Array.isArray(data.cartItems) && data.cartItems.length > 0) {
+return data.cartItems.map((item) => ({
+name: sanitizeValue(item.name || item.product_name || "Item"),
+qty: Math.max(1, Number(item.qty) || 1),
+price: Math.max(0, Number(item.price) || 0),
+image: sanitizeValue(item.images?.[0] || item.image || "logo.png")
+}));
+}
+
+return [{
+name: sanitizeValue(data.name || data.itemsText || "Item"),
+qty: 1,
+price: Math.max(0, Number(data.price) || 0),
+image: sanitizeValue(data.image || "logo.png")
+}];
+}
+
+async function resolveCustomerId(user) {
+if (!user?.id) return null;
+
+// 1) Reuse any customer_id from this user's previous orders.
+try {
+const { data: prevOrder } = await supa
+.from('orders')
+.select('customer_id')
+.eq('user_id', user.id)
+.not('customer_id', 'is', null)
+.order('created_at', { ascending: false })
+.limit(1)
+.maybeSingle();
+if (prevOrder?.customer_id) return prevOrder.customer_id;
+} catch (e) {
+console.warn("Could not read previous order customer_id:", e);
+}
+
+// 2) Try direct lookup in customers table by user/email/phone if allowed.
+try {
+let query = supa.from('customers').select('id').eq('user_id', user.id).limit(1);
+let { data: byUser } = await query;
+if (Array.isArray(byUser) && byUser[0]?.id) return byUser[0].id;
+} catch (e) {
+console.warn("customers lookup by user_id failed:", e);
+}
+
+if (user.email) {
+try {
+const { data: byEmail } = await supa.from('customers').select('id').eq('email', user.email).limit(1);
+if (Array.isArray(byEmail) && byEmail[0]?.id) return byEmail[0].id;
+} catch (e) {
+console.warn("customers lookup by email failed:", e);
+}
+}
+
+if (user.phone) {
+try {
+const { data: byPhone } = await supa.from('customers').select('id').eq('phone_number', user.phone).limit(1);
+if (Array.isArray(byPhone) && byPhone[0]?.id) return byPhone[0].id;
+} catch (e) {
+console.warn("customers lookup by phone failed:", e);
+}
+}
+
+return null;
+}
+
+async function ensureCustomerId(user) {
+  if (!user?.id) return null;
+
+  /* -------------------------------------------------
+     STEP 0 â€” CHECK IF USER IS ADMIN
+     Admins must NEVER become customers
+  --------------------------------------------------*/
+  const { data: roleRow } = await supa
+    .from("user_roles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (roleRow?.role === "admin") {
+    console.log("Admin detected â€” skipping customer creation");
+    return null;   // ðŸš« STOP HERE FOR ADMINS
+  }
+
+  /* -------------------------------------------------
+     STEP 1 â€” Try find existing customer
+  --------------------------------------------------*/
+  const existingId = await resolveCustomerId(user);
+  if (existingId) return existingId;
+
+  /* -------------------------------------------------
+     STEP 2 â€” Create customer ONLY for real customers
+  --------------------------------------------------*/
+  const candidateName =
+    profileName ||
+    user.user_metadata?.full_name ||
+    "Customer";
+
+  const candidatePhone = profilePhone || user.phone || null;
+
+  const { data: inserted, error } = await supa
+    .from("customers")
+    .insert([{
+      user_id: user.id,
+      customer_name: candidateName,
+      email: user.email || null,
+      phone_number: candidatePhone
+    }])
+    .select("id")
+    .maybeSingle();
+
+  if (error) {
+    console.warn("Customer insert failed:", error);
+    return null;
+  }
+
+  return inserted?.id || null;
+}
+
+// 1. Load the Product from LocalStorage
+const checkoutData = JSON.parse(localStorage.getItem('checkout-item'));
+if (!checkoutData) {
+alert("Checkout session expired.");
+location.href = "products.html";
+}
+
+// 2. Display Order Summary
+const summaryItems = getSummaryItems(checkoutData);
+const itemsSubtotal = summaryItems.reduce((sum, item) => sum + (Number(item.price) * Number(item.qty || 1)), 0);
+const grandTotal = Math.max(0, Number(checkoutData.price) || 0);
+const deliveryFee = Math.max(0, grandTotal - itemsSubtotal);
+const summaryHtml = summaryItems.length
+? `<div class="order-items">
+${summaryItems.map((item) => {
+const qty = Math.max(1, Number(item.qty) || 1);
+const unit = Math.max(0, Number(item.price) || 0);
+const lineTotal = unit * qty;
+return `<div class="order-item">
+<img src="${escapeHtml(item.image || "logo.png")}" alt="${escapeHtml(item.name)}" onerror="this.src='logo.png'">
+<div class="order-item-body">
+<div class="item-name">${escapeHtml(item.name)}</div>
+<div class="order-item-meta">
+<div>
+<div class="item-qty">Qty: ${qty}</div>
+<div class="item-unit">Unit: Rs. ${unit.toLocaleString('en-IN')}</div>
+</div>
+<div class="item-total">${RUPEE}${lineTotal.toLocaleString('en-IN')}</div>
+</div>
+</div>
+</div>`;
+}).join("")}
+</div>`
+: `<p style="font-weight:800;">${escapeHtml(sanitizeValue(checkoutData.itemsText || checkoutData.name || "Item"))}</p>`;
+document.getElementById('order-summary').innerHTML = `
+   <p style="font-size:0.75rem; color:#64748b;">ORDERING:</p>
+   ${summaryHtml}
+   <div class="order-totals">
+   <p><span>Items Total</span><span>${RUPEE}${itemsSubtotal.toLocaleString('en-IN')}</span></p>
+   ${deliveryFee > 0 ? `<p><span>Delivery</span><span>${RUPEE}${deliveryFee.toLocaleString('en-IN')}</span></p>` : ""}
+   <p class="grand-total"><span>Total</span><span>${RUPEE}${grandTotal.toLocaleString('en-IN')}</span></p>
+   </div>
+`;
+
+// 3. Load Saved Data on Page Load
+async function loadCheckoutData() {
+const { data: { user } } = await supa.auth.getUser();
+await blockAdminFromCustomerSite();
+const guest = getGuestUser();
+if (!user && guest) {
+setGuestCheckoutMode(guest);
+return;
+}
+if (!user) { location.href = "login.html?next=checkout.html"; return; }
+localStorage.removeItem(GUEST_STORAGE_KEY);
+resolvedCustomerId = await ensureCustomerId(user);
+
+// Load Profile Name/Phone
+    // Get user profile from customers table instead
+    const { data: profile } = await supa
+      .from('customers')
+      .select('*')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    if (profile) {
+      profileName = profile?.customer_name || "";
+      profilePhone = profile?.phone_number || "";
+      document.getElementById('cust-alt-phone').value = profile?.phone_number || "";
+    }
+
+// Load Addresses Cards
+const { data: rawAddresses } = await supa.from('customer_addresses').select('*').eq('user_id', user.id);
+const listDiv = document.getElementById('address-list');
+const selectedText = document.getElementById('selected-address-text');
+const dropdown = document.getElementById('address-dropdown');
+listDiv.innerHTML = "";
+
+const addresses = (rawAddresses || []).filter((addr) => sanitizeValue(addr.user_id) === sanitizeValue(user.id));
+if (addresses && addresses.length > 0) {
+const preferredAddressId = sanitizeValue(checkoutData?.selectedAddressId);
+const preferredAddressLabel = normalizeText(checkoutData?.selectedAddressText);
+let selectedIndex = -1;
+
+if (preferredAddressId) {
+selectedIndex = addresses.findIndex((addr) => sanitizeValue(addr.id) === preferredAddressId);
+}
+
+if (selectedIndex < 0 && preferredAddressLabel && preferredAddressLabel !== "use a different pincode") {
+selectedIndex = addresses.findIndex((addr) => {
+const recipient = sanitizeValue(addr.full_name || addr.recipient_name || "");
+const label = `${recipient} ${formatAddress(addr)}`.trim();
+return normalizeText(label) === preferredAddressLabel;
+});
+}
+
+if (selectedIndex < 0) {
+selectedIndex = addresses.findIndex((addr) => Boolean(addr.is_default || addr.default || addr.is_primary));
+}
+
+if (selectedIndex < 0) selectedIndex = 0;
+
+addresses.forEach((addr, index) => {
+const fullAddrStr = formatAddress(addr);
+const card = document.createElement('div');
+const isSelected = index === selectedIndex;
+card.className = `address-card ${isSelected ? 'selected' : ''}`;
+if (isSelected) selectedAddressText = fullAddrStr;
+
+const badgeText = (addr.is_default || addr.default || addr.is_primary)
+? "Default"
+: (addr.type || addr.address_type || "Address").toString();
+const recipientName = (addr.full_name || addr.recipient_name || "").toString();
+card.innerHTML = `<span class="badge">${badgeText}</span><p><b>${recipientName}</b> ${fullAddrStr}</p>`;
+card.onclick = () => {
+document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
+card.classList.add('selected');
+selectedAddressText = fullAddrStr;
+if (selectedText) selectedText.innerText = `${recipientName} ${fullAddrStr}`.trim();
+isManualMode = false;
+setManualAddressRequired(false);
+document.getElementById('new-address-form').classList.add('hidden');
+if (dropdown) dropdown.classList.remove('open');
+};
+listDiv.appendChild(card);
+if (isSelected && selectedText) {
+selectedText.innerText = `${recipientName} ${fullAddrStr}`.trim();
+}
+});
+}
+
+// New Address Button
+const newBtn = document.createElement('div');
+newBtn.className = "address-card";
+newBtn.innerHTML = `<p style="color:var(--primary); font-weight:700;">+ Use a new delivery address</p>`;
+newBtn.onclick = () => {
+document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
+newBtn.classList.add('selected');
+isManualMode = true;
+setManualAddressRequired(true);
+if (selectedText) selectedText.innerText = "Use a new delivery address";
+document.getElementById('new-address-form').classList.remove('hidden');
+if (dropdown) dropdown.classList.remove('open');
+};
+listDiv.appendChild(newBtn);
+setManualAddressRequired(false);
+}
+
+// 4. Handle Final Form Submission
+document.getElementById('checkout-form').addEventListener('submit', async (e) => {
+e.preventDefault();
+const btn = document.getElementById('confirm-btn');
+const { data: { user } } = await supa.auth.getUser();
+await blockAdminFromCustomerSite();
+const guest = getGuestUser();
+
+if (!user && !guest) {
+alert("Please login or continue as guest to place the order.");
+window.location.href = "login.html?next=checkout.html";
+return;
+}
+
+let finalAddress = "";
+
+try {
+btn.disabled = true;
+btn.innerText = "Processing...";
+
+// Ensure we have a valid customers.id for RLS policies that check customer ownership.
+if (user) {
+resolvedCustomerId = await ensureCustomerId(user);
+if (!resolvedCustomerId) {
+throw new Error("Customer profile is missing. Please open Profile once and try again.");
+}
+}
+
+// PHASE 1: Handle Manual Address Save
+if (isManualMode) {
+const manualName = document.getElementById('new-full-name').value.trim();
+const pin = document.getElementById('new-pincode').value.trim();
+const city = document.getElementById('new-city').value.trim();
+const flat = document.getElementById('new-flat').value.trim();
+const area = document.getElementById('new-area').value.trim();
+const state = document.getElementById('new-state').value.trim();
+const type = document.getElementById('new-addr-type').value;
+
+const manualMobile = document.getElementById('new-mobile').value.trim();
+if (!manualName || !manualMobile || !pin || !city || !flat || !area || !state) {
+throw new Error("Please fill all required fields for the new delivery address.");
+}
+if (!/^\d{10}$/.test(manualMobile)) {
+throw new Error("Please enter a valid 10-digit mobile number for delivery.");
+}
+if (!/^\d{6}$/.test(pin)) {
+throw new Error("Please enter a valid 6-digit pincode.");
+}
+
+const manualBase = [flat, area, city, state].map(sanitizeValue).filter(Boolean).join(", ");
+if (manualBase && pin) finalAddress = `${manualBase} - ${pin}`;
+else if (manualBase) finalAddress = manualBase;
+else finalAddress = pin;
+
+// Save to customer_addresses table
+if (document.getElementById('save-to-profile').checked) {
+const { data: { user: sessionUser } } = await supa.auth.getUser();
+await blockAdminFromCustomerSite();
+if (!sessionUser) {
+throw new Error("User not logged in");
+}
+const { error: addrError } = await supa
+  .from('customer_addresses')
+  .insert({
+    user_id: sessionUser.id,
+    address_type: type,
+    full_address: `${flat}, ${area}`,
+    pincode: pin,
+    city: city,
+    full_name: manualName || profileName || "Customer",
+    is_default: false
+  });
+if (addrError) throw new Error("Could not save address to profile: " + addrError.message);
+}
+} else {
+finalAddress = sanitizeValue(selectedAddressText);
+}
+
+if (!sanitizeValue(finalAddress)) {
+throw new Error("Please select a delivery address or add a new delivery address before placing the order.");
+}
+
+// ðŸ”¥ GUARANTEE CUSTOMER EXISTS (fix saved address bug)
+if (user) {
+resolvedCustomerId = await ensureCustomerId(user);
+if (!resolvedCustomerId) {
+  throw new Error("Customer record missing. Please login again.");
+}
+}
+
+// PHASE 2: Create Order
+const orderPayload = {
+user_id: user?.id || null,
+customer_name: (isManualMode ? document.getElementById('new-full-name').value.trim() : "") || profileName || guest?.name || "Guest Customer",
+address: finalAddress,
+phone_number: (isManualMode && document.getElementById('new-mobile').value.trim()) || profilePhone || guest?.phone || user?.phone || null,
+email: user?.email || null,
+alt_phone: document.getElementById('cust-alt-phone').value || null,
+items: checkoutData.itemsText || checkoutData.name,
+total_price: checkoutData.price,
+status: 'New',
+payment_status: 'Pending',
+payment_method: 'Cash',
+is_approved: false
+};
+if (resolvedCustomerId) orderPayload.customer_id = resolvedCustomerId;
+
+let { data: createdOrder, error: orderError } = await supa.from('orders').insert([orderPayload]).select('id').single();
+
+// If trigger/policy still attempts customers insert, retry once with resolved customer_id from latest order.
+if (user && orderError && /customers/i.test(orderError.message || "")) {
+const fallbackCustomerId = await resolveCustomerId(user);
+if (fallbackCustomerId) {
+resolvedCustomerId = fallbackCustomerId;
+orderPayload.customer_id = fallbackCustomerId;
+const retry = await supa.from('orders').insert([orderPayload]).select('id').single();
+createdOrder = retry.data;
+orderError = retry.error;
+}
+}
+
+if (orderError) {
+console.error("Order insert failed:", orderError);
+throw orderError;
+}
+
+// PHASE 3A: Insert Order Items
+// ðŸ”¥ INSERT ORDER ITEMS (THIS WAS MISSING)
+let createdOrderId;
+
+createdOrderId = createdOrder?.id;
+if (!createdOrderId && user) {
+// get latest order id of this user (safe way)
+const { data: latestOrder } = await supa
+  .from("orders")
+  .select("id")
+  .eq("user_id", user.id)
+  .order("created_at", { ascending: false })
+  .limit(1)
+  .single();
+
+createdOrderId = latestOrder?.id;
+}
+if (!createdOrderId && guest?.phone) {
+const { data: latestGuestOrder } = await supa
+  .from("orders")
+  .select("id")
+  .eq("phone_number", guest.phone)
+  .order("created_at", { ascending: false })
+  .limit(1)
+  .single();
+createdOrderId = latestGuestOrder?.id;
+}
+if (!createdOrderId) {
+throw new Error("Order was created, but the order id could not be confirmed.");
+}
+
+// If cart checkout
+if (checkoutData.cartItems && checkoutData.cartItems.length > 0) {
+  const itemsPayload = checkoutData.cartItems.map(item => ({
+    order_id: createdOrderId,
+    product_id: item.id,
+    quantity: item.qty || 1,
+    unit_price: item.price
+  }));
+
+  const { error: itemsErr } = await supa
+    .from("order_items")
+    .insert(itemsPayload);
+
+  if (itemsErr) {
+    console.error("Order items insert failed", itemsErr);
+  }
+} else {
+  // Single product buy now
+  const { error: itemsErr } = await supa
+    .from("order_items")
+    .insert([{
+      order_id: createdOrderId,
+      product_id: checkoutData.id,
+      quantity: 1,
+      unit_price: checkoutData.price
+    }]);
+
+  if (itemsErr) console.error(itemsErr);
+}
+
+// PHASE 3: Subtract Stock
+if (checkoutData.cartItems) {
+for (const item of checkoutData.cartItems) {
+const { data: p } = await supa.from('products').select('stock').eq('id', item.id).single();
+await supa.from('products').update({ stock: p.stock - (item.qty || 1) }).eq('id', item.id);
+}
+} else if (checkoutData.id !== "CART_ORDER") {
+const { data: p } = await supa.from('products').select('stock').eq('id', checkoutData.id).single();
+await supa.from('products').update({ stock: p.stock - 1 }).eq('id', checkoutData.id);
+}
+
+// PHASE 3B: Insert Inventory Logs
+// ðŸ”¥ INVENTORY LOGS (THIS WAS MISSING)
+if (checkoutData.cartItems && checkoutData.cartItems.length > 0) {
+  for (const item of checkoutData.cartItems) {
+    await supa.from("inventory_logs").insert({
+      product_id: item.id,
+      type: "ORDER_PLACED",
+      change: -(item.qty || 1),
+      reason: "Customer Order",
+      order_id: createdOrderId
+    });
+  }
+} else {
+  await supa.from("inventory_logs").insert({
+    product_id: checkoutData.id,
+    type: "ORDER_PLACED",
+    change: -1,
+    reason: "Customer Order",
+    order_id: createdOrderId
+  });
+}
+
+// PHASE 4: Success Cleanup
+if (Array.isArray(checkoutData.remainingCartItems)) {
+localStorage.setItem('hc-cart', JSON.stringify(checkoutData.remainingCartItems));
+} else {
+localStorage.removeItem('hc-cart');
+}
+localStorage.removeItem('hc-cart-selected');
+localStorage.removeItem('checkout-item');
+
+const msg = `*NEW ORDER*\nItem: ${checkoutData.itemsText || checkoutData.name}\nAddress: ${finalAddress}\nTotal: \u20B9${checkoutData.price}`;
+window.open(`https://wa.me/919307760665?text=${encodeURIComponent(msg)}`, '_blank');
+
+location.href = "index.html";
+
+} catch (err) {
+const details = [err?.message, err?.details, err?.hint].filter(Boolean).join(" | ");
+alert("Error: " + details);
+btn.disabled = false;
+btn.innerText = "Confirm Order";
+}
+});
+
+loadCheckoutData();
+lucide.createIcons();
+
+const newPincodeEl = document.getElementById('new-pincode');
+if (newPincodeEl) {
+newPincodeEl.addEventListener('input', (e) => {
+const onlyDigits = String(e.target.value || "").replace(/\D/g, "").slice(0, 6);
+if (e.target.value !== onlyDigits) e.target.value = onlyDigits;
+if (onlyDigits.length === 6) autofillCityStateFromPincode(onlyDigits);
+});
+newPincodeEl.addEventListener('blur', () => {
+const val = String(newPincodeEl.value || "").trim();
+if (val.length === 6) autofillCityStateFromPincode(val);
+});
+}
+
+document.getElementById('address-select')?.addEventListener('click', (e) => {
+e.stopPropagation();
+const dropdown = document.getElementById('address-dropdown');
+if (dropdown) dropdown.classList.toggle('open');
+});
+
+document.addEventListener('click', (e) => {
+const dropdown = document.getElementById('address-dropdown');
+if (dropdown && !e.target.closest('#address-dropdown')) dropdown.classList.remove('open');
+});
+</script>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-section footer-block">
+        <h4>Policies</h4>
+        <nav class="footer-links" aria-label="Policies">
+          <a href="privacy-policy.html">Privacy Policy</a>
+          <a href="terms-and-conditions.html">Terms &amp; Conditions</a>
+          <a href="return-and-refund-policy.html">Return &amp; Refund Policy</a>          <a href="payment-policy.html">Payment Policy</a>
+        </nav>
+      </div>
+      <div class="footer-section footer-block">
+        <h4>Contact</h4>
+        <p class="footer-contact">Phone: <a href="tel:+919307760665">+91 9307760665</a></p>
+        <p class="footer-contact">WhatsApp: <a href="https://wa.me/919307760665" target="_blank" rel="noopener">Chat Support</a></p>
+        <p class="footer-contact">Email: <a href="mailto:hygienicsandcomfort@gmail.com">hygienicsandcomfort@gmail.com</a></p>
+        <p class="footer-contact">Location: Ambernath, Maharashtra</p>
+      </div>
+    </div>
+
+    <div class="footer-divider" role="presentation"></div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 Hygienic &amp; Comfort Co. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+<script>
+  (function initThemeFromSettings() {
+    const THEME_STORAGE_KEY = 'hc-theme';
+    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    const mediaQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+    const hasStoredTheme = storedTheme === 'dark' || storedTheme === 'light';
+    const applyTheme = (isDark) => document.body.classList.toggle('dark-theme', isDark);
+
+    applyTheme(hasStoredTheme ? storedTheme === 'dark' : !!(mediaQuery && mediaQuery.matches));
+
+    if (!hasStoredTheme && mediaQuery) {
+      if (typeof mediaQuery.addEventListener === 'function') {
+        mediaQuery.addEventListener('change', (e) => applyTheme(e.matches));
+      } else if (typeof mediaQuery.addListener === 'function') {
+        mediaQuery.addListener((e) => applyTheme(e.matches));
+      }
+    }
+  })();
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

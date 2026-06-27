@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>About Us | Hygienic & Comfort Co. - Our Story & Mission</title>
+<meta name="description" content="Learn about Hygienic & Comfort Co., your trusted provider for premium baby and adult hygiene products. Discover our commitment to quality, comfort, and safety.">
+<link rel="canonical" href="https://hygienicandcomfortco.shop/about.html" />
+
+<link rel="icon" type="image/png" href="logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+--primary: #2563eb;
+--bg: #f8fafc;
+--card: #ffffff;
+--text: #1e293b;
+--grey: #64748b;
+--radius: 12px;
+}
+
+body { 
+font-family: 'Plus Jakarta Sans', sans-serif; 
+background-color: var(--bg); 
+margin: 0; padding: 0; 
+color: var(--text);
+line-height: 1.6;
+}
+
+/* --- Optimized Header Navigation --- */
+.main-header {
+background: rgba(255, 255, 255, 0.95);
+padding: 12px 5%;
+border-bottom: 1px solid #f1f5f9;
+position: sticky;
+top: 0;
+z-index: 1000;
+backdrop-filter: blur(10px);
+}
+
+.header-container {
+max-width: 1200px;
+margin: 0 auto;
+display: flex;
+flex-direction: column; 
+align-items: center;
+gap: 15px;
+}
+
+.brand-wrapper {
+display: flex;
+align-items: center;
+justify-content: space-between;
+width: 100%;
+}
+
+.logo-link { text-decoration: none; color: inherit; display: block; }
+.logo-area { display: flex; align-items: center; gap: 12px; }
+.header-logo { height: 40px; width: auto; }
+
+.brand-text { text-align: left; }
+.brand-text h1 { font-size: 1rem; font-weight: 800; line-height: 1.2; margin: 0; }
+.brand-text p { font-size: 0.65rem; color: var(--grey); font-weight: 600; display: none; margin: 0; }
+
+.nav-links { 
+display: flex; 
+gap: 15px; 
+align-items: center; 
+width: 100%;
+justify-content: center;
+border-top: 1px solid #f1f5f9;
+padding-top: 10px;
+}
+.nav-links a { text-decoration: none; color: #475569; font-weight: 700; font-size: 0.85rem; transition: 0.2s; white-space: nowrap; }
+.nav-links a:hover, .nav-links a.active { color: var(--primary); }
+
+/* --- Desktop Layout Adjustments --- */
+@media (min-width: 768px) {
+.header-container { 
+flex-direction: row; 
+justify-content: space-between; 
+padding: 5px 0; 
+}
+.brand-wrapper { 
+display: contents;
+}
+.logo-link { order: 1; }
+.brand-text h1 { font-size: 1.1rem; }
+.brand-text p { display: block; }
+
+.nav-links { 
+width: auto; 
+border-top: none; 
+padding-top: 0; 
+gap: 25px; 
+margin-left: auto; 
+order: 2;
+}
+.profile-section {
+order: 3; 
+margin-left: 12px;
+}
+.header-logo { height: 50px; }
+}
+/* --- Profile Section & Dropdown --- */
+.profile-section { position: relative; }
+.profile-btn { 
+background: #eef4ff; 
+color: var(--primary); 
+width: 42px; height: 42px; 
+border-radius: 50%; 
+display: flex; align-items: center; justify-content: center; 
+cursor: pointer; border: 2px solid transparent; 
+transition: 0.3s;
+}
+.profile-btn:hover { border-color: var(--primary); }
+
+.dropdown-menu {
+position: absolute;
+top: 55px; right: 0;
+background: white;
+width: 280px;
+border-radius: 20px;
+box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+border: 1px solid #f1f5f9;
+display: none;
+flex-direction: column;
+padding: 15px;
+z-index: 2001;
+}
+.dropdown-menu.active { display: flex !important; }
+
+.dropdown-header { margin-bottom: 12px; padding: 10px; border-bottom: 1px solid #f1f5f9; }
+.dropdown-header h4 { font-size: 1.1rem; font-weight: 800; color: var(--text); margin: 0; }
+.dropdown-header p { font-size: 0.85rem; color: var(--grey); margin: 5px 0 0 0; }
+
+.dropdown-item {
+padding: 12px;
+text-decoration: none;
+color: var(--text);
+border-radius: 12px;
+display: flex;
+align-items: center;
+gap: 15px;
+transition: 0.2s;
+cursor: pointer;
+}
+.dropdown-item:hover { background: #eef4ff; color: var(--primary); }
+.dropdown-item i { width: 22px; height: 22px; color: var(--grey); transition: 0.2s; }
+.dropdown-item:hover i { color: var(--primary); }
+.item-info { display: flex; flex-direction: column; }
+.item-info b { font-size: 0.95rem; font-weight: 700; display: block; color: var(--text); }
+.item-info span { font-size: 0.8rem; color: var(--grey); }
+.logout-btn-item { color: #ef4444 !important; }
+.logout-btn-item i { color: #ef4444 !important; }
+#auth-items,
+#guest-items {
+display: flex;
+flex-direction: column;
+gap: 6px;
+}
+
+/* --- About Content Styling --- */
+.about-container {
+max-width: 900px;
+margin: 60px auto;
+padding: 0 20px;
+}
+
+.about-card {
+background: var(--card);
+padding: 50px;
+border-radius: 20px;
+border: 1px solid #e2e8f0;
+box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+text-align: center;
+}
+
+h2 { font-size: 2.5rem; margin-bottom: 20px; font-weight: 800; color: #0f172a; }
+
+.mission-statement {
+font-size: 1.25rem;
+color: var(--primary);
+font-weight: 600;
+margin-bottom: 30px;
+}
+
+.content-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+gap: 30px;
+margin-top: 50px;
+text-align: left;
+}
+
+.feature-box h4 {
+font-weight: 800;
+margin-bottom: 10px;
+color: #1e293b;
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.feature-box p { color: var(--grey); font-size: 0.95rem; }
+
+/* --- Floating Cart --- */
+.cart-icon-wrapper {
+position: fixed;
+bottom: 30px;
+right: 30px;
+background: var(--primary);
+color: white;
+width: 65px;
+height: 65px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+z-index: 2000;
+text-decoration: none;
+transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.cart-count {
+position: absolute;
+top: -2px;
+right: -2px;
+background: #ef4444;
+color: white;
+font-size: 0.75rem;
+min-width: 24px;
+height: 24px;
+display: flex;
+align-items: center;
+justify-content: center;
+border-radius: 50%;
+font-weight: 800;
+border: 2px solid white;
+}
+
+
+    /* --- Footer (Unified) --- */
+    .site-footer {
+      margin-top: 40px;
+      padding: 44px 5% 24px;
+      background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+      border-top: 1px solid #dbe7ff;
+    }
+    .site-footer .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .site-footer .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      align-items: start;
+      text-align: left;
+    }
+    .site-footer .footer-section h4 {
+      font-size: 0.95rem;
+      color: var(--dark);
+      margin: 0 0 10px 0;
+      font-weight: 800;
+    }
+    .site-footer .footer-links { display: grid; gap: 8px; }
+    .site-footer .footer-links a {
+      color: #2563eb;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+    .site-footer .footer-links a:hover {
+      color: #1d4ed8;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .site-footer .footer-block {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 18px 18px;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
+    }
+    .site-footer .footer-contact {
+      margin: 0 0 8px 0;
+      color: #64748b;
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+    .site-footer .footer-contact a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .site-footer .footer-contact a:hover {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .site-footer .footer-divider {
+      height: 1px;
+      background: #dbe7ff;
+      margin: 28px 0 14px;
+    }
+    .site-footer .footer-bottom {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      text-align: center;
+      color: #64748b;
+      font-size: 0.82rem;
+    }
+    .site-footer .footer-bottom a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .site-footer .footer-bottom a:hover {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    @media (min-width: 768px) {
+      .site-footer .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        align-items: start;
+        text-align: left;
+      }
+      .site-footer .footer-bottom {
+        flex-direction: row;
+        justify-content: center;
+        text-align: center;
+        gap: 18px;
+      }
+    }
+
+@media (min-width: 768px) {
+.header-container { flex-direction: row; justify-content: space-between; padding: 5px 0; }
+.brand-wrapper { display: contents; }
+.logo-link { order: 1; }
+.nav-links { 
+width: auto; 
+border-top: none; 
+padding-top: 0; 
+gap: 25px; 
+margin-left: auto;
+order: 2;
+}
+.profile-section { order: 3; margin-left: 12px; }
+}
+
+@media (max-width: 768px) {
+.header-container { flex-direction: column; gap: 15px; }
+.nav-links { gap: 15px; }
+.about-card { padding: 30px; }
+}
+
+    /* --- Dark Theme --- */
+    body.dark-theme {
+      --bg: #0b1220;
+      --card: #0f1a2e;
+      --text: #eaf2ff;
+      --grey: #cbd5e1;
+      background: var(--bg) !important;
+      color: var(--text) !important;
+    }
+    body.dark-theme .main-header {
+      background: rgba(8, 14, 27, 0.92) !important;
+      border-bottom-color: #1e293b !important;
+    }
+    body.dark-theme .nav-links { border-top-color: #1e293b !important; }
+    body.dark-theme .nav-links a { color: #cbd5e1 !important; }
+    body.dark-theme .nav-links a:hover,
+    body.dark-theme .nav-links a.active { color: #60a5fa !important; }
+    body.dark-theme .profile-btn { background: #15243c !important; color: #60a5fa !important; }
+    body.dark-theme .dropdown-menu {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+      box-shadow: 0 15px 40px rgba(2, 6, 23, 0.55) !important;
+    }
+    body.dark-theme .dropdown-header { border-bottom-color: #1e293b !important; }
+    body.dark-theme .dropdown-item { color: #e2e8f0 !important; }
+    body.dark-theme .dropdown-item:hover { background: #15243c !important; color: #60a5fa !important; }
+    body.dark-theme .dropdown-item i,
+    body.dark-theme .item-info span { color: #94a3b8 !important; }
+    body.dark-theme .item-info b { color: #e2e8f0 !important; }
+    body.dark-theme .site-footer {
+      background: linear-gradient(180deg, #0f172a 0%, #0b1220 100%) !important;
+      border-top-color: #1f2a44 !important;
+    }
+    body.dark-theme .site-footer .footer-block {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+      box-shadow: 0 10px 24px rgba(2, 6, 23, 0.38) !important;
+    }
+    body.dark-theme .site-footer .footer-contact,
+    body.dark-theme .site-footer .footer-bottom { color: #94a3b8 !important; }
+    body.dark-theme .site-footer .footer-divider { background: #1f2a44 !important; }
+    body.dark-theme .card,
+    body.dark-theme .about-card,
+    body.dark-theme .form-card,
+    body.dark-theme .checkout-container,
+    body.dark-theme .order-summary,
+    body.dark-theme .payment-method,
+    body.dark-theme .address-card,
+    body.dark-theme .product-card,
+    body.dark-theme .review-item,
+    body.dark-theme .review-form-wrap,
+    body.dark-theme .order-card,
+    body.dark-theme .info-card {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+      color: #e2e8f0 !important;
+    }
+    body.dark-theme input,
+    body.dark-theme textarea,
+    body.dark-theme select {
+      background: #111b2e !important;
+      color: #e2e8f0 !important;
+      border-color: #2a3a57 !important;
+    }
+    body.dark-theme .search-section-bar,
+    body.dark-theme .announcement-bar,
+    body.dark-theme .form-section,
+    body.dark-theme .reviews-section,
+    body.dark-theme .trust-bar {
+      background: #0f172a !important;
+      border-color: #1e293b !important;
+    }
+    body.dark-theme .suggestion-box {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+    }
+    body.dark-theme .suggestion-item:hover { background: #15243c !important; }
+  
+    /* --- Dark Mode Readability Fix --- */
+    body.dark-theme .menu-item {
+      color: #dbe7ff !important;
+    }
+    body.dark-theme .menu-item i {
+      color: #9fb3cc !important;
+    }
+    body.dark-theme .menu-item:hover,
+    body.dark-theme .menu-item.active {
+      background: #15243c !important;
+      color: #60a5fa !important;
+    }
+    body.dark-theme .sidebar,
+    body.dark-theme .mobile-sidebar,
+    body.dark-theme .user-profile-brief,
+    body.dark-theme .summary-card,
+    body.dark-theme .cart-main,
+    body.dark-theme .address-section,
+    body.dark-theme .pincode-section {
+      background: #0f1a2e !important;
+      border-color: #1f2a44 !important;
+    }
+    body.dark-theme h1,
+    body.dark-theme h2,
+    body.dark-theme h3,
+    body.dark-theme h4,
+    body.dark-theme h5,
+    body.dark-theme h6,
+    body.dark-theme .page-title,
+    body.dark-theme .card-head,
+    body.dark-theme .meta-item p,
+    body.dark-theme .meta-value,
+    body.dark-theme .items-text,
+    body.dark-theme .item-name,
+    body.dark-theme .reviewer-name,
+    body.dark-theme .p-name,
+    body.dark-theme .p-main-price,
+    body.dark-theme .sum-total {
+      color: #eaf2ff !important;
+    }
+    body.dark-theme .dropdown-header p,
+    body.dark-theme .item-info span,
+    body.dark-theme .user-profile-brief p,
+    body.dark-theme .meta-item label,
+    body.dark-theme .meta-label,
+    body.dark-theme .address-info,
+    body.dark-theme .selection-count,
+    body.dark-theme .item-qty,
+    body.dark-theme .item-unit,
+    body.dark-theme .p-mrp-line,
+    body.dark-theme .review-date,
+    body.dark-theme p[style*="color: var(--grey)"] {
+      color: #cbd5e1 !important;
+    }
+    body.dark-theme .about-card {
+      background: var(--card) !important;
+      border-color: #1f2a44 !important;
+    }
+    body.dark-theme .mission-statement {
+      color: #93c5fd !important;
+    }
+    body.dark-theme .feature-box p,
+    body.dark-theme main.about-container p {
+      color: var(--grey) !important;
+    }
+  
+    /* --- Dark Theme Inline Color Guard --- */
+    body.dark-theme [style*="color: #475569"],
+    body.dark-theme [style*="color:#475569"],
+    body.dark-theme [style*="color: #565959"],
+    body.dark-theme [style*="color:#565959"],
+    body.dark-theme [style*="color: #334155"],
+    body.dark-theme [style*="color:#334155"],
+    body.dark-theme [style*="color: #64748b"],
+    body.dark-theme [style*="color:#64748b"] {
+      color: #cbd5e1 !important;
+    }
+    body.dark-theme [style*="color: #1e293b"],
+    body.dark-theme [style*="color:#1e293b"],
+    body.dark-theme [style*="color: #0f172a"],
+    body.dark-theme [style*="color:#0f172a"] {
+      color: #eaf2ff !important;
+    }
+  </style>
+</head>
+<body>
+
+<header class="main-header">
+<div class="header-container">
+<div class="brand-wrapper">
+<a href="index.html" class="logo-link">
+<div class="logo-area">
+<img src="logo.png" alt="Hygienic & Comfort Co. Logo" class="header-logo">
+<div class="brand-text">
+<h1>Hygienic & Comfort Co.</h1>
+<p>Care, Comfort & Hygiene for Every Age</p>
+</div>
+</div>
+</a>
+
+<div class="profile-section">
+<div class="profile-btn" id="profile-btn">
+<i data-lucide="user"></i>
+</div>
+
+<div class="dropdown-menu" id="profile-dropdown">
+<div class="dropdown-header">
+<h4 id="user-display-name">Guest User</h4>
+<p id="user-display-sub">Manage your account</p>
+</div>
+<div id="guest-items">
+<a href="login.html" class="dropdown-item">
+<i data-lucide="log-in"></i>
+<div class="item-info"><b>Sign In</b><span>Access orders & profile</span></div>
+</a>
+<a href="settings.html" class="dropdown-item">
+<i data-lucide="settings"></i>
+<div class="item-info"><b>Settings</b><span>Theme preferences</span></div>
+</a>
+</div>
+<div id="auth-items" style="display:none">
+<a href="profile.html" class="dropdown-item">
+<i data-lucide="user"></i>
+<div class="item-info"><b>My Profile</b><span>Settings</span></div>
+</a>
+<a href="orders.html" class="dropdown-item">
+<i data-lucide="package"></i>
+<div class="item-info"><b>My Orders</b><span>Purchase history</span></div>
+</a>
+            <a href="settings.html" class="dropdown-item">
+              <i data-lucide="settings"></i>
+              <div class="item-info"><b>Settings</b><span>Theme preferences</span></div>
+            </a>
+<div class="dropdown-item logout-btn-item" onclick="handleLogout()" style="cursor:pointer">
+<i data-lucide="log-out"></i>
+<div class="item-info"><b>Logout</b><span>End session safely</span></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<nav class="nav-links">
+<a href="index.html">Home</a>
+<a href="products.html">Products</a>
+<a href="about.html" class="active">About</a>
+<a href="contact.html">Contact</a>
+</nav>
+</div>
+</header>
+
+<main class="about-container">
+<section class="about-card">
+<h2>Our Story</h2>
+<p class="mission-statement">Care, Comfort & Hygiene for Every Age</p>
+
+<p>
+Hygienic & Comfort Co. was founded with a clear vision: to make high-quality hygiene and care products easily accessible to every family. As a trusted wholesaler and retailer, we carefully source products from leading brands to ensure reliability, safety, and comfort.
+
+We believe that hygiene is the foundation of health, and comfort is essential for everyday well-being. Whether it’s for newborn babies, adults, or personal care needs, we provide a wide range of products that meet the highest standards of quality and affordability.
+</p>
+
+<div class="content-grid">
+<div class="feature-box">
+<h4><i data-lucide="shield-check"></i> Our Quality</h4>
+<p>We stock trusted brands ensuring that every product we offer meets high standards of safety, reliability, and skin-friendly care.</p>
+</div>
+<div class="feature-box">
+<h4><i data-lucide="handshake"></i> Our Commitment</h4>
+<p>We believe in delivering quality at the right price. We are committed to providing customers in Ambernath and beyond with reliable products and great value they can trust.</p>
+</div>
+<div class="feature-box">
+<h4><i data-lucide="target"></i> Our Vision</h4>
+<p>To become a leading wholesale and retail provider of hygiene essentials, making comfort and care accessible to every household.</p>
+</div>
+<div class="feature-box">
+<h4><i data-lucide="truck"></i> Our Service</h4>
+<p>We focus on timely delivery, responsive customer support, and a smooth shopping experience, ensuring customers can order their essentials with complete confidence.</p>
+</div>
+</div>
+<div style="margin-top:28px;border-top:1px solid #cbd5e1;padding-top:18px;text-align:right;">
+<div style="display:inline-block;text-align:center;">
+<p style="margin:0;font-weight:700;color:#334155;">Mohammed Rehan Javed Nakhwa</p>
+<p style="margin:2px 0 0 0;font-weight:600;color:#64748b;">Founder &amp; Developer</p>
+</div>
+</div>
+</section>
+</main>
+
+<a href="cart.html" class="cart-icon-wrapper">
+<i data-lucide="shopping-basket"></i>
+<span class="cart-count" id="cart-badge">0</span>
+</a>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-section footer-block">
+        <h4>Policies</h4>
+        <nav class="footer-links" aria-label="Policies">
+          <a href="privacy-policy.html">Privacy Policy</a>
+          <a href="terms-and-conditions.html">Terms &amp; Conditions</a>
+          <a href="return-and-refund-policy.html">Return &amp; Refund Policy</a>          <a href="payment-policy.html">Payment Policy</a>
+        </nav>
+      </div>
+      <div class="footer-section footer-block">
+        <h4>Contact</h4>
+        <p class="footer-contact">Phone: <a href="tel:+919307760665">+91 9307760665</a></p>
+        <p class="footer-contact">WhatsApp: <a href="https://wa.me/919307760665" target="_blank" rel="noopener">Chat Support</a></p>
+        <p class="footer-contact">Email: <a href="mailto:hygienicsandcomfort@gmail.com">hygienicsandcomfort@gmail.com</a></p>
+        <p class="footer-contact">Location: Ambernath, Maharashtra</p>
+      </div>
+    </div>
+
+    <div class="footer-divider" role="presentation"></div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 Hygienic &amp; Comfort Co. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+
+
+<script>
+const _supabase = supabase.createClient(
+'https://uhkheprfbxxwuojswyht.supabase.co',
+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa2hlcHJmYnh4d3VvanN3eWh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjQ4NTMsImV4cCI6MjA4MzEwMDg1M30.sm7ZhqVDWWckAolZN_7p3cGMaK0_aOnwgQcPXnUA-Es'
+);
+
+async function checkUserSession() {
+const { data: { user } } = await _supabase.auth.getUser();
+const guestItems = document.getElementById('guest-items');
+const authItems = document.getElementById('auth-items');
+const userDisplay = document.getElementById('user-display-name');
+const userSub = document.getElementById('user-display-sub');
+const profileIcon = document.querySelector('.profile-btn i');
+
+if (user) {
+let latestName = "";
+try {
+const { data: profile } = await _supabase
+  .from('customers')
+  .select('customer_name')
+  .eq('user_id', user.id)
+  .maybeSingle();
+latestName = (profile?.customer_name || "").toString().trim();
+} catch (e) {
+console.warn("Could not fetch latest profile name:", e);
+}
+
+const metaName = (user.user_metadata?.full_name || user.user_metadata?.name || "").toString().trim();
+const fallbackName = (user.email ? user.email.split('@')[0] : (user.phone || "User"));
+const displayName = latestName || metaName || fallbackName || "User";
+
+guestItems.style.display = 'none';
+authItems.style.display = 'flex';
+userDisplay.innerText = displayName;
+userSub.innerText = user.email || user.phone || "User Account";
+if (profileIcon) profileIcon.setAttribute('data-lucide', 'user-check');
+} else {
+guestItems.style.display = 'flex';
+authItems.style.display = 'none';
+userDisplay.innerText = "Guest User";
+userSub.innerText = "Manage your account";
+if (profileIcon) profileIcon.setAttribute('data-lucide', 'user');
+}
+lucide.createIcons();
+}
+
+document.getElementById('profile-btn').addEventListener('click', (e) => {
+e.stopPropagation();
+document.getElementById('profile-dropdown').classList.toggle('active');
+});
+
+async function handleLogout() {
+    if (!confirm('Are you sure you want to log out?')) return;
+try {
+await _supabase.auth.signOut();
+localStorage.removeItem('checkout-item');
+window.location.href = 'index.html'; 
+} catch (err) {
+console.error("Logout Error:", err);
+window.location.reload();
+}
+}
+
+// Initialize Cart Count and Icons
+function updateCartBadge() {
+const cart = JSON.parse(localStorage.getItem('hc-cart')) || [];
+const totalQty = cart.reduce((sum, item) => sum + (Number(item.qty) || 1), 0);
+const badge = document.getElementById('cart-badge');
+if (badge) badge.innerText = totalQty;
+}
+
+window.onload = () => {
+updateCartBadge();
+checkUserSession();
+};
+
+document.addEventListener('click', (e) => {
+if (!e.target.closest('.profile-section')) { 
+const dropdown = document.getElementById('profile-dropdown');
+if(dropdown) dropdown.classList.remove('active');
+}
+});
+</script>
+
+<script>
+  (function initThemeFromSettings() {
+    const THEME_STORAGE_KEY = 'hc-theme';
+    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    const mediaQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+    const hasStoredTheme = storedTheme === 'dark' || storedTheme === 'light';
+    const applyTheme = (isDark) => document.body.classList.toggle('dark-theme', isDark);
+
+    applyTheme(hasStoredTheme ? storedTheme === 'dark' : !!(mediaQuery && mediaQuery.matches));
+
+    if (!hasStoredTheme && mediaQuery) {
+      if (typeof mediaQuery.addEventListener === 'function') {
+        mediaQuery.addEventListener('change', (e) => applyTheme(e.matches));
+      } else if (typeof mediaQuery.addListener === 'function') {
+        mediaQuery.addListener((e) => applyTheme(e.matches));
+      }
+    }
+  })();
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
